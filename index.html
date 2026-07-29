@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AmberOne · One Assistant. One Place. One Life.</title>
+  <meta name="description" content="AmberOne is an AI operating system for personal life, family, work, and business — natural conversation and trusted automation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 90% 70% at 70% 20%, rgba(212, 160, 23, 0.18), transparent 55%),
+        radial-gradient(ellipse 60% 50% at 10% 90%, rgba(125, 155, 120, 0.12), transparent 50%),
+        linear-gradient(165deg, #12161e 0%, #0e1116 45%, #0a0c10 100%);
+      border-bottom: 0;
+    }
+    .hero .nav { border-bottom: 0; background: transparent; backdrop-filter: none; }
+    .hero-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2rem clamp(1.25rem, 4vw, 3rem) 4rem;
+      max-width: 52rem;
+    }
+    .brand {
+      font-family: Fraunces, Georgia, serif;
+      font-size: clamp(3.2rem, 10vw, 6.5rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      margin: 0 0 1rem;
+    }
+    .brand span { color: var(--amber); }
+    .tagline {
+      font-family: Fraunces, Georgia, serif;
+      font-size: clamp(1.35rem, 3.2vw, 1.85rem);
+      font-weight: 500;
+      color: var(--sand-dim);
+      margin: 0 0 0.85rem;
+      max-width: 28ch;
+    }
+    .support { margin: 0; max-width: 36rem; color: var(--sand-dim); font-size: 1.05rem; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+    section { padding: clamp(3.5rem, 8vw, 6rem) clamp(1.25rem, 4vw, 3rem); border-top: 1px solid var(--line); }
+    .products { display: grid; gap: 1.5rem; }
+    @media (min-width: 800px) { .products { grid-template-columns: 1fr 1fr; } }
+    .product h3 { margin: 0 0 0.35rem; font-size: 1.45rem; }
+    .product p { margin: 0; color: var(--sand-dim); }
+    .principles { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+    @media (min-width: 700px) { .principles { grid-template-columns: repeat(3, 1fr); } }
+    .principles strong { display: block; color: var(--sand); font-family: Fraunces, Georgia, serif; font-size: 1.15rem; margin-bottom: 0.35rem; }
+    .principles li { color: var(--sand-dim); }
+    @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-body > * { animation: rise 0.7s ease both; }
+    .hero-body .brand { animation-delay: 0.05s; }
+    .hero-body .tagline { animation-delay: 0.15s; }
+    .hero-body .support { animation-delay: 0.25s; }
+    .hero-body .cta-row { animation-delay: 0.35s; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-brand" href="/">Amber<span>One</span></a>
+      <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+      <div class="nav-links" data-nav-links>
+        <a href="#products">Products</a>
+        <a href="/pricing.html">Pricing</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/login.html">Sign in</a>
+        <a class="nav-cta" href="/signup.html">Get started</a>
+      </div>
+    </nav>
+    <div class="hero-body">
+      <h1 class="brand">Amber<span>One</span></h1>
+      <p class="tagline">One Assistant. One Place. One Life.</p>
+      <p class="support">
+        An AI operating system for personal life, family, work, and business —
+        natural conversation, intelligent memory, and trusted automation from start to finish.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/pricing.html">Start Now</a>
+        <a class="btn btn-ghost" href="#products">See products</a>
+      </div>
+    </div>
+  </header>
+
+  <section id="products">
+    <div class="wrap" style="padding-top:0;padding-bottom:0;max-width:1100px">
+      <h2>Core products</h2>
+      <p class="lede">Same Amber brain. Different roles for how you live and work.</p>
+      <div class="products">
+        <article class="product">
+          <h3>Amber Personal</h3>
+          <div class="price">$19.99 / month</div>
+          <p>Conversations, calendar, reminders, memory, notes, shopping, travel, bill reminders, daily briefing, evening recap, calls &amp; messaging.</p>
+        </article>
+        <article class="product">
+          <h3>Amber Family</h3>
+          <div class="price">From $29.99 / month</div>
+          <p>Everything in Personal plus shared calendars, chores, birthdays, school &amp; sports, groceries, family timeline, vacation planning.</p>
+        </article>
+        <article class="product">
+          <h3>Amber Executive</h3>
+          <div class="price">$59.99 / month</div>
+          <p>Executive calendar, email assistance, meeting scheduling, AI receptionist, CRM support, travel, expenses, prep &amp; follow-ups.</p>
+        </article>
+        <article class="product">
+          <h3>Amber Business</h3>
+          <div class="price">From $99 / month</div>
+          <p>Appointments, customer reminders, receptionist, CRM, Instagram &amp; Nextdoor, marketing images, reviews, team scheduling.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap" style="padding-top:0;padding-bottom:0;max-width:1100px">
+      <h2>Design principles</h2>
+      <ul class="principles">
+        <li><strong>Talk naturally</strong>Most actions start with Talk to Amber — not hunting menus.</li>
+        <li><strong>Stay until finished</strong>Amber walks you through setup, waits during login, and verifies before blaming.</li>
+        <li><strong>Learn once, help forever</strong>Preferences and verified workflows improve every future session.</li>
+      </ul>
+      <div class="cta-row" style="margin-top:2rem">
+        <a class="btn btn-primary" href="/signup.html">Create account</a>
+        <a class="btn btn-ghost" href="/pricing.html">View pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap" style="padding-top:0;padding-bottom:0">
+      AmberOne · <a href="/pricing.html">Pricing</a> · <a href="/faq.html">FAQ</a> ·
+      <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a>
+    </div>
+  </footer>
+  <script src="/assets/app.js"></script>
+</body>
+</html>

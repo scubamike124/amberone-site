@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/">Amber<span>One</span></a>
+    <div class="nav-links" data-nav-links>
+      <a href="/signup.html">Create account</a>
+    </div>
+  </nav>
+  <main class="wrap-narrow">
+    <div class="panel">
+      <h1>Sign in</h1>
+      <p class="lede">Access your AmberOne dashboard and billing portal.</p>
+      <div id="banner" class="banner"></div>
+      <form id="login-form">
+        <label class="label" for="email">Email</label>
+        <input class="field" id="email" type="email" required autocomplete="email" />
+        <label class="label" for="password">Password</label>
+        <input class="field" id="password" type="password" required autocomplete="current-password" />
+        <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+      <p class="lede" style="margin:1rem 0 0;text-align:center">
+        <a href="/forgot-password.html">Forgot password?</a> ·
+        <a href="/signup.html">Create account</a>
+      </p>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script>
+    document.getElementById("login-form").onsubmit = async (e) => {
+      e.preventDefault();
+      const banner = document.getElementById("banner");
+      const { res, data } = await AmberOne.api("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email: document.getElementById("email").value,
+          password: document.getElementById("password").value,
+        }),
+      });
+      if (!res.ok) {
+        AmberOne.showBanner(banner, data.error || "Sign in failed", "err");
+        return;
+      }
+      const next = AmberOne.qs("next") || "/dashboard/";
+      location.href = next;
+    };
+  </script>
+</body>
+</html>

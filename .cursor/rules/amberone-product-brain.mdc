@@ -1,0 +1,20 @@
+---
+description: AmberOne Product Brain — personal/family/executive/business OS
+alwaysApply: false
+globs:
+  - "**/amberone*/**"
+  - "**/21-amberone.md"
+  - "**/AMBERONE_BLUEPRINT.md"
+---
+
+# AmberOne Product Blueprint
+
+**Mission:** One Assistant. One Place. One Life.
+
+AmberOne is an AI operating system for personal life, family, work, and business. It inherits Platform Brain + Experience + Intelligence Metrics.
+
+Voice-first · ≤3 taps · Manual/Assisted/Automatic · Resiliency Engine · Privacy first.
+
+Products: Personal $19.99 · Family $29.99–$79.99 · Executive $59.99 · Business $99/$199/custom · Marketplace · White label.
+
+Full: `docs/blueprint/21-amberone.md`.

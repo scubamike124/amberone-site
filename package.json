@@ -1,0 +1,22 @@
+{
+  "name": "amberone",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AmberOne — One Assistant. One Place. One Life.",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev . --d1=DB=amberone --local --port 8788",
+    "build": "node scripts/build-check.mjs",
+    "typecheck": "tsc --noEmit",
+    "db:migrate:local": "wrangler d1 execute amberone --local --file=./schema.sql",
+    "db:migrate:remote": "wrangler d1 execute amberone --remote --file=./schema.sql",
+    "stripe:catalog": "node scripts/stripe-catalog.mjs",
+    "deploy": "wrangler pages deploy . --project-name=amberone",
+    "test:smoke": "node scripts/smoke.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250726.0",
+    "typescript": "^5.8.3",
+    "wrangler": "3.114.15"
+  }
+}

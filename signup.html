@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Create account · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/">Amber<span>One</span></a>
+    <div class="nav-links" data-nav-links>
+      <a href="/login.html">Sign in</a>
+      <a class="nav-cta" href="/pricing.html">Pricing</a>
+    </div>
+  </nav>
+  <main class="wrap-narrow">
+    <div class="panel">
+      <h1>Create your account</h1>
+      <p class="lede" id="plan-note">Create your account, then Start Now on Pricing anytime.</p>
+      <div id="banner" class="banner"></div>
+      <form id="signup-form">
+        <label class="label" for="name">Name</label>
+        <input class="field" id="name" name="name" autocomplete="name" />
+        <label class="label" for="email">Work email</label>
+        <input class="field" id="email" name="email" type="email" required autocomplete="email" />
+        <label class="label" for="password">Password (8+ characters)</label>
+        <input class="field" id="password" name="password" type="password" required minlength="8" autocomplete="new-password" />
+        <button class="btn btn-primary btn-block" type="submit">Create account</button>
+      </form>
+      <p class="lede" style="margin:1rem 0 0;text-align:center">Already have an account? <a href="/login.html">Sign in</a></p>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script>
+    const plan = AmberOne.qs("plan");
+    const note = document.getElementById("plan-note");
+    if (plan) note.textContent = `Next: secure Stripe checkout for ${plan}.`;
+    document.getElementById("signup-form").onsubmit = async (e) => {
+      e.preventDefault();
+      const banner = document.getElementById("banner");
+      const body = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value,
+        plan,
+      };
+      const { res, data } = await AmberOne.api("/api/auth/signup", { method: "POST", body: JSON.stringify(body) });
+      if (!res.ok) {
+        AmberOne.showBanner(banner, data.error || "Signup failed", "err");
+        return;
+      }
+      if (plan) {
+        try {
+          await AmberOne.startCheckout(plan, e.submitter);
+          return;
+        } catch (err) {
+          AmberOne.showBanner(banner, err.message || "Account created — checkout needs Stripe keys.", "warn");
+          setTimeout(() => (location.href = "/dashboard/"), 1200);
+          return;
+        }
+      }
+      location.href = "/dashboard/";
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Settings · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/">Home</a>
+      <a href="/dashboard/billing.html">Billing</a>
+      <a href="/dashboard/settings.html">Settings</a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside class="panel dash-nav">
+        <a href="/dashboard/">Home</a>
+        <a href="/dashboard/billing.html">Billing</a>
+        <a class="is-on" href="/dashboard/settings.html">Settings</a>
+      </aside>
+      <section>
+        <h1>Settings</h1>
+        <p class="lede">Account details and security.</p>
+        <div class="panel" style="margin-bottom:1rem">
+          <h2>Account</h2>
+          <p><strong id="name">—</strong></p>
+          <p class="lede" id="email">—</p>
+        </div>
+        <div class="panel">
+          <h2>Security</h2>
+          <p class="lede">Use password reset if you need to rotate credentials.</p>
+          <a class="btn btn-ghost" href="/forgot-password.html">Reset password</a>
+          <button class="btn btn-primary" data-logout type="button" style="margin-left:0.5rem">Log out</button>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script>
+    (async () => {
+      const user = await AmberOne.requireAuth();
+      if (!user) return;
+      document.getElementById("name").textContent = user.name || "Member";
+      document.getElementById("email").textContent = user.email;
+    })();
+  </script>
+</body>
+</html>

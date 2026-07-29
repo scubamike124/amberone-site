@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/">Home</a>
+      <a href="/dashboard/billing.html">Billing</a>
+      <a href="/dashboard/settings.html">Settings</a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside class="panel dash-nav">
+        <a class="is-on" href="/dashboard/">Home</a>
+        <a href="/dashboard/billing.html">Billing</a>
+        <a href="/dashboard/settings.html">Settings</a>
+        <a href="/pricing.html">Upgrade plan</a>
+      </aside>
+      <section>
+        <h1 id="greeting">Welcome</h1>
+        <p class="lede">Your AmberOne home base — briefing, plan status, and quick actions.</p>
+        <div class="stat-row" style="margin-bottom:1.25rem">
+          <div class="stat"><span class="label">Plan</span><strong id="plan">—</strong></div>
+          <div class="stat"><span class="label">Status</span><strong id="status">—</strong></div>
+          <div class="stat"><span class="label">Account</span><strong id="email">—</strong></div>
+        </div>
+        <div class="panel">
+          <h2>Talk to Amber</h2>
+          <p class="lede">Ask Amber what to do next — connect calendar, pick a plan, or open billing.</p>
+          <div id="talk-log" class="talk-log" style="max-height:240px;border:1px solid var(--line);border-radius:12px;margin-bottom:0.75rem"></div>
+          <form id="dash-talk" style="display:flex;gap:0.5rem">
+            <input class="field" id="dash-talk-input" style="margin:0" placeholder="What’s on your list today?" required />
+            <button class="btn btn-primary" type="submit">Send</button>
+          </form>
+        </div>
+        <div class="cta-row" style="margin-top:1.25rem;display:flex;gap:0.75rem;flex-wrap:wrap">
+          <a class="btn btn-primary" href="/pricing.html">Start / change plan</a>
+          <a class="btn btn-ghost" href="/dashboard/billing.html">Open billing</a>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script>
+    (async () => {
+      const user = await AmberOne.requireAuth();
+      if (!user) return;
+      document.getElementById("greeting").textContent = `Welcome${user.name ? `, ${user.name}` : ""}`;
+      document.getElementById("plan").textContent = user.planSlug || "None yet";
+      document.getElementById("status").textContent = user.subscriptionStatus || "none";
+      document.getElementById("email").textContent = user.email;
+      const log = document.getElementById("talk-log");
+      const add = (text, me = false) => {
+        const div = document.createElement("div");
+        div.className = `talk-bubble${me ? " me" : ""}`;
+        div.textContent = text;
+        log.appendChild(div);
+        log.scrollTop = log.scrollHeight;
+      };
+      add("Good to see you. I can help with plans, billing, or what to set up first.");
+      document.getElementById("dash-talk").onsubmit = async (e) => {
+        e.preventDefault();
+        const input = document.getElementById("dash-talk-input");
+        const message = input.value.trim();
+        if (!message) return;
+        add(message, true);
+        input.value = "";
+        const { data } = await AmberOne.api("/api/talk", { method: "POST", body: JSON.stringify({ message }) });
+        add(data.reply || data.error || "I couldn’t answer that just now.");
+      };
+    })();
+  </script>
+</body>
+</html>
