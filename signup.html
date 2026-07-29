@@ -12,33 +12,88 @@
 <body>
   <nav class="nav" aria-label="Primary">
     <a class="nav-brand" href="/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
     <div class="nav-links" data-nav-links>
+      <a href="/pricing">Pricing</a>
+      <a href="/plans">Plans</a>
       <a href="/login">Sign in</a>
-      <a class="nav-cta" href="/pricing">Pricing</a>
     </div>
   </nav>
-  <main class="wrap-narrow">
-    <div class="panel">
-      <h1>Create your account</h1>
-      <p class="lede" id="plan-note">Create your account, then Start Now on Pricing anytime.</p>
-      <div id="banner" class="banner"></div>
-      <form id="signup-form">
-        <label class="label" for="name">Name</label>
-        <input class="field" id="name" name="name" autocomplete="name" />
-        <label class="label" for="email">Work email</label>
-        <input class="field" id="email" name="email" type="email" required autocomplete="email" />
-        <label class="label" for="password">Password (8+ characters)</label>
-        <input class="field" id="password" name="password" type="password" required minlength="8" autocomplete="new-password" />
-        <button class="btn btn-primary btn-block" type="submit">Create account</button>
-      </form>
-      <p class="lede" style="margin:1rem 0 0;text-align:center">Already have an account? <a href="/login">Sign in</a></p>
+  <main class="wrap">
+    <div class="grid" style="align-items:start">
+      <div class="panel" style="grid-column:1/-1;max-width:480px;margin:0 auto;width:100%">
+        <h1>Create your account</h1>
+        <p class="lede" id="plan-note">Create your account, then choose a plan anytime. By continuing you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
+        <div id="banner" class="banner"></div>
+        <form id="signup-form">
+          <label class="label" for="name">Name</label>
+          <input class="field" id="name" name="name" autocomplete="name" />
+          <label class="label" for="email">Work email</label>
+          <input class="field" id="email" name="email" type="email" required autocomplete="email" />
+          <label class="label" for="password">Password (8+ characters)</label>
+          <input class="field" id="password" name="password" type="password" required minlength="8" autocomplete="new-password" />
+          <button class="btn btn-primary btn-block" type="submit">Create account</button>
+        </form>
+        <p class="lede" style="margin:1rem 0 0;text-align:center">Already have an account? <a href="/login">Sign in</a></p>
+      </div>
     </div>
+
+    <section style="margin-top:2.5rem;padding:0;border:0">
+      <h2>All 7 plans</h2>
+      <p class="lede">Pick a plan now or after signup — Stripe Checkout is secure and self-service.</p>
+      <div class="pricing-summary pricing-7">
+        <article class="panel">
+          <h3>Personal</h3>
+          <p class="price">$19.99 / mo</p>
+          <p class="meta">Talk, calendar, memory, briefing.</p>
+          <a class="btn btn-ghost btn-block" href="/signup?plan=personal">Choose Personal</a>
+        </article>
+        <article class="panel">
+          <h3>Family (2)</h3>
+          <p class="price">$29.99 / mo</p>
+          <p class="meta">Two household seats.</p>
+          <a class="btn btn-ghost btn-block" href="/signup?plan=family_2">Choose Family (2)</a>
+        </article>
+        <article class="panel">
+          <h3>Family (5)</h3>
+          <p class="price">$49.99 / mo</p>
+          <p class="meta">Five household seats.</p>
+          <a class="btn btn-ghost btn-block" href="/signup?plan=family_5">Choose Family (5)</a>
+        </article>
+        <article class="panel">
+          <h3>Family (10)</h3>
+          <p class="price">$79.99 / mo</p>
+          <p class="meta">Ten household seats.</p>
+          <a class="btn btn-ghost btn-block" href="/signup?plan=family_10">Choose Family (10)</a>
+        </article>
+        <article class="panel">
+          <h3>Executive</h3>
+          <p class="price">$59.99 / mo</p>
+          <p class="meta">Meetings, email, CRM support.</p>
+          <a class="btn btn-ghost btn-block" href="/signup?plan=executive">Choose Executive</a>
+        </article>
+        <article class="panel">
+          <h3>Business Small</h3>
+          <p class="price">$99 / mo</p>
+          <p class="meta">Appointments &amp; customers.</p>
+          <a class="btn btn-ghost btn-block" href="/signup?plan=business_small">Choose Business</a>
+        </article>
+        <article class="panel">
+          <h3>Business Medium</h3>
+          <p class="price">$199 / mo</p>
+          <p class="meta">Growing team capacity.</p>
+          <a class="btn btn-ghost btn-block" href="/signup?plan=business_medium">Choose Medium</a>
+        </article>
+      </div>
+    </section>
   </main>
+  <footer data-site-footer></footer>
   <script src="/assets/app.js"></script>
+  <script src="/assets/site-footer.js"></script>
   <script>
     const plan = AmberOne.qs("plan");
     const note = document.getElementById("plan-note");
-    if (plan) note.textContent = `Next: secure Stripe checkout for ${plan}.`;
+    if (plan) note.innerHTML = `Next: secure Stripe checkout for <strong>${plan}</strong>. By continuing you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.`;
     document.getElementById("signup-form").onsubmit = async (e) => {
       e.preventDefault();
       const banner = document.getElementById("banner");

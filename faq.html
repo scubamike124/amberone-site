@@ -15,6 +15,8 @@
     <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
     <div class="nav-links" data-nav-links>
       <a href="/pricing">Pricing</a>
+      <a href="/plans">Plans</a>
+      <a href="/family">Family</a>
       <a href="/signup">Get started</a>
       <a href="/login">Sign in</a>
     </div>
@@ -22,11 +24,23 @@
   <main class="wrap">
     <h1>FAQ</h1>
     <div class="panel" style="margin-bottom:1rem"><h3>How do I subscribe?</h3><p class="lede">Create an account, open Pricing, and Start Now. Stripe Checkout handles payment securely.</p></div>
-    <div class="panel" style="margin-bottom:1rem"><h3>Can I upgrade or cancel?</h3><p class="lede">Yes — from Dashboard → Billing → Customer Portal. No phone call required.</p></div>
+    <div class="panel" style="margin-bottom:1rem"><h3>Can I upgrade or cancel?</h3><p class="lede">Yes — from Dashboard → Billing → Customer Portal. No phone call required. See the <a href="/refunds">Refund Policy</a>.</p></div>
     <div class="panel" style="margin-bottom:1rem"><h3>Is there Enterprise custom pricing?</h3><p class="lede">No. AmberOne is self-service: Personal, Family, Executive, and Business plans only.</p></div>
-    <div class="panel"><h3>What about Family seats?</h3><p class="lede">Family plans are available for 2, 5, or 10 users.</p></div>
+    <div class="panel" style="margin-bottom:1rem"><h3>What about Family seats?</h3><p class="lede">Family plans are available for 2, 5, or 10 users. Details on the <a href="/family">Family page</a>.</p></div>
+
+    <h2 style="margin-top:2rem">All 7 prices</h2>
+    <div class="pricing-summary pricing-7" style="margin-top:1rem">
+      <article class="panel"><h3>Personal</h3><p class="price">$19.99 / mo</p><a class="btn btn-ghost btn-block" href="/pricing?plan=personal">Start</a></article>
+      <article class="panel"><h3>Family (2)</h3><p class="price">$29.99 / mo</p><a class="btn btn-ghost btn-block" href="/pricing?plan=family_2">Start</a></article>
+      <article class="panel"><h3>Family (5)</h3><p class="price">$49.99 / mo</p><a class="btn btn-ghost btn-block" href="/pricing?plan=family_5">Start</a></article>
+      <article class="panel"><h3>Family (10)</h3><p class="price">$79.99 / mo</p><a class="btn btn-ghost btn-block" href="/pricing?plan=family_10">Start</a></article>
+      <article class="panel"><h3>Executive</h3><p class="price">$59.99 / mo</p><a class="btn btn-ghost btn-block" href="/pricing?plan=executive">Start</a></article>
+      <article class="panel"><h3>Business Small</h3><p class="price">$99 / mo</p><a class="btn btn-ghost btn-block" href="/pricing?plan=business_small">Start</a></article>
+      <article class="panel"><h3>Business Medium</h3><p class="price">$199 / mo</p><a class="btn btn-ghost btn-block" href="/pricing?plan=business_medium">Start</a></article>
+    </div>
   </main>
-  <footer><div class="wrap" style="padding-top:0"><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></div></footer>
+  <footer data-site-footer></footer>
   <script src="/assets/app.js"></script>
+  <script src="/assets/site-footer.js"></script>
 </body>
 </html>

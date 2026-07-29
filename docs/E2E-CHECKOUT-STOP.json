@@ -1,0 +1,92 @@
+{
+  "at": "2026-07-29T20:31:08.212Z",
+  "email": "checkout_stop_1785357061082@amberone.test",
+  "note": "Reached Stripe Checkout for every plan; did NOT submit payment.",
+  "results": [
+    {
+      "plan": "personal",
+      "checkoutApi": true,
+      "status": 200,
+      "sessionId": "cs_live_b1rDRzVdweoL18YKg883fjQ5Lhw41t4JwU1FxA0vTVkCEDdBkk9WnHvNkC",
+      "stripeUrl": true,
+      "stripeHost": "checkout.stripe.com",
+      "stripePageOk": true,
+      "looksLikeCheckout": true,
+      "title": "Stripe Checkout",
+      "stoppedBeforePay": true
+    },
+    {
+      "plan": "family_2",
+      "checkoutApi": true,
+      "status": 200,
+      "sessionId": "cs_live_b1IY09sYmfNRlza78IWpypkOTwxWIpLy2HWTLOaOg2Bp7crm9BXm0srcCN",
+      "stripeUrl": true,
+      "stripeHost": "checkout.stripe.com",
+      "stripePageOk": true,
+      "looksLikeCheckout": true,
+      "title": "Stripe Checkout",
+      "stoppedBeforePay": true
+    },
+    {
+      "plan": "family_5",
+      "checkoutApi": true,
+      "status": 200,
+      "sessionId": "cs_live_b1dPlJVpzkMN5liOOYmRdyxfxBpAbjHCQBT7GJwY7yVmUY9apBy7V49fev",
+      "stripeUrl": true,
+      "stripeHost": "checkout.stripe.com",
+      "stripePageOk": true,
+      "looksLikeCheckout": true,
+      "title": "Stripe Checkout",
+      "stoppedBeforePay": true
+    },
+    {
+      "plan": "family_10",
+      "checkoutApi": true,
+      "status": 200,
+      "sessionId": "cs_live_b1Ovxwesk6lHMCnhz2mXM36H59jzg1fUGS5vXR7jKaf2EphznG31qVhtTT",
+      "stripeUrl": true,
+      "stripeHost": "checkout.stripe.com",
+      "stripePageOk": true,
+      "looksLikeCheckout": true,
+      "title": "Stripe Checkout",
+      "stoppedBeforePay": true
+    },
+    {
+      "plan": "executive",
+      "checkoutApi": true,
+      "status": 200,
+      "sessionId": "cs_live_b1ef491oUEkgJ4W5Qzfqlu5wNl2LslWkh1aXHAY7VOdyQpxIFy9uZcNwy5",
+      "stripeUrl": true,
+      "stripeHost": "checkout.stripe.com",
+      "stripePageOk": true,
+      "looksLikeCheckout": true,
+      "title": "Stripe Checkout",
+      "stoppedBeforePay": true
+    },
+    {
+      "plan": "business_small",
+      "checkoutApi": true,
+      "status": 200,
+      "sessionId": "cs_live_b1Mm0Z5LuFi15vA2DgD4y6EWapqHCqj4RCdU29rGKScn8EItTqsGLmJyS8",
+      "stripeUrl": true,
+      "stripeHost": "checkout.stripe.com",
+      "stripePageOk": true,
+      "looksLikeCheckout": true,
+      "title": "Stripe Checkout",
+      "stoppedBeforePay": true
+    },
+    {
+      "plan": "business_medium",
+      "checkoutApi": true,
+      "status": 200,
+      "sessionId": "cs_live_b1y4ENwnrt4foZVkpnLxSoFj6tW45BnMzfaNutofW4z3ncKqXmYurveaiW",
+      "stripeUrl": true,
+      "stripeHost": "checkout.stripe.com",
+      "stripePageOk": true,
+      "looksLikeCheckout": true,
+      "title": "Stripe Checkout",
+      "stoppedBeforePay": true
+    }
+  ],
+  "passed": true
+}

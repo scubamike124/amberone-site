@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Compare plans · AmberOne</title>
+  <meta name="description" content="Compare AmberOne Personal, Family, Executive, and Business plans side by side." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    .compare-table th, .compare-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 0.85rem 0.75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    .compare-table th {
+      font-family: Fraunces, Georgia, serif;
+      color: var(--sand);
+      background: rgba(250, 248, 244, 0.8);
+    }
+    .compare-table td { color: var(--sand-dim); }
+    .compare-wrap {
+      overflow-x: auto;
+      background: linear-gradient(165deg, #faf8f4, #f1ede6);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/#capabilities">What it does</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/plans">Plans</a>
+      <a href="/family">Family</a>
+      <a href="/login">Sign in</a>
+      <a class="nav-cta" href="/signup">Get started</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <h1>Compare plans</h1>
+    <p class="lede">Same Amber brain. Different scope. All seven self-service prices — checkout on <a href="/pricing">Pricing</a>.</p>
+
+    <div class="pricing-summary pricing-7" style="margin-bottom:2.5rem">
+      <article class="panel">
+        <h3>Personal</h3>
+        <p class="price">$19.99 / mo</p>
+        <p class="meta">One person, full personal OS.</p>
+        <a class="btn btn-primary btn-block" href="/pricing?plan=personal">Start</a>
+      </article>
+      <article class="panel">
+        <h3>Family (2)</h3>
+        <p class="price">$29.99 / mo</p>
+        <p class="meta">Two household seats.</p>
+        <a class="btn btn-primary btn-block" href="/pricing?plan=family_2">Start</a>
+      </article>
+      <article class="panel">
+        <h3>Family (5)</h3>
+        <p class="price">$49.99 / mo</p>
+        <p class="meta">Five household seats.</p>
+        <a class="btn btn-primary btn-block" href="/pricing?plan=family_5">Start</a>
+      </article>
+      <article class="panel">
+        <h3>Family (10)</h3>
+        <p class="price">$79.99 / mo</p>
+        <p class="meta">Ten household seats.</p>
+        <a class="btn btn-primary btn-block" href="/pricing?plan=family_10">Start</a>
+      </article>
+      <article class="panel">
+        <h3>Executive</h3>
+        <p class="price">$59.99 / mo</p>
+        <p class="meta">Professionals and operators.</p>
+        <a class="btn btn-primary btn-block" href="/pricing?plan=executive">Start</a>
+      </article>
+      <article class="panel">
+        <h3>Business Small</h3>
+        <p class="price">$99 / mo</p>
+        <p class="meta">Appointments &amp; marketing assist.</p>
+        <a class="btn btn-primary btn-block" href="/pricing?plan=business_small">Start</a>
+      </article>
+      <article class="panel">
+        <h3>Business Medium</h3>
+        <p class="price">$199 / mo</p>
+        <p class="meta">Growing team capacity.</p>
+        <a class="btn btn-primary btn-block" href="/pricing?plan=business_medium">Start</a>
+      </article>
+    </div>
+
+    <h2>What’s included</h2>
+    <div class="compare-wrap" style="margin-top:1rem">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>Personal<br><span class="meta">$19.99</span></th>
+            <th>Family<br><span class="meta">from $29.99</span></th>
+            <th>Executive<br><span class="meta">$59.99</span></th>
+            <th>Business<br><span class="meta">from $99</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Talk to Amber</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Calendar, reminders, notes, memory</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Daily briefing &amp; evening recap</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Shared family calendars &amp; chores</td><td>—</td><td>Yes</td><td>—</td><td>—</td></tr>
+          <tr><td>Meeting prep &amp; email assistance</td><td>—</td><td>—</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>CRM health &amp; follow-ups</td><td>—</td><td>—</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Appointments &amp; customers</td><td>—</td><td>—</td><td>—</td><td>Yes</td></tr>
+          <tr><td>Marketing &amp; reviews assist</td><td>—</td><td>—</td><td>—</td><td>Yes</td></tr>
+          <tr><td>Self-service Stripe billing</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <footer data-site-footer></footer>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/site-footer.js"></script>
+</body>
+</html>

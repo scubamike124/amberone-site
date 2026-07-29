@@ -46,6 +46,23 @@ window.AmberOne = {
         this.logout();
       });
     });
+    this.refreshNotifBadge();
+  },
+
+  async refreshNotifBadge() {
+    const badges = document.querySelectorAll("[data-notif-badge]");
+    if (!badges.length) return;
+    try {
+      const { res, data } = await this.api("/api/notifications?unread=1&limit=1");
+      if (!res.ok) return;
+      const count = data.unreadCount || 0;
+      badges.forEach((el) => {
+        el.textContent = String(count);
+        el.hidden = count === 0;
+      });
+    } catch {
+      // ignore — badge is best-effort
+    }
   },
 
   async startCheckout(plan, button) {
@@ -93,6 +110,7 @@ window.AmberOne = {
     document.body.appendChild(root);
     const panel = document.getElementById("ao-talk-panel");
     const log = document.getElementById("ao-talk-log");
+    let conversationId = null;
     const add = (text, me = false) => {
       const div = document.createElement("div");
       div.className = `talk-bubble${me ? " me" : ""}`;
@@ -112,10 +130,39 @@ window.AmberOne = {
       input.value = "";
       const { data } = await this.api("/api/talk", {
         method: "POST",
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message, conversationId }),
       });
+      conversationId = data.conversationId || conversationId;
       add(data.reply || data.error || "I couldn’t answer that just now.");
     };
+  },
+
+  /** Wire up a Talk panel that already exists in the page (used on the dashboard Home). */
+  bindTalkForm({ formEl, inputEl, logEl, greeting }) {
+    let conversationId = null;
+    const add = (text, me = false) => {
+      const div = document.createElement("div");
+      div.className = `talk-bubble${me ? " me" : ""}`;
+      div.textContent = text;
+      logEl.appendChild(div);
+      logEl.scrollTop = logEl.scrollHeight;
+    };
+    if (greeting) add(greeting);
+    formEl.onsubmit = async (e) => {
+      e.preventDefault();
+      const message = inputEl.value.trim();
+      if (!message) return;
+      add(message, true);
+      inputEl.value = "";
+      const { data } = await this.api("/api/talk", {
+        method: "POST",
+        body: JSON.stringify({ message, conversationId }),
+      });
+      conversationId = data.conversationId || conversationId;
+      add(data.reply || data.error || "I couldn’t answer that just now.");
+      this.refreshNotifBadge();
+    };
+    return { add, getConversationId: () => conversationId };
   },
 };
 

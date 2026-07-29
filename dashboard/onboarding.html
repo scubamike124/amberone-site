@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Set up AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/">Skip for now</a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap-narrow">
+    <div class="onboard-steps" id="steps"></div>
+    <div class="panel" id="step-panel">
+      <p class="empty-state">Loading…</p>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      const user = await AmberOne.requireAuth();
+      if (!user) return;
+
+      const STEPS = ["welcome", "plan", "connect_calendar", "memory_prefs", "done"];
+      const LABELS = { welcome: "Welcome", plan: "Plan", connect_calendar: "Calendar", memory_prefs: "Memory", done: "Done" };
+      let current = "welcome";
+      let prefs = {};
+
+      function renderSteps() {
+        document.getElementById("steps").innerHTML = STEPS.map((s) => {
+          const idx = STEPS.indexOf(s);
+          const currentIdx = STEPS.indexOf(current);
+          const cls = s === current ? "is-current" : idx < currentIdx ? "is-done" : "";
+          return `<span class="onboard-step ${cls}">${LABELS[s]}</span>`;
+        }).join("");
+      }
+
+      async function save(partial) {
+        const { data } = await AmberOne.api("/api/onboarding", { method: "POST", body: JSON.stringify(partial) });
+        return data;
+      }
+
+      function renderStep() {
+        renderSteps();
+        const panel = document.getElementById("step-panel");
+        if (current === "welcome") {
+          panel.innerHTML = `
+            <h1>Welcome to AmberOne${user.name ? ", " + user.name : ""}</h1>
+            <p class="lede">One Assistant. One Place. One Life. Let's get Amber set up for you — it only takes a minute.</p>
+            <button class="btn btn-primary btn-block" id="next">Get started</button>`;
+          document.getElementById("next").onclick = async () => {
+            await save({ step: "plan" });
+            current = "plan";
+            renderStep();
+          };
+        } else if (current === "plan") {
+          panel.innerHTML = `
+            <h1>Your plan</h1>
+            <p class="lede">Current plan: <strong>${user.planSlug || "none yet"}</strong> (${user.subscriptionStatus || "none"}).</p>
+            <p class="lede">You can start or change a plan anytime from Pricing — this isn't required to keep setting up Amber.</p>
+            <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+              <a class="btn btn-ghost" href="/pricing">View plans</a>
+              <button class="btn btn-primary" id="next">Continue</button>
+            </div>`;
+          document.getElementById("next").onclick = async () => {
+            await save({ step: "connect_calendar" });
+            current = "connect_calendar";
+            renderStep();
+          };
+        } else if (current === "connect_calendar") {
+          panel.innerHTML = `
+            <h1>Connect your calendar</h1>
+            <p class="lede">Link Google Calendar so Amber can see and schedule around your real life. Optional — you can do this later from Connections.</p>
+            <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+              <a class="btn btn-primary" href="/dashboard/connections">Open Connections</a>
+              <button class="btn btn-ghost" id="next">Skip for now</button>
+            </div>`;
+          document.getElementById("next").onclick = async () => {
+            await save({ step: "memory_prefs" });
+            current = "memory_prefs";
+            renderStep();
+          };
+        } else if (current === "memory_prefs") {
+          const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Los_Angeles";
+          panel.innerHTML = `
+            <h1>Preferences</h1>
+            <p class="lede">Amber can remember details you share and personalize your daily briefing.</p>
+            <label class="label" style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem">
+              <input type="radio" name="memlevel" value="full" checked /> Remember everything I share automatically
+            </label>
+            <label class="label" style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem">
+              <input type="radio" name="memlevel" value="ask" /> Ask before saving anything new
+            </label>
+            <label class="label" style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem">
+              <input type="radio" name="memlevel" value="off" /> Don't save memories yet
+            </label>
+            <label class="label" for="weather-city">City for weather (optional)</label>
+            <input class="field" id="weather-city" placeholder="e.g. San Diego" value="${prefs.weatherCity || ""}" />
+            <p class="sub" style="margin-bottom:1rem">Timezone detected: ${tz}</p>
+            <button class="btn btn-primary btn-block" id="next">Continue</button>`;
+          document.getElementById("next").onclick = async () => {
+            const level = document.querySelector('input[name="memlevel"]:checked').value;
+            prefs.memoryPermission = level;
+            prefs.timeZone = tz;
+            prefs.weatherCity = document.getElementById("weather-city").value.trim() || null;
+            await save({ step: "done", prefs });
+            current = "done";
+            renderStep();
+          };
+        } else if (current === "done") {
+          panel.innerHTML = `
+            <h1>You're all set</h1>
+            <p class="lede">Amber is ready. Your home base now includes a daily briefing, Talk, calendar, and reminders.</p>
+            <a class="btn btn-primary btn-block" href="/dashboard/">Go to home</a>`;
+          save({ complete: true, prefs });
+        }
+      }
+
+      const onboardRes = await AmberOne.api("/api/onboarding");
+      if (onboardRes.res.ok && onboardRes.data.step) {
+        current = onboardRes.data.complete ? "done" : onboardRes.data.step;
+        prefs = onboardRes.data.prefs || {};
+      }
+      renderStep();
+    })();
+  </script>
+</body>
+</html>

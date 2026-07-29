@@ -1,0 +1,50 @@
+{
+  "at": "2026-07-29T13:40:24.229Z",
+  "databaseId": "0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a",
+  "wranglerToml": "name = \"amberone\"\ncompatibility_date = \"2025-07-18\"\npages_build_output_dir = \".\"\n\n[[d1_databases]]\nbinding = \"DB\"\ndatabase_name = \"amberone\"\ndatabase_id = \"0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a\"\npreview_database_id = \"0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a\"\n",
+  "steps": [
+    {
+      "step": "d1 execute schema.sql --remote",
+      "ok": false,
+      "status": 1,
+      "out": "⛅️ wrangler 3.114.15 (update available 4.115.0)\n------------------------------------------------\n\n🌀 Executing on preview database amberone (0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a):\n🌀 To execute on your local development database, remove the --remote flag from your wrangler command.\nNote: if the execution fails to complete, your DB will return to its original state and you can safely retry.\n├ Checking if file needs uploading\n│\n\n📎 It looks like you are authenticating Wrangler via a custom API token set in an environment variable.\nPlease ensure it has the correct permissions for this operation.\n\nGetting User settings...\nℹ️  The API Token is read from the CLOUDFLARE_API_TOKEN environment variable.\n👋 You are logged in with an User API Token. Unable to retrieve email for this user. Are you missing the `User->User Details->Read` permission?\n┌──────────────────────────────────┬──────────────────────────────────┐\n│ Account Name                     │ Account ID                       │\n├──────────────────────────────────┼──────────────────────────────────┤\n│ Scubamike124@gmail.com's Account │ 735d0e617e9ba6a16d9b2a1ec05b4dd3 │\n└──────────────────────────────────┴──────────────────────────────────┘\n🔓 To see token permissions visit https://dash.cloudflare.com/profile/api-tokens.\n🎢 Unable to get membership roles. Make sure you have permissions to read the account. Are you missing the `User->Memberships->Read` permission?\n\u001b[33m▲ \u001b[43;33m[\u001b[43;30mWARNING\u001b[43;33m]\u001b[0m \u001b[1mThe version of Wrangler you are using is now out-of-date.\u001b[0m\n\n  Please update to the latest version to prevent critical errors.\n  Run `npm install --save-dev wrangler@4` to update to the latest version.\n  After installation, run Wrangler with `npx wrangler`.\n\n\n\u001b[33m▲ \u001b[43;33m[\u001b[43;30mWARNING\u001b[43;33m]\u001b[0m \u001b[1m⚠️ This process may take some time, during which your D1 database will be unavailable to serve queries.\u001b[0m\n\n\n\u001b[31mX \u001b[41;31m[\u001b[41;97mERROR\u001b[41;31m]\u001b[0m \u001b[1mA request to the Cloudflare API (/accounts/735d0e617e9ba6a16d9b2a1ec05b4dd3/d1/database/0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a/import) failed.\u001b[0m\n\n  Authentication error [code: 10000]\n\n\n🪵  Logs were written to \"C:\\Users\\michael\\AppData\\Roaming\\xdg.config\\.wrangler\\logs\\wrangler-2026-07-29_13-40-25_321.log\""
+    },
+    {
+      "step": "verify tables",
+      "ok": false,
+      "status": 3221226505,
+      "out": "wrangler d1 execute <database>\n\nExecute a command or SQL file\n\nPOSITIONALS\n  database  The name or binding of the DB  [string] [required]\n\nGLOBAL FLAGS\n  -c, --config   Path to Wrangler configuration file  [string]\n      --cwd      Run as if Wrangler was started in the specified directory instead of the current working directory  [string]\n  -e, --env      Environment to use for operations, and for selecting .env and .dev.vars files  [string]\n  -h, --help     Show help  [boolean]\n  -v, --version  Show version number  [boolean]\n\nOPTIONS\n  -y, --yes         Answer \"yes\" to any prompts  [boolean]\n      --local       Execute commands/files against a local DB for use with wrangler dev  [boolean]\n      --remote      Execute commands/files against a remote DB for use with wrangler dev  [boolean]\n      --file        A .sql file to ingest  [string]\n      --command     A single SQL statement to execute  [string]\n      --persist-to  Specify directory to use for local persistence (for --local)  [string]\n      --json        Return output as clean JSON  [boolean] [default: false]\n      --preview     Execute commands/files against a preview D1 DB  [boolean] [default: false]\n\u001b[31mX \u001b[41;31m[\u001b[41;97mERROR\u001b[41;31m]\u001b[0m \u001b[1mUnknown arguments: name, FROM, sqlite_master, WHERE, type='table', ORDER, BY, name;\u001b[0m\n\n\n🪵  Logs were written to \"C:\\Users\\michael\\AppData\\Roaming\\xdg.config\\.wrangler\\logs\\wrangler-2026-07-29_13-40-30_381.log\"\nAssertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\\win\\async.c, line 94"
+    },
+    {
+      "step": "pages deploy",
+      "ok": true,
+      "status": 0,
+      "publicUrl": "https://41d2487d.amberone.pages.dev",
+      "out": "✨ Compiled Worker successfully\nUploading... (108/130)\nUploading... (115/130)\nUploading... (123/130)\nUploading... (130/130)\n✨ Success! Uploaded 22 files (108 already uploaded) (3.87 sec)\n\n✨ Uploading Functions bundle\n✨ Uploading _routes.json\n🌎 Deploying...\n✨ Deployment complete! Take a peek over at https://41d2487d.amberone.pages.dev"
+    }
+  ],
+  "pagesBindingCheck": {
+    "http": 200,
+    "d1_databases": {
+      "DB": {
+        "id": "0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a"
+      }
+    },
+    "productionKeys": [
+      "env_vars",
+      "d1_databases",
+      "fail_open",
+      "always_use_latest_compatibility_date",
+      "compatibility_date",
+      "compatibility_flags",
+      "build_image_major_version",
+      "usage_model",
+      "wrangler_config_hash"
+    ],
+    "rawD1": {
+      "DB": {
+        "id": "0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a"
+      }
+    }
+  }
+}

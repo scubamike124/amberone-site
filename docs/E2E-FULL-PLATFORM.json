@@ -1,0 +1,469 @@
+{
+  "at": "2026-07-29T20:10:25.616Z",
+  "base": "https://amberone.pages.dev",
+  "email": "e2e_full_1785355800431@amberone.test",
+  "userId": "user_f69f54c6c1634501ba81d01216d04b2d",
+  "passed": 82,
+  "total": 82,
+  "failed": [],
+  "notes": [
+    "Credit card capture intentionally skipped; Checkout session create + webhook plan grants only.",
+    "Family Plus mapped to family_5 mid tier; Family (2)/(10) tested separately.",
+    "Talk tool-calling depends on OpenAI; reply presence is the hard requirement."
+  ],
+  "steps": [
+    {
+      "name": "page /",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "page /pricing",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "page /plans",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "page /family",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "page /signup",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "page /login",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "page /faq",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "page /privacy",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "page /terms",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "page /cookies",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "page /refunds",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "page /acceptable-use",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "signup",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "login",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "session /api/auth/me",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/calendar",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/reminders",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/memories",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/notes",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/connections",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/billing",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/settings",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/notifications",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/onboarding",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/family/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/family/members",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/executive/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/executive/crm",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/executive/follow-ups",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/business/",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/business/appointments",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/business/customers",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/business/marketing",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dash /dashboard/marketplace",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "health",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "home aggregate",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "briefing",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "calendar create",
+      "ok": true,
+      "status": 201,
+      "eventId": "evt_e11f4cf0bc9a4bd6bd5dfde43f23f47e"
+    },
+    {
+      "name": "calendar list",
+      "ok": true,
+      "status": 200,
+      "count": 1
+    },
+    {
+      "name": "calendar update",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "calendar create second",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "alarm create past-due",
+      "ok": true,
+      "status": 201,
+      "dispatched": 1
+    },
+    {
+      "name": "alarm create future",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "alarms list",
+      "ok": true,
+      "status": 200,
+      "count": 2
+    },
+    {
+      "name": "notifications from alarm",
+      "ok": true,
+      "status": 200,
+      "unreadCount": 1
+    },
+    {
+      "name": "memory create",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "memory list",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "note create",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "notes list",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "list create",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "lists list",
+      "ok": true,
+      "status": 200,
+      "count": 1
+    },
+    {
+      "name": "talk scheduling",
+      "ok": true,
+      "status": 200,
+      "source": "openai",
+      "tools": [
+        "create_calendar_event"
+      ]
+    },
+    {
+      "name": "talk alarm",
+      "ok": true,
+      "status": 200,
+      "tools": [
+        "create_reminder"
+      ]
+    },
+    {
+      "name": "connections",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "billing status (no card)",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "checkout session create only (no card)",
+      "ok": true,
+      "status": 200,
+      "hasUrl": true
+    },
+    {
+      "name": "onboarding",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "grant plan personal",
+      "ok": true,
+      "status": 200,
+      "planSlug": "personal",
+      "subStatus": "active",
+      "granted": true
+    },
+    {
+      "name": "personal: create team",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "grant plan family_2",
+      "ok": true,
+      "status": 200,
+      "planSlug": "family_2",
+      "subStatus": "active",
+      "granted": true
+    },
+    {
+      "name": "family_2: create team",
+      "ok": true,
+      "status": 201,
+      "teamId": "team_91388829d5654c35bcfd126d881a4d89"
+    },
+    {
+      "name": "family_2: chore create",
+      "ok": true,
+      "status": 201,
+      "error": null
+    },
+    {
+      "name": "family_2: chores list",
+      "ok": true,
+      "status": 200,
+      "count": 1
+    },
+    {
+      "name": "grant plan family_5",
+      "ok": true,
+      "status": 200,
+      "planSlug": "family_5",
+      "subStatus": "active",
+      "granted": true
+    },
+    {
+      "name": "family_5 (Family Plus): create team",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "family_5: invite member",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "grant plan family_10",
+      "ok": true,
+      "status": 200,
+      "planSlug": "family_10",
+      "subStatus": "active",
+      "granted": true
+    },
+    {
+      "name": "family_10: create team",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "grant plan executive",
+      "ok": true,
+      "status": 200,
+      "planSlug": "executive",
+      "subStatus": "active",
+      "granted": true
+    },
+    {
+      "name": "executive: CRM contact create",
+      "ok": true,
+      "status": 201,
+      "contactId": "contact_ea0a498ac1c3412f8f959759cb578bef"
+    },
+    {
+      "name": "executive: CRM list",
+      "ok": true,
+      "status": 200,
+      "count": 1
+    },
+    {
+      "name": "executive: CRM interaction",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "executive: meeting prep",
+      "ok": true,
+      "status": 201,
+      "error": null
+    },
+    {
+      "name": "grant plan business_small",
+      "ok": true,
+      "status": 200,
+      "planSlug": "business_small",
+      "subStatus": "active",
+      "granted": true
+    },
+    {
+      "name": "business_small: appointment create",
+      "ok": true,
+      "status": 201,
+      "apptId": "appt_bb0ebfafb04d4482b5428700a74e1e89"
+    },
+    {
+      "name": "business_small: appointments list",
+      "ok": true,
+      "status": 200,
+      "count": 1
+    },
+    {
+      "name": "business_small: customer create",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "grant plan business_medium",
+      "ok": true,
+      "status": 200,
+      "planSlug": "business_medium",
+      "subStatus": "active",
+      "granted": true
+    },
+    {
+      "name": "business_medium: appointment create",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "hero video asset",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "logout",
+      "ok": true,
+      "status": 200
+    }
+  ]
+}

@@ -45,20 +45,39 @@ report.steps.push({
   snippet: d1Create.out.split("\n").slice(0, 20),
 });
 
-const idMatch = d1Create.out.match(/database_id\s*=\s*"([^"]+)"/i) || d1Create.out.match(/([0-9a-f-]{36})/i);
-if (idMatch?.[1] && idMatch[1] !== "local-amberone-db") {
+const KNOWN_D1 = "0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a";
+const idMatch = d1Create.out.match(/database_id\s*=\s*"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})"/i);
+const parsedId = idMatch?.[1] || null;
+const databaseId = parsedId || KNOWN_D1;
+
+{
   const tomlPath = path.join(root, "wrangler.toml");
   let toml = readFileSync(tomlPath, "utf8");
-  toml = toml.replace(/database_id\s*=\s*"[^"]+"/, `database_id = "${idMatch[1]}"`);
+  toml = toml.replace(/database_id\s*=\s*"[^"]+"/, `database_id = "${databaseId}"`);
+  if (!/preview_database_id\s*=/.test(toml)) {
+    toml = toml.replace(
+      /database_id\s*=\s*"[^"]+"/,
+      `database_id = "${databaseId}"\npreview_database_id = "${databaseId}"`,
+    );
+  } else {
+    toml = toml.replace(/preview_database_id\s*=\s*"[^"]+"/, `preview_database_id = "${databaseId}"`);
+  }
   writeFileSync(tomlPath, toml);
-  report.steps.push({ step: "wrangler.toml database_id", ok: true, databaseId: idMatch[1] });
+  report.steps.push({
+    step: "wrangler.toml database_id",
+    ok: true,
+    databaseId,
+    source: parsedId ? "d1_create_output" : "known_amberone_d1",
+  });
   const migrate = run(["d1", "execute", "amberone", "--remote", "--file=./schema.sql"]);
-  report.steps.push({ step: "d1 migrate remote", ok: migrate.status === 0, snippet: migrate.out.split("\n").slice(0, 20) });
-} else {
-  report.steps.push({ step: "wrangler.toml database_id", ok: false, reason: "Could not parse new D1 id" });
+  report.steps.push({
+    step: "d1 migrate remote",
+    ok: migrate.status === 0,
+    snippet: migrate.out.split("\n").slice(0, 20),
+  });
 }
 
-const deploy = run(["pages", "deploy", ".", "--project-name=amberone"]);
+const deploy = run(["pages", "deploy", ".", "--project-name=amberone", "--commit-dirty=true"]);
 report.steps.push({
   step: "pages deploy",
   ok: deploy.status === 0,

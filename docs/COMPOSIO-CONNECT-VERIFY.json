@@ -1,0 +1,52 @@
+{
+  "at": "2026-07-29T17:13:28.194Z",
+  "connections": [
+    {
+      "toolkit": "gmail",
+      "status": "ACTIVE"
+    },
+    {
+      "toolkit": "googlecalendar",
+      "status": "ACTIVE"
+    }
+  ],
+  "available": [
+    {
+      "toolkit": "googlecalendar",
+      "label": "Google Calendar",
+      "configured": true,
+      "connected": true
+    },
+    {
+      "toolkit": "gmail",
+      "label": "Gmail",
+      "configured": true,
+      "connected": true
+    }
+  ],
+  "sync": {
+    "ok": true,
+    "synced": 1,
+    "foundEvents": 1,
+    "window": {
+      "from": "2026-07-22T10:13:26-07:00",
+      "to": "2026-09-27T10:13:26-07:00"
+    },
+    "connectedAccountId": "ca_qLmdyMpyUviI"
+  },
+  "calendarEvents": [
+    {
+      "title": "AmberOne sync verification",
+      "starts_at": "2026-07-29T19:11:29-07:00",
+      "external_source": "googlecalendar"
+    }
+  ],
+  "homeFlags": {
+    "googleCalendarConnected": true,
+    "gmailConnected": true
+  },
+  "pass": {
+    "bothActive": true,
+    "syncImported": true
+  }
+}

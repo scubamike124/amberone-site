@@ -1,0 +1,132 @@
+{
+  "listish": [
+    {
+      "slug": "GOOGLECALENDAR_CALENDAR_LIST_INSERT",
+      "name": "Insert Calendar into List"
+    },
+    {
+      "slug": "GOOGLECALENDAR_CALENDAR_LIST_UPDATE",
+      "name": "Update Calendar List Entry"
+    },
+    {
+      "slug": "GOOGLECALENDAR_CREATE_EVENT",
+      "name": "Create Event"
+    },
+    {
+      "slug": "GOOGLECALENDAR_DELETE_EVENT",
+      "name": "Delete event"
+    },
+    {
+      "slug": "GOOGLECALENDAR_EVENTS_INSTANCES",
+      "name": "Get Event Instances"
+    },
+    {
+      "slug": "GOOGLECALENDAR_EVENTS_LIST",
+      "name": "List Events"
+    },
+    {
+      "slug": "GOOGLECALENDAR_EVENTS_MOVE",
+      "name": "Move Event"
+    },
+    {
+      "slug": "GOOGLECALENDAR_EVENTS_WATCH",
+      "name": "Watch Events"
+    },
+    {
+      "slug": "GOOGLECALENDAR_FIND_EVENT",
+      "name": "Find event"
+    },
+    {
+      "slug": "GOOGLECALENDAR_FIND_FREE_SLOTS",
+      "name": "Find free slots"
+    },
+    {
+      "slug": "GOOGLECALENDAR_LIST_ACL_RULES",
+      "name": "List ACL Rules"
+    },
+    {
+      "slug": "GOOGLECALENDAR_LIST_CALENDARS",
+      "name": "List Google Calendars"
+    },
+    {
+      "slug": "GOOGLECALENDAR_PATCH_EVENT",
+      "name": "Patch Event"
+    },
+    {
+      "slug": "GOOGLECALENDAR_SETTINGS_LIST",
+      "name": "List Settings"
+    },
+    {
+      "slug": "GOOGLECALENDAR_SYNC_EVENTS",
+      "name": "Sync Events"
+    },
+    {
+      "slug": "GOOGLECALENDAR_UPDATE_EVENT",
+      "name": "Update Google event"
+    }
+  ],
+  "results": [
+    {
+      "slug": "GOOGLECALENDAR_EVENTS_LIST",
+      "status": 200,
+      "argKeys": [
+        "calendarId",
+        "timeMin",
+        "timeMax"
+      ],
+      "body": "{\"data\":{\"accessRole\":\"owner\",\"composio_execution_message\":\"TIMEZONE NOTICE: No events found, but the query used UTC times (ending in 'Z') while the calendar timezone is 'America/Los_Angeles'. UTC midnight-to-midnight may not align with local calendar dates. For example, if you're searching for events on a specific local date, consider using timestamps with the local timezone offset (e.g., '2026-01-19T00:00:00-08:00' for PST) or ensure the timeMin/timeMax values account for the timezone differen"
+    },
+    {
+      "slug": "GOOGLECALENDAR_LIST_EVENTS",
+      "status": 404,
+      "argKeys": [
+        "calendarId",
+        "timeMin",
+        "timeMax"
+      ],
+      "body": "{\"error\":{\"message\":\"Tool GOOGLECALENDAR_LIST_EVENTS not found\",\"code\":2401,\"slug\":\"Tool_ToolNotFound\",\"status\":404,\"request_id\":\"19010d19-53e4-428f-b636-859b54c9038c\",\"suggested_fix\":\"Check your input.\"}}"
+    },
+    {
+      "slug": "GOOGLECALENDAR_LIST_EVENTS",
+      "status": 404,
+      "argKeys": [
+        "calendar_id",
+        "time_min",
+        "time_max",
+        "max_results"
+      ],
+      "body": "{\"error\":{\"message\":\"Tool GOOGLECALENDAR_LIST_EVENTS not found\",\"code\":2401,\"slug\":\"Tool_ToolNotFound\",\"status\":404,\"request_id\":\"bee1b73a-e615-4e97-945b-90078c5e56a4\",\"suggested_fix\":\"Check your input.\"}}"
+    },
+    {
+      "slug": "GOOGLECALENDAR_FIND_EVENT",
+      "status": 200,
+      "argKeys": [
+        "calendarId",
+        "timeMin",
+        "timeMax"
+      ],
+      "body": "{\"data\":{\"accessRole\":\"owner\",\"defaultReminders\":[{\"method\":\"popup\",\"minutes\":30}],\"description\":\"\",\"display_url\":null,\"etag\":\"\\\"p32vr9rvuqqh9a0o\\\"\",\"event_data\":{\"event_data\":[],\"nextPageToken\":null,\"nextSyncToken\":\"CL-07_7WopUDEL-07_7WopUDGAUgtOynxgMotOynxgM=\",\"note\":\"\"},\"kind\":\"calendar#events\",\"nextSyncToken\":\"CL-07_7WopUDEL-07_7WopUDGAUgtOynxgMotOynxgM=\",\"summary\":\"scubamike124@gmail.com\",\"timeZone\":\"America/Los_Angeles\",\"updated\":\"2026-06-25T15:13:39.617Z\"},\"successful\":true,\"error\":null,\""
+    },
+    {
+      "slug": "GOOGLECALENDAR_GET_EVENTS",
+      "status": 404,
+      "argKeys": [
+        "calendarId",
+        "timeMin",
+        "timeMax"
+      ],
+      "body": "{\"error\":{\"message\":\"Tool GOOGLECALENDAR_GET_EVENTS not found\",\"code\":2401,\"slug\":\"Tool_ToolNotFound\",\"status\":404,\"request_id\":\"ce9accac-bf50-4354-9729-986e98630886\",\"suggested_fix\":\"Check your input.\"}}"
+    },
+    {
+      "slug": "GOOGLECALENDAR_GET_EVENTS",
+      "status": 404,
+      "argKeys": [
+        "calendar_id",
+        "time_min",
+        "time_max",
+        "max_results"
+      ],
+      "body": "{\"error\":{\"message\":\"Tool GOOGLECALENDAR_GET_EVENTS not found\",\"code\":2401,\"slug\":\"Tool_ToolNotFound\",\"status\":404,\"request_id\":\"6620fa36-2ab9-44e3-b4fb-dfd7fc9a46fd\",\"suggested_fix\":\"Check your input.\"}}"
+    }
+  ]
+}

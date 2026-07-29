@@ -3,18 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Privacy · AmberOne</title>
+  <title>Privacy Policy · AmberOne</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 <body>
-  <nav class="nav"><a class="nav-brand" href="/">Amber<span>One</span></a></nav>
-  <main class="wrap">
-    <h1>Privacy</h1>
-    <p class="lede">AmberOne stores account credentials securely (hashed passwords), session cookies for sign-in, and Stripe customer identifiers for billing. Memory and personal data features require your permission. Payments are processed by Stripe. Contact the account owner to request data export or deletion.</p>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/">Amber<span>One</span></a>
+    <div class="nav-links" data-nav-links>
+      <a href="/terms">Terms</a>
+      <a href="/pricing">Pricing</a>
+    </div>
+  </nav>
+  <main class="wrap legal-doc">
+    <h1>Privacy Policy</h1>
+    <p class="lede">Last updated: July 29, 2026. This policy explains what AmberOne collects, why, and how you can control it.</p>
+
+    <h2>Information we collect</h2>
+    <ul>
+      <li>Account details you provide (name, email, password — stored hashed).</li>
+      <li>Session cookies used to keep you signed in.</li>
+      <li>Billing identifiers from Stripe (customer and subscription IDs).</li>
+      <li>Content you choose to store (notes, memories, calendar items, reminders, team data).</li>
+      <li>Optional connected-service tokens when you authorize integrations.</li>
+    </ul>
+
+    <h2>How we use information</h2>
+    <ul>
+      <li>To operate the AmberOne service you subscribe to.</li>
+      <li>To process payments and manage plans via Stripe.</li>
+      <li>To personalize assistants and workflows you opt into.</li>
+      <li>To secure accounts, prevent abuse, and improve reliability.</li>
+    </ul>
+
+    <h2>Sharing</h2>
+    <p>We do not sell personal data. We share limited data with processors needed to run the product (for example Stripe for payments, and AI providers for Talk features you use). Customer Brain data is not mixed across customers.</p>
+
+    <h2>Your choices</h2>
+    <p>You may request export or deletion of account data by contacting the account owner support channel listed on your billing receipt. You can disconnect integrations anytime from Connections. Cancel subscriptions in the Customer Portal.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about this policy: use the email on your account receipt or the operator contact published with your AmberOne deployment.</p>
   </main>
+  <footer data-site-footer></footer>
   <script src="/assets/app.js"></script>
+  <script src="/assets/site-footer.js"></script>
 </body>
 </html>

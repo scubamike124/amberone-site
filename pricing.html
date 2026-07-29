@@ -14,16 +14,18 @@
     <a class="nav-brand" href="/">Amber<span>One</span></a>
     <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
     <div class="nav-links" data-nav-links>
-      <a href="/#products">Products</a>
+      <a href="/#capabilities">What it does</a>
       <a href="/pricing">Pricing</a>
+      <a href="/plans">Plans</a>
+      <a href="/family">Family</a>
       <a href="/faq">FAQ</a>
       <a href="/login">Sign in</a>
       <a class="nav-cta" href="/signup">Get started</a>
     </div>
   </nav>
   <main class="wrap">
-    <h1>Choose how Amber works with you</h1>
-    <p class="lede">Personal, Family, Executive, or Business — same assistant, different scope. Fully self-service — no custom quotes.</p>
+    <h1>All 7 AmberOne plans</h1>
+    <p class="lede">Personal, Family (2/5/10), Executive, Business Small &amp; Medium — same assistant, different scope. Fully self-service — no custom quotes.</p>
     <div id="banner" class="banner"></div>
     <div class="grid">
       <article class="panel">
@@ -69,14 +71,11 @@
         <button class="btn btn-ghost btn-block" data-plan="business_medium">Start Medium</button>
       </article>
     </div>
-    <p class="lede" style="margin-top:2rem">After checkout, manage upgrade, downgrade, or cancel in your Customer Portal from the dashboard.</p>
+    <p class="lede" style="margin-top:2rem">After checkout, manage upgrade, downgrade, or cancel in your Customer Portal from the dashboard. See the <a href="/refunds">Refund Policy</a> and <a href="/terms">Terms</a> for billing details.</p>
   </main>
-  <footer>
-    <div class="wrap" style="padding-top:0;padding-bottom:0">
-      <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/faq">FAQ</a>
-    </div>
-  </footer>
+  <footer data-site-footer></footer>
   <script src="/assets/app.js"></script>
+  <script src="/assets/site-footer.js"></script>
   <script>
     const banner = document.getElementById("banner");
     const q = new URLSearchParams(location.search);
@@ -84,7 +83,10 @@
     if (q.get("checkout") === "cancel") AmberOne.showBanner(banner, "Checkout canceled. You can start again anytime.", "warn");
     const highlight = q.get("plan");
     document.querySelectorAll("[data-plan]").forEach((btn) => {
-      if (highlight && btn.dataset.plan === highlight) btn.classList.add("btn-primary");
+      if (highlight && btn.dataset.plan === highlight) {
+        btn.classList.remove("btn-ghost");
+        btn.classList.add("btn-primary");
+      }
       btn.addEventListener("click", async () => {
         try {
           await AmberOne.startCheckout(btn.dataset.plan, btn);

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Business · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/business/">Business</a>
+      <a href="/dashboard/business/appointments.html">Appointments</a>
+      <a href="/dashboard/business/customers.html">Customers</a>
+      <a href="/dashboard/business/marketing.html">Marketing</a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside data-dash-nav data-active="Business"></aside>
+      <div class="dash-main">
+        <header class="dash-header"><h1>Business Dashboard</h1><p class="lede">Appointments, customers, marketing assist, and team schedule.</p></header>
+        <div class="ao-grid">
+          <article class="ao-card ao-span-6">
+            <div class="ao-card-head">
+              <div class="ao-card-title"><span class="ao-icon is-info">◷</span><div><h2>Today’s Appointments</h2></div></div>
+              <a class="btn btn-ghost btn-sm" href="/dashboard/business/appointments.html">All</a>
+            </div>
+            <div id="appts"></div>
+          </article>
+          <article class="ao-card ao-span-6">
+            <div class="ao-card-head">
+              <div class="ao-card-title"><span class="ao-icon">◈</span><div><h2>Recent Customers</h2></div></div>
+              <a class="btn btn-ghost btn-sm" href="/dashboard/business/customers.html">All</a>
+            </div>
+            <div id="customers"></div>
+          </article>
+          <article class="ao-card ao-span-6">
+            <div class="ao-card-head">
+              <div class="ao-card-title"><span class="ao-icon">▦</span><div><h2>Team Schedule</h2><p class="ao-card-meta">Shared business calendar</p></div></div>
+              <a class="btn btn-ghost btn-sm" href="/dashboard/calendar">Calendar</a>
+            </div>
+            <div class="empty-state"><strong>No data yet.</strong><div class="empty-hint">Team events will appear when your business calendar is shared.</div></div>
+          </article>
+          <article class="ao-card ao-span-6">
+            <div class="ao-card-head">
+              <div class="ao-card-title"><span class="ao-icon is-warn">✎</span><div><h2>Marketing Assist</h2><p class="ao-card-meta">AI copy for posts &amp; promos</p></div></div>
+              <a class="btn btn-primary btn-sm" href="/dashboard/business/marketing.html">Open</a>
+            </div>
+            <p class="lede" style="margin:0">Generate social posts, promos, and announcements — text only for now.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      await AmberOne.requireAuth();
+      const empty = (h) => `<div class="empty-state"><strong>No data yet.</strong><div class="empty-hint">${h}</div></div>`;
+      const { data: appts } = await AmberOne.api("/api/appointments");
+      const list = Array.isArray(appts) ? appts : [];
+      const today = new Date().toISOString().slice(0, 10);
+      const todayAppts = list.filter((a) => (a.starts_at || "").startsWith(today));
+      document.getElementById("appts").innerHTML = todayAppts.length
+        ? `<ul class="list">${todayAppts.map((a) => `<li class="list-item"><div class="meta-col"><strong>${a.title}</strong><span class="sub">${(a.starts_at || "").slice(11, 16)}</span></div></li>`).join("")}</ul>`
+        : empty("No appointments today.");
+      const { data: contacts } = await AmberOne.api("/api/crm");
+      const c = Array.isArray(contacts) ? contacts : [];
+      document.getElementById("customers").innerHTML = c.length
+        ? `<ul class="list">${c.slice(0, 5).map((x) => `<li class="list-item"><div class="meta-col"><strong>${x.name}</strong><span class="sub">${x.company || ""}</span></div></li>`).join("")}</ul>`
+        : empty("No customers yet.");
+    })();
+  </script>
+</body>
+</html>

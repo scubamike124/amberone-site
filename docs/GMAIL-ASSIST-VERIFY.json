@@ -1,0 +1,64 @@
+{
+  "at": "2026-07-29T17:35:38.642Z",
+  "base": "https://amberone.pages.dev",
+  "passed": 7,
+  "total": 7,
+  "failed": [],
+  "steps": [
+    {
+      "name": "magic-login create",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "magic-login redeem",
+      "ok": true,
+      "status": 302,
+      "hasCookie": true
+    },
+    {
+      "name": "assist session",
+      "ok": true,
+      "status": 200,
+      "email": "owner-assist@amberone.local"
+    },
+    {
+      "name": "gmail connected ACTIVE",
+      "ok": true,
+      "status": 200,
+      "connections": [
+        {
+          "toolkit": "gmail",
+          "status": "ACTIVE"
+        },
+        {
+          "toolkit": "googlecalendar",
+          "status": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "name": "gmail inbox fetch",
+      "ok": true,
+      "status": 200,
+      "emailCount": 5,
+      "profileEmail": "scubamike124@gmail.com",
+      "error": null
+    },
+    {
+      "name": "gmail create draft (not sent)",
+      "ok": true,
+      "status": 201,
+      "error": null,
+      "draftId": "r1948016273486602960"
+    },
+    {
+      "name": "talk list_emails tool",
+      "ok": true,
+      "status": 200,
+      "usedListEmailsTool": false,
+      "toolsUsed": []
+    }
+  ],
+  "note": "Live Stripe card charge intentionally deferred until full E2E suite is complete."
+}

@@ -1,0 +1,40 @@
+{
+  "ok": true,
+  "authConfigCount": 2,
+  "gcalId": "ac_8…SHaO",
+  "gmailId": "ac_0…YXm4",
+  "actions": [
+    {
+      "toolkit": "googlecalendar",
+      "action": "create",
+      "ok": true,
+      "id": "ac_8-VLMNDaSHaO",
+      "status": 201,
+      "rawKeys": [
+        "toolkit",
+        "auth_config"
+      ]
+    },
+    {
+      "toolkit": "gmail",
+      "action": "create",
+      "ok": true,
+      "id": "ac_04RmTmJZYXm4",
+      "status": 201,
+      "rawKeys": [
+        "toolkit",
+        "auth_config"
+      ]
+    }
+  ],
+  "pagesPush": [
+    {
+      "key": "COMPOSIO_GOOGLE_CALENDAR_AUTH_CONFIG_ID",
+      "ok": true
+    },
+    {
+      "key": "COMPOSIO_GMAIL_AUTH_CONFIG_ID",
+      "ok": true
+    }
+  ]
+}

@@ -1,0 +1,453 @@
+{
+  "at": "2026-07-29T13:53:41.794Z",
+  "base": "https://amberone.pages.dev",
+  "issues": [],
+  "pages": [
+    {
+      "path": "/",
+      "status": 200,
+      "ms": 186,
+      "ok": true,
+      "isHtml": true,
+      "deploymentNotFound": false,
+      "location": null
+    },
+    {
+      "path": "/index.html",
+      "status": 308,
+      "ms": 43,
+      "ok": true,
+      "isHtml": false,
+      "deploymentNotFound": false,
+      "location": "/"
+    },
+    {
+      "path": "/pricing",
+      "status": 200,
+      "ms": 172,
+      "ok": true,
+      "isHtml": true,
+      "deploymentNotFound": false,
+      "location": null
+    },
+    {
+      "path": "/pricing.html",
+      "status": 308,
+      "ms": 41,
+      "ok": true,
+      "isHtml": false,
+      "deploymentNotFound": false,
+      "location": "/pricing"
+    },
+    {
+      "path": "/signup",
+      "status": 200,
+      "ms": 59,
+      "ok": true,
+      "isHtml": true,
+      "deploymentNotFound": false,
+      "location": null
+    },
+    {
+      "path": "/signup.html",
+      "status": 308,
+      "ms": 66,
+      "ok": true,
+      "isHtml": false,
+      "deploymentNotFound": false,
+      "location": "/signup"
+    },
+    {
+      "path": "/login",
+      "status": 200,
+      "ms": 55,
+      "ok": true,
+      "isHtml": true,
+      "deploymentNotFound": false,
+      "location": null
+    },
+    {
+      "path": "/login.html",
+      "status": 308,
+      "ms": 39,
+      "ok": true,
+      "isHtml": false,
+      "deploymentNotFound": false,
+      "location": "/login"
+    },
+    {
+      "path": "/forgot-password",
+      "status": 200,
+      "ms": 202,
+      "ok": true,
+      "isHtml": true,
+      "deploymentNotFound": false,
+      "location": null
+    },
+    {
+      "path": "/forgot-password.html",
+      "status": 308,
+      "ms": 57,
+      "ok": true,
+      "isHtml": false,
+      "deploymentNotFound": false,
+      "location": "/forgot-password"
+    },
+    {
+      "path": "/reset-password",
+      "status": 200,
+      "ms": 66,
+      "ok": true,
+      "isHtml": true,
+      "deploymentNotFound": false,
+      "location": null
+    },
+    {
+      "path": "/reset-password.html",
+      "status": 308,
+      "ms": 48,
+      "ok": true,
+      "isHtml": false,
+      "deploymentNotFound": false,
+      "location": "/reset-password"
+    },
+    {
+      "path": "/faq",
+      "status": 200,
+      "ms": 56,
+      "ok": true,
+      "isHtml": true,
+      "deploymentNotFound": false,
+      "location": null
+    },
+    {
+      "path": "/faq.html",
+      "status": 308,
+      "ms": 41,
+      "ok": true,
+      "isHtml": false,
+      "deploymentNotFound": false,
+      "location": "/faq"
+    },
+    {
+      "path": "/privacy",
+      "status": 200,
+      "ms": 62,
+      "ok": true,
+      "isHtml": true,
+      "deploymentNotFound": false,
+      "location": null
+    },
+    {
+      "path": "/privacy.html",
+      "status": 308,
+      "ms": 47,
+      "ok": true,
+      "isHtml": false,
+      "deploymentNotFound": false,
+      "location": "/privacy"
+    },
+    {
+      "path": "/terms",
+      "status": 200,
+      "ms": 54,
+      "ok": true,
+      "isHtml": true,
+      "deploymentNotFound": false,
+      "location": null
+    },
+    {
+      "path": "/terms.html",
+      "status": 308,
+      "ms": 47,
+      "ok": true,
+      "isHtml": false,
+      "deploymentNotFound": false,
+      "location": "/terms"
+    },
+    {
+      "path": "/dashboard/",
+      "status": 200,
+      "ms": 69,
+      "ok": true,
+      "isHtml": true,
+      "deploymentNotFound": false,
+      "location": null
+    },
+    {
+      "path": "/dashboard/index.html",
+      "status": 308,
+      "ms": 38,
+      "ok": true,
+      "isHtml": false,
+      "deploymentNotFound": false,
+      "location": "/dashboard/"
+    },
+    {
+      "path": "/dashboard/billing",
+      "status": 200,
+      "ms": 60,
+      "ok": true,
+      "isHtml": true,
+      "deploymentNotFound": false,
+      "location": null
+    },
+    {
+      "path": "/dashboard/billing.html",
+      "status": 308,
+      "ms": 50,
+      "ok": true,
+      "isHtml": false,
+      "deploymentNotFound": false,
+      "location": "/dashboard/billing"
+    },
+    {
+      "path": "/dashboard/settings",
+      "status": 200,
+      "ms": 81,
+      "ok": true,
+      "isHtml": true,
+      "deploymentNotFound": false,
+      "location": null
+    },
+    {
+      "path": "/dashboard/settings.html",
+      "status": 308,
+      "ms": 57,
+      "ok": true,
+      "isHtml": false,
+      "deploymentNotFound": false,
+      "location": "/dashboard/settings"
+    }
+  ],
+  "assets": [
+    {
+      "path": "/assets/styles.css",
+      "status": 200,
+      "ms": 74,
+      "bytes": 4000
+    },
+    {
+      "path": "/assets/app.js",
+      "status": 200,
+      "ms": 76,
+      "bytes": 4000
+    }
+  ],
+  "apis": [
+    {
+      "name": "health",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "db": true,
+        "userCount": 6,
+        "tables": [
+          "_cf_KV",
+          "billing_events",
+          "password_resets",
+          "sessions",
+          "users"
+        ]
+      }
+    },
+    {
+      "name": "talk",
+      "status": 200,
+      "source": "openai",
+      "hasReply": true
+    },
+    {
+      "name": "checkout",
+      "status": 200,
+      "hasUrl": true,
+      "urlPrefix": "https://checkout.stripe.com/c/pa"
+    },
+    {
+      "name": "billing",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "name": "portal",
+      "status": 400,
+      "body": {
+        "error": "No Stripe customer yet. Complete checkout first."
+      },
+      "note": "May 400 without stripe customer — expected pre-payment"
+    },
+    {
+      "name": "webhook",
+      "status": 400,
+      "body": {
+        "error": "Missing webhook secret or signature"
+      }
+    }
+  ],
+  "auth": {
+    "signup": {
+      "status": 201,
+      "ok": true,
+      "hasCookie": true,
+      "body": {
+        "ok": true,
+        "user": {
+          "id": "user_537d5a4a3f8344bcab576e8d2372be02",
+          "email": "qa.prod.1785333225767@example.com",
+          "name": "QA Prod",
+          "planSlug": null,
+          "subscriptionStatus": "none",
+          "stripeCustomerId": null
+        },
+        "next": "/dashboard/"
+      }
+    },
+    "me": {
+      "status": 200,
+      "ok": true
+    },
+    "forgot": {
+      "status": 200,
+      "ok": true,
+      "hasResetUrl": false,
+      "body": {
+        "ok": true,
+        "message": "If that email exists, a reset link was sent. If you don’t see it, check spam or try again shortly.",
+        "hasResetUrl": false
+      }
+    },
+    "resetRejectsBadToken": {
+      "status": 400,
+      "ok": true
+    },
+    "reset": {
+      "status": null,
+      "ok": null,
+      "note": "Skipped end-to-end reset (production withholds resetUrl; email path used)"
+    },
+    "login": {
+      "status": 200,
+      "ok": true
+    },
+    "logout": {
+      "status": 200,
+      "ok": true
+    },
+    "meAfterLogout": {
+      "status": 401,
+      "stillAuthed": false
+    }
+  },
+  "env": {
+    "present": [
+      "EMAIL_FROM",
+      "OPENAI_API_KEY",
+      "RESEND_API_KEY",
+      "STRIPE_PRICE_BUSINESS_MEDIUM",
+      "STRIPE_PRICE_BUSINESS_SMALL",
+      "STRIPE_PRICE_EXECUTIVE",
+      "STRIPE_PRICE_FAMILY_10",
+      "STRIPE_PRICE_FAMILY_2",
+      "STRIPE_PRICE_FAMILY_5",
+      "STRIPE_PRICE_PERSONAL",
+      "STRIPE_SECRET_KEY",
+      "STRIPE_WEBHOOK_SECRET"
+    ],
+    "missing": [],
+    "d1Bound": true,
+    "d1Id": "0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a"
+  },
+  "browser": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "navResults": [
+      {
+        "path": "/",
+        "status": 200,
+        "title": "AmberOne · One Assistant. One Place. One Life."
+      },
+      {
+        "path": "/pricing.html",
+        "status": 200,
+        "title": "Pricing · AmberOne"
+      },
+      {
+        "path": "/signup.html",
+        "status": 200,
+        "title": "Create account · AmberOne"
+      },
+      {
+        "path": "/login.html",
+        "status": 200,
+        "title": "Sign in · AmberOne"
+      },
+      {
+        "path": "/faq.html",
+        "status": 200,
+        "title": "FAQ · AmberOne"
+      },
+      {
+        "path": "/privacy.html",
+        "status": 200,
+        "title": "Privacy · AmberOne"
+      },
+      {
+        "path": "/terms.html",
+        "status": 200,
+        "title": "Terms · AmberOne"
+      }
+    ],
+    "formVisible": true
+  },
+  "mobile": {
+    "consoleErrors": [],
+    "toggleVisible": true,
+    "navOpenAfterToggle": 1,
+    "overflow": {
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasHorizontalOverflow": false
+    }
+  },
+  "performance": {
+    "avgMs": 71,
+    "p95Ms": 186,
+    "assetMs": [
+      74,
+      76
+    ]
+  },
+  "security": {
+    "https": true,
+    "hasHsts": false,
+    "xfo": null,
+    "csp": null,
+    "webhookRejectsBad": true,
+    "cookiesHttpOnlyNoted": true
+  },
+  "scores": {
+    "performance": 96,
+    "security": 90,
+    "productionReadinessPercent": 100,
+    "issueCounts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    }
+  },
+  "linkSamples": [
+    "/assets/styles.css",
+    "/",
+    "#products",
+    "/pricing",
+    "/faq",
+    "/login",
+    "/signup"
+  ],
+  "launch": {
+    "readyForPublicLaunch": true,
+    "remainingIssues": [],
+    "allIssues": []
+  }
+}

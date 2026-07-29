@@ -1,0 +1,1072 @@
+{
+  "at": "2026-07-29T14:30:00.000Z",
+  "product": "AmberOne",
+  "sourceOfTruth": "AMBERONE_BLUEPRINT.md / docs/blueprint/21-amberone.md (ACTIVE owner standard)",
+  "inherits": [
+    "19-platform-brain.md (Platform / Customer / Learning Brain)",
+    "18-experience.md",
+    "20-intelligence-metrics.md"
+  ],
+  "productionUrl": "https://amberone.pages.dev",
+  "productionReadyDeclaration": false,
+  "methodology": {
+    "apiStatus": "Configured = credential verified in inventory; Missing = required for feature and not obtained; Not Required = feature uses existing stack or no external API",
+    "buildStatus": "Complete / In Progress / Not Started vs amberone-site code",
+    "completionFormula": "effort-weighted: Complete=1.0, In Progress=0.4, Not Started=0.0; weight = effortDays",
+    "apiRecommendationRule": "Only recommend APIs required by approved roadmap features — not because an API exists"
+  },
+  "phases": {
+    "0": "Launch shell — auth, billing, Talk shell, marketing (built)",
+    "1": "AI conversations · Memory · Calendar · Calls · Messaging · Reminders",
+    "2": "Family · Executive · Business · Marketing",
+    "3": "Marketplace · Skills · White-label · Advanced automations"
+  },
+  "features": [
+    {
+      "id": "user-auth",
+      "feature": "User authentication",
+      "purpose": "Signup, login, logout, session cookies, password reset",
+      "requiredApis": [
+        "Cloudflare D1",
+        "Resend (reset email)"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Complete",
+      "priority": "Critical",
+      "effortDays": 5,
+      "dependencies": [],
+      "phase": 0,
+      "notes": "D1 users/sessions/password_resets live"
+    },
+    {
+      "id": "stripe-billing",
+      "feature": "Stripe billing",
+      "purpose": "Checkout, Customer Portal, webhooks, plan sync for 7 self-service plans",
+      "requiredApis": [
+        "Stripe Secret Key",
+        "Stripe Webhook Secret",
+        "STRIPE_PRICE_* ×7"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Complete",
+      "priority": "Critical",
+      "effortDays": 10,
+      "dependencies": [
+        "user-auth"
+      ],
+      "phase": 0,
+      "notes": "Live card payment still needs owner confirmation; not declared production-ready"
+    },
+    {
+      "id": "ai-chat",
+      "feature": "AI chat (Talk to Amber)",
+      "purpose": "Central conversational interface; Phase 1 must expand beyond marketing FAQ into tool-using assistant",
+      "requiredApis": [
+        "OpenAI"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "In Progress",
+      "priority": "Critical",
+      "effortDays": 8,
+      "dependencies": [
+        "user-auth",
+        "ai-memory"
+      ],
+      "phase": 1,
+      "notes": "gpt-4o-mini + FAQ fallback; no tools, no memory grounding, no action completion"
+    },
+    {
+      "id": "email",
+      "feature": "Transactional email",
+      "purpose": "Password reset and system mail",
+      "requiredApis": [
+        "Resend",
+        "EMAIL_FROM"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Complete",
+      "priority": "Critical",
+      "effortDays": 2,
+      "dependencies": [],
+      "phase": 0,
+      "notes": "Reset flow only; product notifications later reuse Resend"
+    },
+    {
+      "id": "customer-dashboard",
+      "feature": "Customer dashboard",
+      "purpose": "Home shell with plan status, Talk panel, billing/settings links",
+      "requiredApis": [],
+      "apiStatus": "Not Required",
+      "buildStatus": "In Progress",
+      "priority": "Critical",
+      "effortDays": 5,
+      "dependencies": [
+        "user-auth",
+        "stripe-billing",
+        "ai-chat"
+      ],
+      "phase": 0,
+      "notes": "Billing + settings exist; Home lacks briefing/schedule/reminders; nav missing Calendar/Notifications"
+    },
+    {
+      "id": "security-basics",
+      "feature": "Security (auth layer)",
+      "purpose": "Password hashing, session tokens, HTTPS via Cloudflare",
+      "requiredApis": [
+        "Cloudflare Pages"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "In Progress",
+      "priority": "Critical",
+      "effortDays": 4,
+      "dependencies": [
+        "user-auth"
+      ],
+      "phase": 0,
+      "notes": "Core auth secure; Face ID/fingerprint/vault/permissions still Phase 1–2"
+    },
+    {
+      "id": "health-monitoring",
+      "feature": "Monitoring (health)",
+      "purpose": "Basic /api/health D1 probe for uptime checks",
+      "requiredApis": [
+        "Cloudflare D1"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "In Progress",
+      "priority": "High",
+      "effortDays": 3,
+      "dependencies": [],
+      "phase": 0,
+      "notes": "Health endpoint only — no APM, alerts, or error tracking product"
+    },
+    {
+      "id": "marketing-site",
+      "feature": "Marketing & pricing site",
+      "purpose": "Public landing, FAQ, legal, pricing → Checkout",
+      "requiredApis": [],
+      "apiStatus": "Not Required",
+      "buildStatus": "Complete",
+      "priority": "High",
+      "effortDays": 4,
+      "dependencies": [
+        "stripe-billing"
+      ],
+      "phase": 0
+    },
+    {
+      "id": "ai-memory",
+      "feature": "AI memory / Memory Vault",
+      "purpose": "Long-term memory of people, pets, places, preferences, dates; natural search",
+      "requiredApis": [
+        "OpenAI",
+        "Cloudflare D1"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "Critical",
+      "effortDays": 12,
+      "dependencies": [
+        "user-auth",
+        "ai-chat"
+      ],
+      "phase": 1,
+      "notes": "No memory tables; sufficient with existing OpenAI + D1 — no new vendor required for v1"
+    },
+    {
+      "id": "calendar-engine",
+      "feature": "Calendar engine",
+      "purpose": "Personal calendar, recurring events, conflict detection, smart reminders, travel time",
+      "requiredApis": [
+        "Cloudflare D1",
+        "Composio (Google Calendar sync)"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "Critical",
+      "effortDays": 14,
+      "dependencies": [
+        "user-auth",
+        "composio-hub",
+        "reminders"
+      ],
+      "phase": 1,
+      "notes": "Internal calendar can start on D1; Google sync requires Composio"
+    },
+    {
+      "id": "reminders",
+      "feature": "Reminders",
+      "purpose": "Timed reminders, bill reminders, follow-ups",
+      "requiredApis": [
+        "Cloudflare D1",
+        "Resend (email notify)",
+        "Twilio (SMS optional Phase 1+)"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "Critical",
+      "effortDays": 8,
+      "dependencies": [
+        "user-auth",
+        "notifications"
+      ],
+      "phase": 1,
+      "notes": "Email reminders: Resend configured. SMS reminders: Twilio Missing"
+    },
+    {
+      "id": "calls-messaging",
+      "feature": "Calls and messaging",
+      "purpose": "Voice/SMS assistance; phone answering foundation for receptionist",
+      "requiredApis": [
+        "Twilio",
+        "OpenAI"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "Critical",
+      "effortDays": 16,
+      "dependencies": [
+        "user-auth",
+        "ai-chat",
+        "composio-hub"
+      ],
+      "phase": 1,
+      "notes": "Blueprint stack: Twilio. Composio may proxy Twilio later; direct Twilio still required"
+    },
+    {
+      "id": "notes-lists",
+      "feature": "Notes & shopping lists",
+      "purpose": "Notes, grocery/shopping lists via Talk and quick actions",
+      "requiredApis": [
+        "Cloudflare D1",
+        "OpenAI"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 5,
+      "dependencies": [
+        "user-auth",
+        "ai-chat",
+        "ai-memory"
+      ],
+      "phase": 1
+    },
+    {
+      "id": "daily-briefing",
+      "feature": "Daily briefing & evening recap",
+      "purpose": "Proactive morning/evening summaries from calendar, reminders, memory",
+      "requiredApis": [
+        "OpenAI",
+        "Cloudflare D1"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 6,
+      "dependencies": [
+        "ai-chat",
+        "calendar-engine",
+        "reminders",
+        "ai-memory"
+      ],
+      "phase": 1,
+      "notes": "Weather optional via free Open-Meteo (no key) — do not obtain a paid weather API unless product requires it"
+    },
+    {
+      "id": "home-dashboard",
+      "feature": "Home dashboard (product)",
+      "purpose": "Greeting, briefing, weather, today’s schedule, pending reminders, notifications",
+      "requiredApis": [
+        "OpenAI",
+        "Cloudflare D1"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "Critical",
+      "effortDays": 7,
+      "dependencies": [
+        "customer-dashboard",
+        "daily-briefing",
+        "calendar-engine",
+        "reminders",
+        "notifications"
+      ],
+      "phase": 1
+    },
+    {
+      "id": "notifications",
+      "feature": "Notifications",
+      "purpose": "In-app + email (+ later SMS/push) for reminders and system events",
+      "requiredApis": [
+        "Resend",
+        "Twilio (SMS)",
+        "Cloudflare D1"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 6,
+      "dependencies": [
+        "user-auth",
+        "email"
+      ],
+      "phase": 1,
+      "notes": "In-app + email can ship without Twilio; SMS needs Twilio"
+    },
+    {
+      "id": "composio-hub",
+      "feature": "Composio integration hub (Connected Services)",
+      "purpose": "Unified connected-accounts layer: Google, Microsoft, Instagram, Nextdoor, Twilio, Stripe actions",
+      "requiredApis": [
+        "Composio API key"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "Critical",
+      "effortDays": 10,
+      "dependencies": [
+        "user-auth",
+        "security-basics"
+      ],
+      "phase": 1,
+      "notes": "Blueprint Integration Hub. Obtain Composio only — not separate OAuth apps unless Composio requires them"
+    },
+    {
+      "id": "gmail-integration",
+      "feature": "Gmail integration",
+      "purpose": "Email assistance for Executive; read/draft/send via connected account",
+      "requiredApis": [
+        "Composio → Gmail"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 8,
+      "dependencies": [
+        "composio-hub",
+        "ai-chat"
+      ],
+      "phase": 2,
+      "notes": "Do not obtain standalone Gmail API credentials if Composio covers OAuth"
+    },
+    {
+      "id": "google-calendar-integration",
+      "feature": "Google Calendar integration",
+      "purpose": "Sync personal/work calendars through Composio",
+      "requiredApis": [
+        "Composio → Google Calendar"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "Critical",
+      "effortDays": 6,
+      "dependencies": [
+        "composio-hub",
+        "calendar-engine"
+      ],
+      "phase": 1
+    },
+    {
+      "id": "google-drive-integration",
+      "feature": "Google Drive integration",
+      "purpose": "Find/store documents referenced in memory and business workflows",
+      "requiredApis": [
+        "Composio → Google Drive"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "Medium",
+      "effortDays": 5,
+      "dependencies": [
+        "composio-hub",
+        "ai-memory"
+      ],
+      "phase": 2,
+      "notes": "Implied by Google suite via Composio; not a standalone Phase 1 blocker"
+    },
+    {
+      "id": "microsoft-integration",
+      "feature": "Microsoft 365 integration",
+      "purpose": "Outlook/Calendar/OneDrive for Executive users",
+      "requiredApis": [
+        "Composio → Microsoft"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "Medium",
+      "effortDays": 8,
+      "dependencies": [
+        "composio-hub"
+      ],
+      "phase": 2
+    },
+    {
+      "id": "github-integration",
+      "feature": "GitHub integration",
+      "purpose": "Not in AmberOne Product Brain",
+      "requiredApis": [],
+      "apiStatus": "Not Required",
+      "buildStatus": "Not Started",
+      "priority": "Low",
+      "effortDays": 0,
+      "dependencies": [],
+      "phase": 3,
+      "notes": "Do NOT obtain GitHub API — out of approved AmberOne roadmap"
+    },
+    {
+      "id": "slack-integration",
+      "feature": "Slack integration",
+      "purpose": "Not in AmberOne Product Brain",
+      "requiredApis": [],
+      "apiStatus": "Not Required",
+      "buildStatus": "Not Started",
+      "priority": "Low",
+      "effortDays": 0,
+      "dependencies": [],
+      "phase": 3,
+      "notes": "Do NOT obtain Slack API for AmberOne unless Product Brain is amended"
+    },
+    {
+      "id": "crm",
+      "feature": "CRM",
+      "purpose": "Contacts, follow-ups, pipeline for Executive/Business",
+      "requiredApis": [
+        "Cloudflare D1",
+        "OpenAI",
+        "Composio (optional external CRM sync)"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 12,
+      "dependencies": [
+        "user-auth",
+        "ai-memory",
+        "ai-chat"
+      ],
+      "phase": 2,
+      "notes": "First-party CRM on D1; external CRM sync later via Composio only if needed"
+    },
+    {
+      "id": "social-publishing",
+      "feature": "Social media publishing",
+      "purpose": "Instagram / Nextdoor posting + marketing images for Business",
+      "requiredApis": [
+        "Composio → Instagram",
+        "Composio → Nextdoor",
+        "OpenAI (image/copy)"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "Medium",
+      "effortDays": 10,
+      "dependencies": [
+        "composio-hub",
+        "business-dashboard"
+      ],
+      "phase": 2
+    },
+    {
+      "id": "business-onboarding",
+      "feature": "Business / user onboarding",
+      "purpose": "Guided first-run: goals, connect calendar, preferences, plan selection",
+      "requiredApis": [],
+      "apiStatus": "Not Required",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 5,
+      "dependencies": [
+        "user-auth",
+        "stripe-billing",
+        "composio-hub"
+      ],
+      "phase": 1
+    },
+    {
+      "id": "automation-engine",
+      "feature": "AI automation engine / Automation Center",
+      "purpose": "Manual · Assisted · Automatic modes with user control and resiliency",
+      "requiredApis": [
+        "OpenAI",
+        "Cloudflare D1",
+        "Composio"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 14,
+      "dependencies": [
+        "ai-chat",
+        "ai-memory",
+        "composio-hub",
+        "workflow-automation"
+      ],
+      "phase": 2
+    },
+    {
+      "id": "workflow-automation",
+      "feature": "Workflow automation",
+      "purpose": "Multi-step workflows with approvals, retries, skip/continue resiliency",
+      "requiredApis": [
+        "Cloudflare D1",
+        "OpenAI",
+        "Composio"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 12,
+      "dependencies": [
+        "composio-hub",
+        "ai-memory",
+        "audit-logs"
+      ],
+      "phase": 2
+    },
+    {
+      "id": "family-dashboard",
+      "feature": "Family dashboard",
+      "purpose": "Shared calendars, chores, birthdays, notes, messages for Family plans",
+      "requiredApis": [
+        "Cloudflare D1",
+        "OpenAI"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 12,
+      "dependencies": [
+        "calendar-engine",
+        "reminders",
+        "ai-memory",
+        "stripe-billing"
+      ],
+      "phase": 2
+    },
+    {
+      "id": "business-dashboard",
+      "feature": "Business dashboard",
+      "purpose": "Customers, appointments, marketing, calls, invoices, team",
+      "requiredApis": [
+        "Cloudflare D1",
+        "OpenAI",
+        "Composio",
+        "Twilio"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 16,
+      "dependencies": [
+        "crm",
+        "calendar-engine",
+        "calls-messaging",
+        "social-publishing"
+      ],
+      "phase": 2
+    },
+    {
+      "id": "executive-suite",
+      "feature": "Executive suite",
+      "purpose": "Exec calendar, email assistance, meeting prep, follow-ups, travel/expense reminders",
+      "requiredApis": [
+        "OpenAI",
+        "Composio → Gmail/Calendar",
+        "Cloudflare D1"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 14,
+      "dependencies": [
+        "gmail-integration",
+        "google-calendar-integration",
+        "crm",
+        "ai-chat"
+      ],
+      "phase": 2
+    },
+    {
+      "id": "admin-dashboard",
+      "feature": "Admin dashboard",
+      "purpose": "Operator view of users, plans, health, audit — may live in Amber HQ initially",
+      "requiredApis": [
+        "Cloudflare D1",
+        "Cloudflare API (ops)"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "Medium",
+      "effortDays": 8,
+      "dependencies": [
+        "user-auth",
+        "audit-logs",
+        "health-monitoring"
+      ],
+      "phase": 2,
+      "notes": "HQ already covers portfolio ops; AmberOne-native admin is Medium priority"
+    },
+    {
+      "id": "analytics",
+      "feature": "Analytics",
+      "purpose": "Usage, retention, Talk quality, conversion — product + ops metrics",
+      "requiredApis": [
+        "Cloudflare D1",
+        "OpenAI (optional eval)"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "Medium",
+      "effortDays": 6,
+      "dependencies": [
+        "user-auth",
+        "ai-chat"
+      ],
+      "phase": 2,
+      "notes": "Do not obtain Mixpanel/Amplitude unless owner chooses a product analytics vendor"
+    },
+    {
+      "id": "reports",
+      "feature": "Reports",
+      "purpose": "User-facing summaries and resiliency final reports (completed/skipped/failed)",
+      "requiredApis": [
+        "OpenAI",
+        "Cloudflare D1"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "Medium",
+      "effortDays": 5,
+      "dependencies": [
+        "workflow-automation",
+        "daily-briefing"
+      ],
+      "phase": 2
+    },
+    {
+      "id": "file-management",
+      "feature": "File management",
+      "purpose": "Upload/store user files for memory and business docs",
+      "requiredApis": [
+        "Cloudflare R2 (recommended) or Composio → Drive"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "Medium",
+      "effortDays": 6,
+      "dependencies": [
+        "user-auth",
+        "security-basics"
+      ],
+      "phase": 2,
+      "notes": "R2 preferred on current Cloudflare stack; obtain R2 only when file upload ships"
+    },
+    {
+      "id": "search",
+      "feature": "Search",
+      "purpose": "Natural-language search across memory, notes, CRM, files",
+      "requiredApis": [
+        "OpenAI embeddings (optional)",
+        "Cloudflare D1"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "Medium",
+      "effortDays": 7,
+      "dependencies": [
+        "ai-memory",
+        "notes-lists"
+      ],
+      "phase": 1,
+      "notes": "v1 keyword SQL sufficient; embeddings later still use existing OpenAI key"
+    },
+    {
+      "id": "learning-engine",
+      "feature": "Learning engine",
+      "purpose": "Learn preferences over time; feed Learning Brain patterns (platform inheritance)",
+      "requiredApis": [
+        "OpenAI",
+        "Cloudflare D1"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "Medium",
+      "effortDays": 10,
+      "dependencies": [
+        "ai-memory",
+        "ai-chat",
+        "workflow-automation"
+      ],
+      "phase": 2
+    },
+    {
+      "id": "business-brain",
+      "feature": "Business Brain (customer)",
+      "purpose": "Per-customer private brain: preferences, businesses, projects, settings (Customer Brain layer)",
+      "requiredApis": [
+        "Cloudflare D1",
+        "OpenAI"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 10,
+      "dependencies": [
+        "ai-memory",
+        "user-auth"
+      ],
+      "phase": 1,
+      "notes": "Platform Customer Brain — implement as AmberOne data model, not a new SaaS API"
+    },
+    {
+      "id": "product-brain",
+      "feature": "Product Brain (AmberOne)",
+      "purpose": "Layer-2 product standards already documented; keep blueprint as living source of truth",
+      "requiredApis": [],
+      "apiStatus": "Not Required",
+      "buildStatus": "Complete",
+      "priority": "Critical",
+      "effortDays": 2,
+      "dependencies": [],
+      "phase": 0,
+      "notes": "Documentation complete (ACTIVE). Runtime product-brain service not required for v1"
+    },
+    {
+      "id": "customer-brain",
+      "feature": "Customer Brain",
+      "purpose": "Connected Accounts, Calendar, Memories, Conversations, Workflows, Approvals",
+      "requiredApis": [
+        "Cloudflare D1",
+        "Composio",
+        "OpenAI"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "Critical",
+      "effortDays": 12,
+      "dependencies": [
+        "ai-memory",
+        "composio-hub",
+        "calendar-engine"
+      ],
+      "phase": 1
+    },
+    {
+      "id": "api-management",
+      "feature": "API management",
+      "purpose": "Versioned product APIs, keys for marketplace/white-label later",
+      "requiredApis": [],
+      "apiStatus": "Not Required",
+      "buildStatus": "Not Started",
+      "priority": "Low",
+      "effortDays": 8,
+      "dependencies": [
+        "security-basics"
+      ],
+      "phase": 3
+    },
+    {
+      "id": "audit-logs",
+      "feature": "Audit logs",
+      "purpose": "Security trail for actions, approvals, connected-account use",
+      "requiredApis": [
+        "Cloudflare D1"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 4,
+      "dependencies": [
+        "user-auth",
+        "security-basics"
+      ],
+      "phase": 1
+    },
+    {
+      "id": "backup-recovery",
+      "feature": "Backup and recovery",
+      "purpose": "D1 backups, restore drills, resiliency reporting",
+      "requiredApis": [
+        "Cloudflare D1 / Cloudflare API"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "Medium",
+      "effortDays": 4,
+      "dependencies": [
+        "health-monitoring"
+      ],
+      "phase": 1
+    },
+    {
+      "id": "marketplace-skills",
+      "feature": "Marketplace skills",
+      "purpose": "Industry skill packs $5–15/mo",
+      "requiredApis": [
+        "Stripe (add-on prices)",
+        "OpenAI"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "Low",
+      "effortDays": 20,
+      "dependencies": [
+        "stripe-billing",
+        "automation-engine",
+        "ai-chat"
+      ],
+      "phase": 3,
+      "notes": "Obtain new Stripe prices only when marketplace ships"
+    },
+    {
+      "id": "white-label",
+      "feature": "White label",
+      "purpose": "Branded AmberOne for partners $499–999/mo",
+      "requiredApis": [
+        "Stripe",
+        "Cloudflare Pages (multi-tenant)"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "Low",
+      "effortDays": 30,
+      "dependencies": [
+        "api-management",
+        "marketplace-skills"
+      ],
+      "phase": 3
+    },
+    {
+      "id": "voice-first-ui",
+      "feature": "Voice-first experience",
+      "purpose": "Speak to Amber (browser + phone); blueprint design principle #1",
+      "requiredApis": [
+        "OpenAI (Realtime/Whisper/TTS)",
+        "Twilio (phone)"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 12,
+      "dependencies": [
+        "ai-chat",
+        "calls-messaging"
+      ],
+      "phase": 1,
+      "notes": "Browser voice can use existing OpenAI; phone voice requires Twilio"
+    },
+    {
+      "id": "travel-planning",
+      "feature": "Travel planning",
+      "purpose": "Personal/exec travel assistance",
+      "requiredApis": [
+        "OpenAI",
+        "Composio (optional booking tools)"
+      ],
+      "apiStatus": "Configured",
+      "buildStatus": "Not Started",
+      "priority": "Medium",
+      "effortDays": 6,
+      "dependencies": [
+        "ai-chat",
+        "calendar-engine",
+        "ai-memory"
+      ],
+      "phase": 1,
+      "notes": "v1 conversational planning needs no booking API"
+    },
+    {
+      "id": "ai-receptionist",
+      "feature": "AI receptionist",
+      "purpose": "Answer business/exec calls, take messages, book appointments",
+      "requiredApis": [
+        "Twilio",
+        "OpenAI"
+      ],
+      "apiStatus": "Missing",
+      "buildStatus": "Not Started",
+      "priority": "High",
+      "effortDays": 14,
+      "dependencies": [
+        "calls-messaging",
+        "calendar-engine",
+        "crm"
+      ],
+      "phase": 2
+    }
+  ],
+  "apiLedger": {
+    "alreadyComplete": [
+      {
+        "api": "Cloudflare Pages",
+        "role": "Hosting + Functions"
+      },
+      {
+        "api": "Cloudflare D1",
+        "role": "Primary database (replaces blueprint Supabase for current stack)"
+      },
+      {
+        "api": "CLOUDFLARE_ACCOUNT_ID + API token",
+        "role": "Ops deploy/secrets"
+      },
+      {
+        "api": "Stripe live secret + 7 prices + AmberOne webhook",
+        "role": "Billing"
+      },
+      {
+        "api": "OpenAI",
+        "role": "Talk / AI Brain"
+      },
+      {
+        "api": "Resend + EMAIL_FROM",
+        "role": "Transactional email"
+      }
+    ],
+    "stillRequired": [
+      {
+        "api": "Composio API key",
+        "why": "Approved Integration Hub for Google/Microsoft/Instagram/Nextdoor/Twilio actions",
+        "neededBy": [
+          "composio-hub",
+          "google-calendar-integration",
+          "gmail-integration",
+          "customer-brain",
+          "social-publishing"
+        ],
+        "when": "Before Phase 1 Connected Services / Calendar sync"
+      },
+      {
+        "api": "Twilio (Account SID, Auth Token, phone number)",
+        "why": "Calls, SMS messaging, AI receptionist — Phase 1 Communications",
+        "neededBy": [
+          "calls-messaging",
+          "notifications",
+          "ai-receptionist",
+          "voice-first-ui"
+        ],
+        "when": "Before Phase 1 Calls/Messaging"
+      }
+    ],
+    "optionalFuture": [
+      {
+        "api": "Cloudflare R2",
+        "why": "Native file uploads when File management ships",
+        "when": "Phase 2 file management"
+      },
+      {
+        "api": "Stripe marketplace / white-label prices",
+        "why": "New Price objects only when Phase 3 packs ship",
+        "when": "Phase 3"
+      },
+      {
+        "api": "Product analytics vendor (Mixpanel/Amplitude/etc.)",
+        "why": "Only if first-party D1 analytics is insufficient",
+        "when": "Optional — do not obtain by default"
+      },
+      {
+        "api": "Paid weather API",
+        "why": "Home briefing weather; prefer free Open-Meteo first",
+        "when": "Optional"
+      },
+      {
+        "api": "Supabase",
+        "why": "Named in blueprint but D1 already chosen and configured — migration only if owner reverses stack decision",
+        "when": "Do not obtain unless migrating"
+      },
+      {
+        "api": "Standalone Google/Microsoft OAuth apps",
+        "why": "Prefer Composio-managed OAuth; obtain only if Composio requires app credentials",
+        "when": "As needed during Composio setup"
+      },
+      {
+        "api": "Slack / GitHub",
+        "why": "Not in AmberOne Product Brain",
+        "when": "Do not obtain for AmberOne"
+      }
+    ]
+  },
+  "completion": {
+    "fullRoadmapPercent": 22,
+    "phase0Percent": 85,
+    "phase1Percent": 55,
+    "phase2Percent": 0,
+    "phase3Percent": 0,
+    "firstProductionReleaseScope": "Phase 0 + Phase 1 Personal MVP excluding Calls/SMS/voice phone (Twilio deferred to Phase 1b). Includes Memory, Calendar, Reminders, Composio hub, Google Calendar, Home dashboard, Notifications, onboarding, audit/backup.",
+    "firstProductionReleasePercent": 48,
+    "featureCountPercent": 35,
+    "updatedAt": "2026-07-29T16:45:00.000Z",
+    "calculationNotes": "Updated after Phase 1 core production verify 18/18. Composio/Google sync and Twilio still incomplete. Live card Checkout still owner blocker. Not production-ready."
+  },
+  "implementationOrder": [
+    "Confirm live Stripe card Checkout (owner)",
+    "Extend Talk with session history + tool framework",
+    "Ship Memory Vault schema + Talk grounding (D1 + OpenAI)",
+    "Obtain Composio → Connected Services hub",
+    "Internal Calendar engine + Reminders (email via Resend)",
+    "Google Calendar sync via Composio",
+    "Home dashboard briefing + Notifications center",
+    "Onboarding wizard (connect calendar, preferences)",
+    "Audit logs + backup/restore runbook",
+    "Obtain Twilio → Calls/SMS/Messaging",
+    "Voice-first browser input",
+    "Family dashboard (Phase 2)",
+    "Gmail + Executive suite (Phase 2)",
+    "CRM + Business dashboard (Phase 2)",
+    "Social publishing Instagram/Nextdoor (Phase 2)",
+    "Automation Center + workflows (Phase 2)",
+    "Marketplace / white-label (Phase 3)"
+  ],
+  "top10BeforeFirstProductionRelease": [
+    {
+      "rank": 1,
+      "task": "Owner completes one live card payment through Checkout and confirms plan activation",
+      "why": "Billing path not production-declared until real charge succeeds"
+    },
+    {
+      "rank": 2,
+      "task": "Upgrade Talk to Amber: conversation history, authenticated context, tool-calling skeleton",
+      "why": "Phase 1 core; current Talk is marketing FAQ shell"
+    },
+    {
+      "rank": 3,
+      "task": "Build Memory System (D1 schema + Memory Vault UI + Talk grounding)",
+      "why": "Phase 1 Critical; uses already-configured OpenAI + D1"
+    },
+    {
+      "rank": 4,
+      "task": "Obtain and configure Composio API key; ship Connected Services connect flow",
+      "why": "Unblocks Google Calendar and all Integration Hub work"
+    },
+    {
+      "rank": 5,
+      "task": "Build Calendar engine (create/list/update events, recurrence) on D1",
+      "why": "Phase 1 Critical; foundation before Google sync"
+    },
+    {
+      "rank": 6,
+      "task": "Ship Reminders + email notifications (Resend) + in-app notification center",
+      "why": "Phase 1 Critical; SMS can wait for Twilio"
+    },
+    {
+      "rank": 7,
+      "task": "Connect Google Calendar via Composio bidirectional sync",
+      "why": "Makes Calendar useful for real users"
+    },
+    {
+      "rank": 8,
+      "task": "Product Home dashboard: greeting, today’s schedule, pending reminders, Talk CTA",
+      "why": "Blueprint primary UI; current dashboard is billing-centric"
+    },
+    {
+      "rank": 9,
+      "task": "First-run onboarding: plan confirmation, connect calendar, memory permissions",
+      "why": "Converts signup into activated Personal product"
+    },
+    {
+      "rank": 10,
+      "task": "Audit logs for auth/billing/memory/connected-account actions + D1 backup runbook",
+      "why": "Security + resiliency required before trusting user life data"
+    }
+  ]
+}

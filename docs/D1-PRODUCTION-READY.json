@@ -1,0 +1,23 @@
+{
+  "at": "2026-07-29T13:44:50.000Z",
+  "databaseId": "0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a",
+  "databaseName": "amberone",
+  "binding": "DB",
+  "productionAlias": "https://amberone.pages.dev",
+  "latestDeploy": "https://f9fd6f76.amberone.pages.dev",
+  "pagesBindingVerified": {
+    "d1_databases": {
+      "DB": { "id": "0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a" }
+    }
+  },
+  "wranglerRemoteMigrate": {
+    "ok": false,
+    "note": "API token still 401 on D1 import; schema created at runtime via ensureSchema on first requests"
+  },
+  "productionSmoke": {
+    "health": { "ok": true, "tables": ["billing_events", "password_resets", "sessions", "users"], "userCount": 2 },
+    "signup": 201,
+    "me": 200,
+    "login": 200
+  }
+}

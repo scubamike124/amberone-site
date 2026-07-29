@@ -12,113 +12,342 @@
   <style>
     .hero {
       position: relative;
-      min-height: 100vh;
-      min-height: 100dvh;
+      height: calc(100dvh - 2.75rem);
+      min-height: calc(100dvh - 2.75rem);
+      max-height: calc(100dvh - 2.75rem);
       display: flex;
       flex-direction: column;
       overflow: hidden;
       background:
-        radial-gradient(ellipse 90% 70% at 70% 20%, rgba(212, 160, 23, 0.18), transparent 55%),
-        radial-gradient(ellipse 60% 50% at 10% 90%, rgba(125, 155, 120, 0.12), transparent 50%),
-        linear-gradient(165deg, #12161e 0%, #0e1116 45%, #0a0c10 100%);
+        radial-gradient(ellipse 90% 70% at 70% 20%, rgba(196, 137, 18, 0.2), transparent 55%),
+        radial-gradient(ellipse 60% 50% at 10% 90%, rgba(61, 111, 168, 0.1), transparent 50%),
+        linear-gradient(165deg, #f4f0e8 0%, #e8e3da 45%, #ddd8cf 100%);
       border-bottom: 0;
     }
-    .hero .nav { border-bottom: 0; background: transparent; backdrop-filter: none; }
-    .hero-body {
+    .hero .nav { border-bottom: 0; background: transparent; backdrop-filter: none; flex-shrink: 0; }
+    .hero-stage {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 2rem clamp(1.25rem, 4vw, 3rem) 4rem;
-      max-width: 52rem;
+      min-height: 0;
+      display: grid;
+      gap: 1.25rem;
+      align-items: center;
+      padding: 0.75rem clamp(1.25rem, 4vw, 2.5rem) 1.25rem;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      grid-template-columns: 1fr;
     }
+    @media (min-width: 960px) {
+      .hero-stage { grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.85fr); gap: 1.5rem; }
+    }
+    .hero-body { max-width: 34rem; }
     .brand {
       font-family: Fraunces, Georgia, serif;
-      font-size: clamp(3.2rem, 10vw, 6.5rem);
+      font-size: clamp(2.4rem, 5.5vw, 4rem);
       font-weight: 700;
       letter-spacing: -0.04em;
       line-height: 0.95;
-      margin: 0 0 1rem;
+      margin: 0 0 0.65rem;
     }
     .brand span { color: var(--amber); }
     .tagline {
       font-family: Fraunces, Georgia, serif;
-      font-size: clamp(1.35rem, 3.2vw, 1.85rem);
+      font-size: clamp(1.15rem, 2.4vw, 1.45rem);
       font-weight: 500;
       color: var(--sand-dim);
-      margin: 0 0 0.85rem;
+      margin: 0 0 0.65rem;
       max-width: 28ch;
     }
-    .support { margin: 0; max-width: 36rem; color: var(--sand-dim); font-size: 1.05rem; }
-    .cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+    .support { margin: 0; max-width: 34rem; color: var(--sand-dim); font-size: 0.98rem; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; }
+
+    /* 20% smaller than prior 630px → 504px; capped so hero fits one viewport */
+    .hero-video-wrap {
+      justify-self: end;
+      width: min(100%, 504px);
+      margin-left: auto;
+      max-height: 100%;
+    }
+    .hero-video-card {
+      background: linear-gradient(165deg, #faf8f4, #f1ede6);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      max-height: min(68dvh, 520px);
+    }
+    .hero-video-card video {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: calc(min(68dvh, 520px) - 4.5rem);
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      background: #e8e3da;
+    }
+    .hero-video-meta {
+      padding: 0.65rem 0.9rem 0.75rem;
+      border-top: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+    .hero-video-meta strong {
+      display: block;
+      font-family: Fraunces, Georgia, serif;
+      font-size: 0.98rem;
+      margin-bottom: 0.15rem;
+    }
+    .hero-video-meta p {
+      margin: 0;
+      color: var(--sand-dim);
+      font-size: 0.8rem;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .hero-video-badge {
+      position: absolute;
+      top: 0.7rem;
+      left: 0.7rem;
+      z-index: 2;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.5rem;
+      border-radius: 999px;
+      background: rgba(250, 248, 244, 0.92);
+      border: 1px solid var(--line);
+      color: var(--amber-deep);
+    }
+
     section { padding: clamp(3.5rem, 8vw, 6rem) clamp(1.25rem, 4vw, 3rem); border-top: 1px solid var(--line); }
-    .products { display: grid; gap: 1.5rem; }
-    @media (min-width: 800px) { .products { grid-template-columns: 1fr 1fr; } }
-    .product h3 { margin: 0 0 0.35rem; font-size: 1.45rem; }
-    .product p { margin: 0; color: var(--sand-dim); }
     .principles { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
     @media (min-width: 700px) { .principles { grid-template-columns: repeat(3, 1fr); } }
     .principles strong { display: block; color: var(--sand); font-family: Fraunces, Georgia, serif; font-size: 1.15rem; margin-bottom: 0.35rem; }
-    .principles li { color: var(--sand-dim); }
+    .principles li {
+      color: var(--sand-dim);
+      background: linear-gradient(165deg, #faf8f4, #f1ede6);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1.1rem;
+    }
     @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     .hero-body > * { animation: rise 0.7s ease both; }
     .hero-body .brand { animation-delay: 0.05s; }
     .hero-body .tagline { animation-delay: 0.15s; }
     .hero-body .support { animation-delay: 0.25s; }
     .hero-body .cta-row { animation-delay: 0.35s; }
+    .hero-video-wrap { animation: rise 0.8s ease 0.2s both; }
+    @media (max-width: 959px) {
+      .hero {
+        height: auto;
+        min-height: auto;
+        max-height: none;
+        overflow: visible;
+      }
+      .hero-video-wrap { justify-self: stretch; margin: 0; width: 100%; max-width: 504px; }
+      .hero-video-card { max-height: none; }
+      .hero-video-card video { max-height: none; }
+    }
   </style>
 </head>
 <body>
+  <div class="site-hook" role="banner">Run your whole life from one conversation.</div>
   <header class="hero">
     <nav class="nav" aria-label="Primary">
       <a class="nav-brand" href="/">Amber<span>One</span></a>
       <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
       <div class="nav-links" data-nav-links>
-        <a href="#products">Products</a>
+        <a href="#capabilities">What it does</a>
         <a href="/pricing">Pricing</a>
+        <a href="/plans">Plans</a>
+        <a href="/family">Family</a>
         <a href="/faq">FAQ</a>
         <a href="/login">Sign in</a>
         <a class="nav-cta" href="/signup">Get started</a>
       </div>
     </nav>
-    <div class="hero-body">
-      <h1 class="brand">Amber<span>One</span></h1>
-      <p class="tagline">One Assistant. One Place. One Life.</p>
-      <p class="support">
-        An AI operating system for personal life, family, work, and business —
-        natural conversation, intelligent memory, and trusted automation from start to finish.
-      </p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href="/pricing">Start Now</a>
-        <a class="btn btn-ghost" href="#products">See products</a>
+    <div class="hero-stage">
+      <div class="hero-body">
+        <h1 class="brand">Amber<span>One</span></h1>
+        <p class="tagline">One Assistant. One Place. One Life.</p>
+        <p class="support">
+          An AI operating system for personal life, family, work, and business —
+          natural conversation, intelligent memory, and trusted automation from start to finish.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="/signup">Get started</a>
+          <a class="btn btn-ghost" href="#capabilities">See what it does</a>
+        </div>
       </div>
+
+      <aside class="hero-video-wrap" aria-label="Product explainer video">
+        <div class="hero-video-card">
+          <span class="hero-video-badge">Explainer</span>
+          <video
+            src="/assets/video/amberone-hero.mp4?v=20260729c"
+            autoplay
+            muted
+            loop
+            playsinline
+            controls
+            title="AmberOne explainer — what the AmberOne website does"
+          ></video>
+          <div class="hero-video-meta">
+            <strong>What AmberOne does</strong>
+            <p>
+              Talk to Amber for calendar, memories, notes, and briefings — or step up to Family, Executive, or Business. Unmute for the walkthrough.
+            </p>
+          </div>
+        </div>
+      </aside>
     </div>
   </header>
 
-  <section id="products">
+  <section id="capabilities">
     <div class="wrap" style="padding-top:0;padding-bottom:0;max-width:1100px">
-      <h2>Core products</h2>
-      <p class="lede">Same Amber brain. Different roles for how you live and work.</p>
-      <div class="products">
-        <article class="product">
-          <h3>Amber Personal</h3>
-          <div class="price">$19.99 / month</div>
-          <p>Conversations, calendar, reminders, memory, notes, shopping, travel, bill reminders, daily briefing, evening recap, calls &amp; messaging.</p>
+      <h2>What AmberOne does</h2>
+      <p class="lede">One brain. The list below is everything the website is built to handle — without burying you in price tags on every capability.</p>
+      <ul class="capability-list">
+        <li>
+          <span class="cap-mark" aria-hidden="true">1</span>
+          <div>
+            <strong>Talk to Amber</strong>
+            <span>Natural conversation to ask, command, plan, and finish work — not hunt menus.</span>
+          </div>
+        </li>
+        <li>
+          <span class="cap-mark" aria-hidden="true">2</span>
+          <div>
+            <strong>Calendar &amp; schedule</strong>
+            <span>Events, appointments, conflict checks, and day-level briefing from one place.</span>
+          </div>
+        </li>
+        <li>
+          <span class="cap-mark" aria-hidden="true">3</span>
+          <div>
+            <strong>Reminders &amp; follow-ups</strong>
+            <span>Never drop a due date, bill, chore, or next action.</span>
+          </div>
+        </li>
+        <li>
+          <span class="cap-mark" aria-hidden="true">4</span>
+          <div>
+            <strong>Memory &amp; notes</strong>
+            <span>Preferences, facts, and notes Amber can reuse so you don’t repeat yourself.</span>
+          </div>
+        </li>
+        <li>
+          <span class="cap-mark" aria-hidden="true">5</span>
+          <div>
+            <strong>Daily briefing &amp; evening recap</strong>
+            <span>Start oriented and close the day knowing what’s done and what’s next.</span>
+          </div>
+        </li>
+        <li>
+          <span class="cap-mark" aria-hidden="true">6</span>
+          <div>
+            <strong>Family coordination</strong>
+            <span>Shared calendars, chores, school &amp; sports, groceries, birthdays, and vacation planning.</span>
+          </div>
+        </li>
+        <li>
+          <span class="cap-mark" aria-hidden="true">7</span>
+          <div>
+            <strong>Executive assist</strong>
+            <span>Meeting prep, email assistance, CRM health, travel, and professional follow-ups.</span>
+          </div>
+        </li>
+        <li>
+          <span class="cap-mark" aria-hidden="true">8</span>
+          <div>
+            <strong>Business operations</strong>
+            <span>Appointments, customers, marketing support, reviews, and team scheduling.</span>
+          </div>
+        </li>
+        <li>
+          <span class="cap-mark" aria-hidden="true">9</span>
+          <div>
+            <strong>Connections</strong>
+            <span>Wire calendar, email, and services so Amber works inside your real stack.</span>
+          </div>
+        </li>
+        <li>
+          <span class="cap-mark" aria-hidden="true">10</span>
+          <div>
+            <strong>Guided setup</strong>
+            <span>Walk-throughs that stay until finished — explain, recommend, wait, verify, complete.</span>
+          </div>
+        </li>
+        <li>
+          <span class="cap-mark" aria-hidden="true">11</span>
+          <div>
+            <strong>Billing &amp; self-service</strong>
+            <span>Subscribe, upgrade, downgrade, or cancel anytime through secure Stripe checkout and the Customer Portal.</span>
+          </div>
+        </li>
+        <li>
+          <span class="cap-mark" aria-hidden="true">12</span>
+          <div>
+            <strong>Marketplace skills</strong>
+            <span>Optional packs for specialized workflows as Amber grows with your needs.</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="wrap" style="padding-top:0;padding-bottom:0;max-width:1100px">
+      <h2>All 7 monthly plans</h2>
+      <p class="lede">Self-service — same Amber brain, different scope. Full checkout on <a href="/pricing">Pricing</a> · compare on <a href="/plans">Plans</a>.</p>
+      <div class="pricing-summary pricing-7">
+        <article class="panel">
+          <h3>Personal</h3>
+          <p class="price">$19.99 / mo</p>
+          <p class="meta">Individuals — Talk, calendar, memory, briefing.</p>
+          <a class="btn btn-primary btn-block" href="/pricing?plan=personal">Start Personal</a>
         </article>
-        <article class="product">
-          <h3>Amber Family</h3>
-          <div class="price">From $29.99 / month</div>
-          <p>Everything in Personal plus shared calendars, chores, birthdays, school &amp; sports, groceries, family timeline, vacation planning.</p>
+        <article class="panel">
+          <h3>Family (2)</h3>
+          <p class="price">$29.99 / mo</p>
+          <p class="meta">Two seats — shared calendars &amp; chores.</p>
+          <a class="btn btn-primary btn-block" href="/pricing?plan=family_2">Start Family (2)</a>
         </article>
-        <article class="product">
-          <h3>Amber Executive</h3>
-          <div class="price">$59.99 / month</div>
-          <p>Executive calendar, email assistance, meeting scheduling, AI receptionist, CRM support, travel, expenses, prep &amp; follow-ups.</p>
+        <article class="panel">
+          <h3>Family (5)</h3>
+          <p class="price">$49.99 / mo</p>
+          <p class="meta">Five seats — growing households.</p>
+          <a class="btn btn-primary btn-block" href="/pricing?plan=family_5">Start Family (5)</a>
         </article>
-        <article class="product">
-          <h3>Amber Business</h3>
-          <div class="price">From $99 / month</div>
-          <p>Appointments, customer reminders, receptionist, CRM, Instagram &amp; Nextdoor, marketing images, reviews, team scheduling.</p>
+        <article class="panel">
+          <h3>Family (10)</h3>
+          <p class="price">$79.99 / mo</p>
+          <p class="meta">Ten seats — larger household coordination.</p>
+          <a class="btn btn-primary btn-block" href="/pricing?plan=family_10">Start Family (10)</a>
+        </article>
+        <article class="panel">
+          <h3>Executive</h3>
+          <p class="price">$59.99 / mo</p>
+          <p class="meta">Meetings, email help, CRM, follow-ups.</p>
+          <a class="btn btn-primary btn-block" href="/pricing?plan=executive">Start Executive</a>
+        </article>
+        <article class="panel">
+          <h3>Business Small</h3>
+          <p class="price">$99 / mo</p>
+          <p class="meta">Appointments, customers, marketing assist.</p>
+          <a class="btn btn-primary btn-block" href="/pricing?plan=business_small">Start Business</a>
+        </article>
+        <article class="panel">
+          <h3>Business Medium</h3>
+          <p class="price">$199 / mo</p>
+          <p class="meta">Growing teams — fuller CRM &amp; marketing.</p>
+          <a class="btn btn-primary btn-block" href="/pricing?plan=business_medium">Start Medium</a>
         </article>
       </div>
     </div>
@@ -134,17 +363,13 @@
       </ul>
       <div class="cta-row" style="margin-top:2rem">
         <a class="btn btn-primary" href="/signup">Create account</a>
-        <a class="btn btn-ghost" href="/pricing">View pricing</a>
+        <a class="btn btn-ghost" href="/pricing">View full pricing</a>
       </div>
     </div>
   </section>
 
-  <footer>
-    <div class="wrap" style="padding-top:0;padding-bottom:0">
-      AmberOne · <a href="/pricing">Pricing</a> · <a href="/faq">FAQ</a> ·
-      <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a>
-    </div>
-  </footer>
+  <footer data-site-footer></footer>
   <script src="/assets/app.js"></script>
+  <script src="/assets/site-footer.js"></script>
 </body>
 </html>

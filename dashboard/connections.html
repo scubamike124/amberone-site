@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Connections · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/">Home</a>
+      <a href="/dashboard/calendar">Calendar</a>
+      <a href="/dashboard/reminders">Reminders</a>
+      <a href="/dashboard/memories">Memories</a>
+      <a href="/dashboard/notes">Notes</a>
+      <a href="/dashboard/connections">Connections</a>
+      <a href="/dashboard/billing">Billing</a>
+      <a href="/dashboard/settings">Settings</a>
+      <a class="nav-notif" href="/dashboard/notifications">Notifications<span class="badge" data-notif-badge hidden>0</span></a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside data-dash-nav></aside>
+      <section>
+        <h1>Connections</h1>
+        <p class="lede">Link outside accounts so Amber can act on your behalf — Google Calendar and Gmail are available now.</p>
+        <div id="banner" class="banner"></div>
+
+        <div class="panel" style="margin-bottom:1.25rem">
+          <h2>Available services</h2>
+          <div id="available-list"><p class="empty-state">Loading…</p></div>
+        </div>
+
+        <div class="panel" style="margin-bottom:1.25rem">
+          <h2>Connected</h2>
+          <div id="connected-list"><p class="empty-state">Loading…</p></div>
+        </div>
+
+        <div class="panel" id="gmail-preview-panel" style="display:none">
+          <div style="display:flex;justify-content:space-between;gap:0.75rem;align-items:center;flex-wrap:wrap">
+            <h2 style="margin:0">Gmail inbox preview</h2>
+            <button type="button" class="btn btn-ghost btn-sm" id="gmail-refresh">Refresh</button>
+          </div>
+          <p class="lede" style="margin-top:0.35rem">Recent inbox messages Amber can read. Drafts can be created from Talk; live send stays owner-gated.</p>
+          <div id="gmail-preview"><p class="empty-state">Loading…</p></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      const user = await AmberOne.requireAuth();
+      if (!user) return;
+      const banner = document.getElementById("banner");
+
+      const params = new URLSearchParams(location.search);
+      if (params.get("connected")) {
+        AmberOne.showBanner(banner, `Connection flow finished for ${params.get("connected")}. Status updates once Google confirms the link.`, "ok");
+      }
+
+      const LABELS = { googlecalendar: "Google Calendar", gmail: "Gmail" };
+
+      async function load() {
+        const { res, data } = await AmberOne.api("/api/connected-services");
+        if (!res.ok) {
+          document.getElementById("available-list").innerHTML = `<p class="empty-state">${data.error || "Could not load connections."}</p>`;
+          document.getElementById("connected-list").innerHTML = "";
+          return;
+        }
+
+        if (!data.composioConfigured) {
+          AmberOne.showBanner(
+            banner,
+            "Connected Services are not fully set up yet — the platform owner needs to add a Composio API key before Google accounts can be linked.",
+            "warn",
+          );
+        }
+
+        const available = data.availableToolkits || [];
+        document.getElementById("available-list").innerHTML = available.length
+          ? available
+              .map(
+                (t) => `<div class="connection-card">
+                  <div>
+                    <strong>${t.label}</strong>
+                    <div class="sub" style="color:var(--sand-dim);font-size:0.85rem">${t.configured ? "Ready to connect" : "Coming soon — not yet configured"}</div>
+                  </div>
+                  <button class="btn btn-primary btn-sm" data-connect="${t.toolkit}" ${t.configured && data.composioConfigured ? "" : "disabled"}>Connect</button>
+                </div>`,
+              )
+              .join("")
+          : `<p class="empty-state">No connections available yet.</p>`;
+
+        const connections = data.connections || [];
+        document.getElementById("connected-list").innerHTML = connections.length
+          ? connections
+              .map(
+                (c) => `<div class="connection-card">
+                  <div>
+                    <strong>${LABELS[c.toolkit] || c.toolkit}</strong>
+                    <div class="sub" style="color:var(--sand-dim);font-size:0.85rem">Linked ${new Date(c.createdAt).toLocaleDateString()}</div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:0.75rem">
+                    <span class="status-pill ${/active/i.test(c.status) ? "is-active" : "is-pending"}">${c.status}</span>
+                    ${c.toolkit === "googlecalendar" ? `<button class="btn btn-ghost btn-sm" data-sync="${c.id}">Sync now</button>` : ""}
+                    <button class="btn btn-ghost btn-sm" data-disconnect="${c.id}">Disconnect</button>
+                  </div>
+                </div>`,
+              )
+              .join("")
+          : `<p class="empty-state">Nothing connected yet.</p>`;
+
+        document.querySelectorAll("[data-connect]").forEach((btn) => {
+          btn.onclick = async () => {
+            btn.disabled = true;
+            const toolkit = btn.dataset.connect;
+            const { res, data } = await AmberOne.api("/api/connected-services", {
+              method: "POST",
+              body: JSON.stringify({ toolkit }),
+            });
+            if (!res.ok || !data.redirectUrl) {
+              AmberOne.showBanner(banner, data.error || "Could not start connection", "err");
+              btn.disabled = false;
+              return;
+            }
+            location.href = data.redirectUrl;
+          };
+        });
+
+        document.querySelectorAll("[data-disconnect]").forEach((btn) => {
+          btn.onclick = async () => {
+            btn.disabled = true;
+            const { res, data } = await AmberOne.api(`/api/connected-services?id=${encodeURIComponent(btn.dataset.disconnect)}`, { method: "DELETE" });
+            if (!res.ok) {
+              AmberOne.showBanner(banner, data.error || "Could not disconnect", "err");
+              btn.disabled = false;
+              return;
+            }
+            load();
+          };
+        });
+
+        document.querySelectorAll("[data-sync]").forEach((btn) => {
+          btn.onclick = async () => {
+            btn.disabled = true;
+            btn.textContent = "Syncing…";
+            const { res, data } = await AmberOne.api("/api/calendar-sync", { method: "POST", body: "{}" });
+            if (!res.ok) {
+              AmberOne.showBanner(banner, data.error || "Sync failed", "err");
+            } else {
+              AmberOne.showBanner(banner, `Synced ${data.synced} event(s) from Google Calendar.`, "ok");
+            }
+            btn.disabled = false;
+            btn.textContent = "Sync now";
+          };
+        });
+
+        const gmailActive = connections.some((c) => c.toolkit === "gmail" && /active/i.test(c.status));
+        const previewPanel = document.getElementById("gmail-preview-panel");
+        if (gmailActive) {
+          previewPanel.style.display = "block";
+          await loadGmailPreview();
+        } else {
+          previewPanel.style.display = "none";
+        }
+      }
+
+      async function loadGmailPreview() {
+        const { res, data } = await AmberOne.api("/api/gmail?query=in:inbox&limit=8&profile=1");
+        if (!res.ok) {
+          document.getElementById("gmail-preview").innerHTML = `<p class="empty-state">${data.error || "Could not load Gmail."}</p>`;
+          return;
+        }
+        const emails = data.emails || [];
+        const profileBit = data.profile?.emailAddress ? `<p class="sub">Account: ${data.profile.emailAddress}</p>` : "";
+        document.getElementById("gmail-preview").innerHTML =
+          profileBit +
+          (emails.length
+            ? `<ul class="list">${emails
+                .map(
+                  (e) => `<li class="list-item"><div class="meta-col"><strong>${String(e.subject || "(no subject)").replace(/</g, "&lt;")}</strong><span class="sub">${String(e.from || "").replace(/</g, "&lt;")}${e.snippet ? " · " + String(e.snippet).replace(/</g, "&lt;") : ""}</span></div></li>`,
+                )
+                .join("")}</ul>`
+            : `<p class="empty-state">Inbox is empty for this query.</p>`);
+      }
+
+      document.getElementById("gmail-refresh").onclick = () => loadGmailPreview();
+      load();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Family · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/">Home</a>
+      <a href="/dashboard/family/">Family</a>
+      <a href="/dashboard/family/members.html">Members</a>
+      <a href="/dashboard/notes">Notes</a>
+      <a class="nav-notif" href="/dashboard/notifications">Notifications<span class="badge" data-notif-badge hidden>0</span></a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside data-dash-nav data-active="Family"></aside>
+      <div class="dash-main">
+        <header class="dash-header">
+          <h1>Family Dashboard</h1>
+          <p class="lede">Shared chores, calendar, lists, and members — one family workspace.</p>
+        </header>
+
+        <div id="no-team" class="ao-card" style="display:none">
+          <div class="ao-card-head">
+            <div class="ao-card-title">
+              <span class="ao-icon is-warn">◇</span>
+              <div><h2>Create your family team</h2><p class="ao-card-meta">Takes about a minute</p></div>
+            </div>
+          </div>
+          <p class="lede" style="margin-bottom:1rem">You don’t have a family team yet. Create one to share chores and lists.</p>
+          <button type="button" class="btn btn-primary" id="create-team">Create Family Team</button>
+        </div>
+
+        <div id="has-team" class="ao-grid" style="display:none">
+          <article class="ao-card ao-span-12 is-hero">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon">✦</span>
+                <div><h2 id="team-name">Family</h2><p class="ao-card-meta">Shared workspace</p></div>
+              </div>
+              <a class="btn btn-ghost btn-sm" href="/dashboard/family/members.html">Manage members</a>
+            </div>
+          </article>
+
+          <article class="ao-card ao-span-6">
+            <div class="ao-card-head">
+              <div class="ao-card-title"><span class="ao-icon">✓</span><div><h2>Chores</h2><p class="ao-card-meta">Pending assignments</p></div></div>
+            </div>
+            <div id="chores-list"></div>
+            <form id="chore-form" style="display:flex;gap:.5rem;margin-top:.85rem;flex-wrap:wrap">
+              <input class="field" name="title" placeholder="New chore…" required style="margin:0;flex:1;min-width:160px" />
+              <button class="btn btn-primary" type="submit">Add</button>
+            </form>
+          </article>
+
+          <article class="ao-card ao-span-6">
+            <div class="ao-card-head">
+              <div class="ao-card-title"><span class="ao-icon is-info">▦</span><div><h2>Shared Calendar</h2><p class="ao-card-meta">Team events</p></div></div>
+              <a class="btn btn-ghost btn-sm" href="/dashboard/calendar">Open</a>
+            </div>
+            <div id="shared-cal"><div class="empty-state"><strong>No data yet.</strong><div class="empty-hint">Family calendar events will appear here.</div></div></div>
+          </article>
+
+          <article class="ao-card ao-span-6">
+            <div class="ao-card-head">
+              <div class="ao-card-title"><span class="ao-icon">✎</span><div><h2>Shared Lists</h2><p class="ao-card-meta">Groceries &amp; todos</p></div></div>
+              <a class="btn btn-ghost btn-sm" href="/dashboard/notes">Manage</a>
+            </div>
+            <div id="shared-lists"><div class="empty-state"><strong>No data yet.</strong><div class="empty-hint">Create shopping lists under Notes.</div></div></div>
+          </article>
+
+          <article class="ao-card ao-span-6">
+            <div class="ao-card-head">
+              <div class="ao-card-title"><span class="ao-icon is-ok">◎</span><div><h2>Members</h2><p class="ao-card-meta">Invite &amp; roles</p></div></div>
+              <a class="btn btn-ghost btn-sm" href="/dashboard/family/members.html">Invite</a>
+            </div>
+            <div id="members-preview"></div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      const user = await AmberOne.requireAuth();
+      if (!user) return;
+      let currentTeam = null;
+
+      async function load() {
+        const res = await fetch("/api/teams", { credentials: "include" });
+        const teams = await res.json();
+        if (!Array.isArray(teams) || !teams.length) {
+          document.getElementById("no-team").style.display = "";
+          document.getElementById("has-team").style.display = "none";
+          return;
+        }
+        currentTeam = teams[0];
+        document.getElementById("no-team").style.display = "none";
+        document.getElementById("has-team").style.display = "grid";
+        document.getElementById("team-name").textContent = currentTeam.name || "Family";
+        loadChores();
+        loadMembers();
+      }
+
+      async function loadChores() {
+        const res = await fetch("/api/chores?status=pending", { credentials: "include" });
+        const chores = await res.json().catch(() => []);
+        const el = document.getElementById("chores-list");
+        el.innerHTML = (chores || []).length
+          ? `<ul class="list">${chores.map((c) => `<li class="list-item"><div class="meta-col"><strong>${c.title}</strong></div><button class="btn btn-ghost btn-sm" data-done="${c.id}">Done</button></li>`).join("")}</ul>`
+          : `<div class="empty-state"><strong>No data yet.</strong><div class="empty-hint">No pending chores.</div></div>`;
+        el.querySelectorAll("[data-done]").forEach((btn) => {
+          btn.onclick = async () => {
+            await fetch("/api/chores", { method: "PATCH", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: btn.dataset.done, status: "done" }) });
+            loadChores();
+          };
+        });
+      }
+
+      async function loadMembers() {
+        const res = await fetch(`/api/teams?action=members&team_id=${currentTeam.id}`, { credentials: "include" });
+        const members = await res.json().catch(() => []);
+        document.getElementById("members-preview").innerHTML = (members || []).length
+          ? `<ul class="list">${members.map((m) => `<li class="list-item"><div class="meta-col"><strong>${m.invited_email || m.user_id}</strong><span class="sub">${m.role} · ${m.status}</span></div></li>`).join("")}</ul>`
+          : `<div class="empty-state"><strong>No data yet.</strong></div>`;
+      }
+
+      document.getElementById("create-team").onclick = async () => {
+        const name = prompt("Family team name?", "My Family");
+        if (!name) return;
+        await fetch("/api/teams", { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
+        load();
+      };
+
+      document.getElementById("chore-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const title = new FormData(e.target).get("title");
+        await fetch("/api/chores", { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title }) });
+        e.target.reset();
+        loadChores();
+      };
+
+      load();
+    })();
+  </script>
+</body>
+</html>

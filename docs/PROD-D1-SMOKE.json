@@ -1,0 +1,43 @@
+﻿{
+    "email":  "amberone.prod.1785332462@example.com",
+    "deployUrl":  "https://41d2487d.amberone.pages.dev",
+    "productionAlias":  "https://amberone.pages.dev",
+    "results":  [
+                    {
+                        "name":  "home",
+                        "ok":  true,
+                        "status":  200,
+                        "body":  "\u003c!DOCTYPE html\u003e\r\n\u003chtml lang=\"en\"\u003e\r\n\u003chead\u003e\r\n  \u003cmeta charset=\"UTF-8\" /\u003e\r\n  \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /\u003e\r\n  \u003ctitle\u003eAmberOne · One Assistant. One Place. One Life.\u003c/title\u003e\r\n  \u003cmeta name=\"description\" content=\"AmberOne is an AI operating system for personal life, family, work, and business — natural conversation and trusted automation.\" /\u003e\r\n  \u003clink rel=\"preconnect\" href=\"https://fonts.googleapis.com\" /\u003e\r\n  \u003clink rel=\"preconnect\" href=\"https://fonts.gstatic.com",
+                        "setCookie":  null
+                    },
+                    {
+                        "name":  "signup",
+                        "ok":  false,
+                        "status":  500,
+                        "body":  "",
+                        "error":  "The remote server returned an error: (500) Internal Server Error."
+                    },
+                    {
+                        "name":  "me",
+                        "ok":  false,
+                        "status":  401,
+                        "body":  "",
+                        "error":  "The remote server returned an error: (401) Unauthorized."
+                    },
+                    {
+                        "name":  "login",
+                        "ok":  false,
+                        "status":  401,
+                        "body":  "",
+                        "error":  "The remote server returned an error: (401) Unauthorized."
+                    },
+                    {
+                        "name":  "talk",
+                        "ok":  true,
+                        "status":  200,
+                        "body":  "{\"reply\":\"Hello! How can I assist you today?\",\"source\":\"openai\"}",
+                        "setCookie":  null
+                    }
+                ],
+    "at":  "2026-07-29T13:41:06.0285527Z"
+}

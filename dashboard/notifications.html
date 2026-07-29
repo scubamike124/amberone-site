@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Notifications · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/">Home</a>
+      <a href="/dashboard/calendar">Calendar</a>
+      <a href="/dashboard/reminders">Reminders</a>
+      <a href="/dashboard/memories">Memories</a>
+      <a href="/dashboard/notes">Notes</a>
+      <a href="/dashboard/connections">Connections</a>
+      <a href="/dashboard/billing">Billing</a>
+      <a href="/dashboard/settings">Settings</a>
+      <a class="nav-notif" href="/dashboard/notifications">Notifications<span class="badge" data-notif-badge hidden>0</span></a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside data-dash-nav></aside>
+      <section>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem">
+          <h1>Notifications</h1>
+          <button class="btn btn-ghost btn-sm" id="read-all">Mark all read</button>
+        </div>
+        <p class="lede">Reminders and updates from Amber land here.</p>
+        <div id="banner" class="banner"></div>
+        <div class="panel">
+          <div id="notif-list"><p class="empty-state">Loading…</p></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      const user = await AmberOne.requireAuth();
+      if (!user) return;
+      const banner = document.getElementById("banner");
+
+      async function load() {
+        const { res, data } = await AmberOne.api("/api/notifications");
+        if (!res.ok) {
+          document.getElementById("notif-list").innerHTML = `<p class="empty-state">${data.error || "Could not load notifications."}</p>`;
+          return;
+        }
+        const items = data.notifications || [];
+        document.getElementById("notif-list").innerHTML = items.length
+          ? `<ul class="list">${items
+              .map(
+                (n) => `<li class="list-item ${n.read_at ? "is-read" : "is-unread"}">
+                  <div class="meta-col">
+                    <strong>${n.title}</strong>
+                    <span class="sub">${n.body || ""}</span>
+                    <span class="sub">${new Date(n.created_at).toLocaleString()}</span>
+                  </div>
+                  ${n.read_at ? "" : `<div class="row-actions"><button class="btn btn-ghost btn-sm" data-read="${n.id}">Mark read</button></div>`}
+                </li>`,
+              )
+              .join("")}</ul>`
+          : `<p class="empty-state">No notifications yet.</p>`;
+
+        document.querySelectorAll("[data-read]").forEach((btn) => {
+          btn.onclick = async () => {
+            btn.disabled = true;
+            await AmberOne.api("/api/notifications", { method: "POST", body: JSON.stringify({ action: "read", id: btn.dataset.read }) });
+            AmberOne.refreshNotifBadge();
+            load();
+          };
+        });
+      }
+
+      document.getElementById("read-all").onclick = async () => {
+        await AmberOne.api("/api/notifications", { method: "POST", body: JSON.stringify({ action: "read_all" }) });
+        AmberOne.showBanner(banner, "All notifications marked read.", "ok");
+        AmberOne.refreshNotifBadge();
+        load();
+      };
+
+      load();
+    })();
+  </script>
+</body>
+</html>

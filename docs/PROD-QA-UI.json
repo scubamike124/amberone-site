@@ -1,0 +1,52 @@
+{
+  "at": "2026-07-29T13:53:59.128Z",
+  "checks": [
+    {
+      "name": "dashboard_requires_auth",
+      "ok": true,
+      "detail": "ended at https://amberone.pages.dev/login?next=%2Fdashboard%2F"
+    },
+    {
+      "name": "pricing_has_ctas",
+      "ok": true,
+      "detail": "btnCount=10"
+    },
+    {
+      "name": "home_cta_to_signup",
+      "ok": true,
+      "detail": "https://amberone.pages.dev/signup"
+    },
+    {
+      "name": "talk_panel_opens",
+      "ok": true,
+      "detail": "open=1"
+    },
+    {
+      "name": "talk_panel_closes",
+      "ok": true,
+      "detail": "open=0"
+    },
+    {
+      "name": "signup_reaches_dashboard_or_pricing",
+      "ok": true,
+      "detail": "https://amberone.pages.dev/dashboard/"
+    },
+    {
+      "name": "logout_returns_home",
+      "ok": true,
+      "detail": "https://amberone.pages.dev/"
+    },
+    {
+      "name": "mobile_nav_toggle",
+      "ok": true,
+      "detail": "open=1"
+    },
+    {
+      "name": "mobile_nav_faq",
+      "ok": true,
+      "detail": "https://amberone.pages.dev/faq"
+    }
+  ],
+  "issues": [],
+  "consoleErrors": []
+}

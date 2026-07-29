@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Family Members · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/">Home</a>
+      <a href="/dashboard/family/">Family</a>
+      <a href="/dashboard/family/members.html">Members</a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside data-dash-nav data-active="Family"></aside>
+      <div class="dash-main">
+        <header class="dash-header">
+          <h1>Family Members</h1>
+          <p class="lede">Invite by email and assign roles.</p>
+        </header>
+        <article class="ao-card">
+          <div class="ao-card-head">
+            <div class="ao-card-title"><span class="ao-icon">◎</span><div><h2>Members</h2><p class="ao-card-meta">Active &amp; pending</p></div></div>
+          </div>
+          <div id="members"></div>
+        </article>
+        <article class="ao-card">
+          <div class="ao-card-head">
+            <div class="ao-card-title"><span class="ao-icon is-warn">→</span><div><h2>Invite a member</h2></div></div>
+          </div>
+          <form id="invite-form" style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <input class="field" name="email" type="email" placeholder="Email address" required style="margin:0;flex:1;min-width:180px" />
+            <select class="field" name="role" style="margin:0;width:auto">
+              <option value="member">Member</option>
+              <option value="admin">Admin</option>
+            </select>
+            <button class="btn btn-primary" type="submit">Invite</button>
+          </form>
+        </article>
+      </div>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      await AmberOne.requireAuth();
+      let teamId = null;
+      async function load() {
+        const teams = await (await fetch("/api/teams", { credentials: "include" })).json();
+        if (!teams?.length) {
+          document.getElementById("members").innerHTML = `<div class="empty-state"><strong>No team yet.</strong><div class="empty-hint"><a href="/dashboard/family/">Create one</a></div></div>`;
+          return;
+        }
+        teamId = teams[0].id;
+        const members = await (await fetch(`/api/teams?action=members&team_id=${teamId}`, { credentials: "include" })).json();
+        document.getElementById("members").innerHTML = (members || []).length
+          ? `<ul class="list">${members.map((m) => `<li class="list-item"><div class="meta-col"><strong>${m.invited_email || m.user_id}</strong><span class="sub">${m.role}</span></div><span class="ao-status ${m.status === "active" ? "is-ok" : "is-warn"}">${m.status}</span></li>`).join("")}</ul>`
+          : `<div class="empty-state"><strong>No data yet.</strong></div>`;
+      }
+      document.getElementById("invite-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        await fetch("/api/teams", { method: "PATCH", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "invite", team_id: teamId, email: fd.get("email"), role: fd.get("role") }) });
+        e.target.reset();
+        load();
+      };
+      load();
+    })();
+  </script>
+</body>
+</html>

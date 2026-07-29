@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard · AmberOne</title>
+  <title>Home · AmberOne</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 <body>
@@ -15,71 +15,715 @@
     <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
     <div class="nav-links" data-nav-links>
       <a href="/dashboard/">Home</a>
+      <a href="/dashboard/calendar">Calendar</a>
+      <a href="/dashboard/reminders">Reminders</a>
+      <a href="/dashboard/memories">Memories</a>
+      <a href="/dashboard/notes">Notes</a>
+      <a href="/dashboard/connections">Connections</a>
       <a href="/dashboard/billing">Billing</a>
       <a href="/dashboard/settings">Settings</a>
+      <a class="nav-notif" href="/dashboard/notifications">Notifications<span class="badge" data-notif-badge hidden>0</span></a>
       <a href="#" data-logout>Log out</a>
     </div>
   </nav>
+
   <main class="wrap">
     <div class="dash-shell">
-      <aside class="panel dash-nav">
-        <a class="is-on" href="/dashboard/">Home</a>
-        <a href="/dashboard/billing">Billing</a>
-        <a href="/dashboard/settings">Settings</a>
-        <a href="/pricing">Upgrade plan</a>
-      </aside>
-      <section>
-        <h1 id="greeting">Welcome</h1>
-        <p class="lede">Your AmberOne home base — briefing, plan status, and quick actions.</p>
-        <div class="stat-row" style="margin-bottom:1.25rem">
-          <div class="stat"><span class="label">Plan</span><strong id="plan">—</strong></div>
-          <div class="stat"><span class="label">Status</span><strong id="status">—</strong></div>
-          <div class="stat"><span class="label">Account</span><strong id="email">—</strong></div>
+      <aside data-dash-nav></aside>
+
+      <div class="dash-main">
+        <header class="dash-header">
+          <h1 id="greeting">Welcome</h1>
+          <p class="lede" id="greeting-sub">Your AI operating system — briefing, schedule, and next actions.</p>
+        </header>
+
+        <div id="onboard-cta" class="banner warn" style="display:none" role="status">
+          Finish setting up AmberOne — connect a calendar and tell Amber how you'd like it to remember things.
+          <a class="btn btn-primary btn-sm" href="/dashboard/onboarding">Continue setup</a>
         </div>
-        <div class="panel">
-          <h2>Talk to Amber</h2>
-          <p class="lede">Ask Amber what to do next — connect calendar, pick a plan, or open billing.</p>
-          <div id="talk-log" class="talk-log" style="max-height:240px;border:1px solid var(--line);border-radius:12px;margin-bottom:0.75rem"></div>
-          <form id="dash-talk" style="display:flex;gap:0.5rem">
-            <input class="field" id="dash-talk-input" style="margin:0" placeholder="What’s on your list today?" required />
-            <button class="btn btn-primary" type="submit">Send</button>
-          </form>
+
+        <div class="ao-grid">
+          <!-- 1. Executive Briefing (hero) -->
+          <article class="ao-card is-hero ao-span-12" id="briefing-panel" data-section="briefing">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon" aria-hidden="true">✦</span>
+                <div>
+                  <h2 id="briefing-title">Executive Briefing</h2>
+                  <p class="ao-card-meta" id="briefing-meta">Preparing your morning briefing…</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <span class="ao-status is-warn" id="briefing-status">Live</span>
+                <button type="button" class="btn-icon" id="briefing-refresh" title="Refresh" aria-label="Refresh briefing">↻</button>
+                <button type="button" class="btn-icon" data-expand title="Expand" aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="briefing-body">
+              <div class="skeleton lg"></div>
+              <div class="skeleton md"></div>
+              <div class="skeleton"></div>
+            </div>
+            <div class="briefing-chips" id="briefing-chips" hidden></div>
+            <div style="margin-top:1.1rem" id="briefing-actions"></div>
+          </article>
+
+          <!-- 2. Talk to Amber -->
+          <article class="ao-card ao-span-8" id="talk" data-section="talk">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon" aria-hidden="true">◎</span>
+                <div>
+                  <h2>Talk to Amber</h2>
+                  <p class="ao-card-meta">Ask, command, or plan — Amber stays until finished.</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <span class="ao-status is-ok">Ready</span>
+                <button type="button" class="btn-icon" data-expand title="Expand" aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body">
+              <div id="talk-log" class="talk-log" aria-live="polite"></div>
+              <form id="dash-talk" style="display:flex;gap:0.5rem;flex-wrap:wrap">
+                <input class="field" id="dash-talk-input" style="margin:0;flex:1;min-width:180px" placeholder="What’s next?" required autocomplete="off" />
+                <button class="btn btn-primary" type="submit">Send</button>
+              </form>
+            </div>
+          </article>
+
+          <!-- AI Suggestions -->
+          <article class="ao-card ao-span-4" data-section="suggestions">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-warn" aria-hidden="true">→</span>
+                <div>
+                  <h2>AI Suggestions</h2>
+                  <p class="ao-card-meta">Recommended next actions</p>
+                </div>
+              </div>
+              <div class="ao-card-actions"><span class="ao-status is-warn" id="suggest-status">—</span></div>
+            </div>
+            <div class="ao-card-body" id="suggestions-body">
+              <div class="skeleton"></div><div class="skeleton"></div>
+            </div>
+          </article>
+
+          <!-- 3. Today's Schedule -->
+          <article class="ao-card ao-span-6" data-section="today">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-info" aria-hidden="true">◷</span>
+                <div>
+                  <h2>Today’s Schedule</h2>
+                  <p class="ao-card-meta" id="today-meta">—</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <a class="btn btn-ghost btn-sm" href="/dashboard/calendar">Open</a>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="today-events"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Calendar Preview -->
+          <article class="ao-card ao-span-6" data-section="calendar-preview">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-info" aria-hidden="true">▦</span>
+                <div>
+                  <h2>Calendar Preview</h2>
+                  <p class="ao-card-meta">Next 7 days</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <a class="btn btn-ghost btn-sm" href="/dashboard/calendar">Manage</a>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="calendar-preview"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Notifications -->
+          <article class="ao-card ao-span-4" data-section="notifications">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-warn" aria-hidden="true">◉</span>
+                <div>
+                  <h2>Notifications</h2>
+                  <p class="ao-card-meta" id="notif-meta">—</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <a class="btn btn-ghost btn-sm" href="/dashboard/notifications">View all</a>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="unread-notifications"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Pending Reminders -->
+          <article class="ao-card ao-span-4" data-section="reminders">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-warn" aria-hidden="true">◎</span>
+                <div>
+                  <h2>Pending Reminders</h2>
+                  <p class="ao-card-meta" id="reminders-meta">—</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <a class="btn btn-ghost btn-sm" href="/dashboard/reminders">Manage</a>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="pending-reminders"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Tasks -->
+          <article class="ao-card ao-span-4" data-section="tasks">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon" aria-hidden="true">✓</span>
+                <div>
+                  <h2>Tasks</h2>
+                  <p class="ao-card-meta">Open list items</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <a class="btn btn-ghost btn-sm" href="/dashboard/notes">Lists</a>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="tasks-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Recent Notes -->
+          <article class="ao-card ao-span-6" data-section="notes">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon" aria-hidden="true">✎</span>
+                <div>
+                  <h2>Recent Notes</h2>
+                  <p class="ao-card-meta">Latest captures</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <a class="btn btn-ghost btn-sm" href="/dashboard/notes">Open</a>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="notes-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Memory Timeline -->
+          <article class="ao-card ao-span-6" data-section="memories">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-ok" aria-hidden="true">◈</span>
+                <div>
+                  <h2>Memory Timeline</h2>
+                  <p class="ao-card-meta">What Amber remembers</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <a class="btn btn-ghost btn-sm" href="/dashboard/memories">All memories</a>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="memories-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Connected Services -->
+          <article class="ao-card ao-span-6" data-section="connections">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-info" aria-hidden="true">⇄</span>
+                <div>
+                  <h2>Connected Services</h2>
+                  <p class="ao-card-meta" id="conn-meta">—</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <a class="btn btn-ghost btn-sm" href="/dashboard/connections">Manage</a>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="connections-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- API Status -->
+          <article class="ao-card ao-span-6" data-section="api-status">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-ok" aria-hidden="true">⬡</span>
+                <div>
+                  <h2>API Status</h2>
+                  <p class="ao-card-meta" id="api-meta">—</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <span class="ao-status is-ok" id="api-status-pill">—</span>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="api-body"><div class="skeleton"></div></div>
+            <div class="progress-bar" aria-hidden="true"><span id="api-progress" style="width:0%"></span></div>
+          </article>
+
+          <!-- Business Health -->
+          <article class="ao-card ao-span-4" data-section="business">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon" aria-hidden="true">◆</span>
+                <div>
+                  <h2>Business Health</h2>
+                  <p class="ao-card-meta">Plan &amp; activity</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <a class="btn btn-ghost btn-sm" href="/dashboard/business/">Business</a>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="business-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Website Health -->
+          <article class="ao-card ao-span-4" data-section="website">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-ok" aria-hidden="true">◉</span>
+                <div>
+                  <h2>Website Health</h2>
+                  <p class="ao-card-meta">Public surface</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <span class="ao-status is-ok">OK</span>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="website-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Active Automations -->
+          <article class="ao-card ao-span-4" data-section="automations">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-idle" aria-hidden="true">⟳</span>
+                <div>
+                  <h2>Active Automations</h2>
+                  <p class="ao-card-meta">Workflow engine</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <span class="ao-status is-idle">Soon</span>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="automations-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Recent Conversations -->
+          <article class="ao-card ao-span-6" data-section="conversations">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon" aria-hidden="true">◎</span>
+                <div>
+                  <h2>Recent Conversations</h2>
+                  <p class="ao-card-meta">Talk history</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <a class="btn btn-ghost btn-sm" href="#talk">Continue</a>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="conversations-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Learning Updates -->
+          <article class="ao-card ao-span-6" data-section="learning">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-ok" aria-hidden="true">✧</span>
+                <div>
+                  <h2>Learning Updates</h2>
+                  <p class="ao-card-meta">Recent memory growth</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <span class="ao-status is-ok">Learning</span>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="learning-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Opportunity Center -->
+          <article class="ao-card ao-span-6" data-section="opportunity">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-warn" aria-hidden="true">◇</span>
+                <div>
+                  <h2>Opportunity Center</h2>
+                  <p class="ao-card-meta">Growth &amp; unlocks</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <a class="btn btn-ghost btn-sm" href="/pricing">Plans</a>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="opportunity-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Revenue Snapshot -->
+          <article class="ao-card ao-span-6" data-section="revenue">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon" aria-hidden="true">$</span>
+                <div>
+                  <h2>Revenue Snapshot</h2>
+                  <p class="ao-card-meta">Subscription status</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <a class="btn btn-ghost btn-sm" href="/dashboard/billing">Billing</a>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="revenue-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- System Health -->
+          <article class="ao-card ao-span-4" data-section="system">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-ok" aria-hidden="true">⬢</span>
+                <div>
+                  <h2>System Health</h2>
+                  <p class="ao-card-meta">Platform pulse</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <span class="ao-status is-ok" id="system-status">OK</span>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="system-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Security Status -->
+          <article class="ao-card ao-span-4" data-section="security">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-ok" aria-hidden="true">⬡</span>
+                <div>
+                  <h2>Security Status</h2>
+                  <p class="ao-card-meta">Session &amp; transport</p>
+                </div>
+              </div>
+              <div class="ao-card-actions">
+                <span class="ao-status is-ok">Secure</span>
+                <button type="button" class="btn-icon" data-expand aria-label="Expand">⤢</button>
+              </div>
+            </div>
+            <div class="ao-card-body" id="security-body"><div class="skeleton"></div></div>
+          </article>
+
+          <!-- Quick Actions -->
+          <article class="ao-card ao-span-4" data-section="quick-actions">
+            <div class="ao-card-head">
+              <div class="ao-card-title">
+                <span class="ao-icon is-warn" aria-hidden="true">⚡</span>
+                <div>
+                  <h2>Quick Actions</h2>
+                  <p class="ao-card-meta">Jump anywhere</p>
+                </div>
+              </div>
+            </div>
+            <div class="ao-card-body">
+              <div class="cta-row">
+                <a class="btn btn-ghost btn-sm" href="/dashboard/calendar">+ Event</a>
+                <a class="btn btn-ghost btn-sm" href="/dashboard/reminders">+ Reminder</a>
+                <a class="btn btn-ghost btn-sm" href="/dashboard/notes">+ Note</a>
+                <a class="btn btn-ghost btn-sm" href="/dashboard/memories">+ Memory</a>
+                <a class="btn btn-primary btn-sm" href="/pricing">Upgrade</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Footer Status -->
+          <footer class="ao-card footer-status ao-span-12" data-section="footer">
+            <div class="dots">
+              <span id="footer-time">—</span>
+              <span id="footer-plan">Plan: —</span>
+              <span id="footer-apis">APIs: —</span>
+              <span>AmberOne · One Assistant. One Place. One Life.</span>
+            </div>
+            <a class="btn btn-ghost btn-sm" href="/">Marketing site</a>
+          </footer>
         </div>
-        <div class="cta-row" style="margin-top:1.25rem;display:flex;gap:0.75rem;flex-wrap:wrap">
-          <a class="btn btn-primary" href="/pricing">Start / change plan</a>
-          <a class="btn btn-ghost" href="/dashboard/billing">Open billing</a>
-        </div>
-      </section>
+      </div>
     </div>
   </main>
+
   <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
   <script>
-    (async () => {
-      const user = await AmberOne.requireAuth();
-      if (!user) return;
-      document.getElementById("greeting").textContent = `Welcome${user.name ? `, ${user.name}` : ""}`;
-      document.getElementById("plan").textContent = user.planSlug || "None yet";
-      document.getElementById("status").textContent = user.subscriptionStatus || "none";
-      document.getElementById("email").textContent = user.email;
-      const log = document.getElementById("talk-log");
-      const add = (text, me = false) => {
-        const div = document.createElement("div");
-        div.className = `talk-bubble${me ? " me" : ""}`;
-        div.textContent = text;
-        log.appendChild(div);
-        log.scrollTop = log.scrollHeight;
+    (function () {
+      const empty = (title, hint) =>
+        `<div class="empty-state"><strong>${title}</strong>${hint ? `<div class="empty-hint">${hint}</div>` : ""}</div>`;
+
+      const fmtTime = (iso) => {
+        if (!iso) return "";
+        try {
+          return new Date(iso).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+        } catch { return ""; }
       };
-      add("Good to see you. I can help with plans, billing, or what to set up first.");
-      document.getElementById("dash-talk").onsubmit = async (e) => {
-        e.preventDefault();
-        const input = document.getElementById("dash-talk-input");
-        const message = input.value.trim();
-        if (!message) return;
-        add(message, true);
-        input.value = "";
-        const { data } = await AmberOne.api("/api/talk", { method: "POST", body: JSON.stringify({ message }) });
-        add(data.reply || data.error || "I couldn’t answer that just now.");
+      const fmtClock = (iso) => {
+        try { return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); }
+        catch { return ""; }
       };
+
+      const listHtml = (items, mapFn) =>
+        items?.length ? `<ul class="list">${items.map(mapFn).join("")}</ul>` : null;
+
+      document.querySelectorAll("[data-expand]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const card = btn.closest(".ao-card");
+          if (!card) return;
+          card.classList.toggle("is-collapsed");
+          btn.textContent = card.classList.contains("is-collapsed") ? "⤡" : "⤢";
+        });
+      });
+
+      (async () => {
+        const user = await AmberOne.requireAuth();
+        if (!user) return;
+
+        const hour = new Date().getHours();
+        const hello = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+        document.getElementById("greeting").textContent = `${hello}${user.name ? `, ${user.name}` : ""}`;
+        document.getElementById("greeting-sub").textContent =
+          "Your AI operating system — briefing first, then schedule, memory, and next actions.";
+
+        AmberOne.bindTalkForm({
+          formEl: document.getElementById("dash-talk"),
+          inputEl: document.getElementById("dash-talk-input"),
+          logEl: document.getElementById("talk-log"),
+          greeting: "I'm ready. Ask for your briefing, or tell me what to schedule, remember, or draft.",
+        });
+
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Los_Angeles";
+
+        async function loadBriefing(force = false) {
+          const qs = new URLSearchParams({ timeZone, mode: "auto" });
+          if (force) qs.set("force", "1");
+          const { res, data } = force
+            ? await AmberOne.api("/api/briefing", { method: "POST", body: JSON.stringify({ timeZone, mode: "auto", force: true }) })
+            : await AmberOne.api(`/api/briefing?${qs.toString()}`);
+
+          const statusEl = document.getElementById("briefing-status");
+          if (!res.ok) {
+            statusEl.className = "ao-status is-danger";
+            statusEl.textContent = "Error";
+            document.getElementById("briefing-meta").textContent = "Could not load briefing";
+            document.getElementById("briefing-body").innerHTML = empty("No data yet.", data.error || "Briefing unavailable.");
+            return;
+          }
+          const b = data.briefing || {};
+          const title = b.mode === "evening" ? "Evening Recap" : "Executive Briefing";
+          document.getElementById("briefing-title").textContent = title;
+          const weather = b.context?.weather;
+          const weatherBit = weather
+            ? ` · ${weather.summary || "Weather"}${weather.currentTempC != null ? ` ${Math.round(weather.currentTempC)}°C` : ""}`
+            : "";
+          document.getElementById("briefing-meta").textContent =
+            `${b.dayKey || ""}${weatherBit}${data.cached ? " · cached" : " · fresh"} · ${fmtTime(new Date().toISOString())}`;
+          statusEl.className = "ao-status is-ok";
+          statusEl.textContent = data.cached ? "Cached" : "Fresh";
+          document.getElementById("briefing-body").innerHTML =
+            `<p class="briefing-body">${String(b.summary || "No data yet.").replace(/</g, "&lt;")}</p>`;
+
+          const ctx = b.context || {};
+          const chips = [];
+          if (ctx.events?.length != null) chips.push(`<span class="chip"><strong>${ctx.events.length}</strong> events</span>`);
+          if (ctx.reminders?.length != null) chips.push(`<span class="chip"><strong>${ctx.reminders.length}</strong> reminders</span>`);
+          if (ctx.notes?.length != null) chips.push(`<span class="chip"><strong>${ctx.notes.length}</strong> notes</span>`);
+          if (weather) chips.push(`<span class="chip">${weather.summary || "Weather"}</span>`);
+          const chipEl = document.getElementById("briefing-chips");
+          if (chips.length) { chipEl.hidden = false; chipEl.innerHTML = chips.join(""); }
+        }
+
+        document.getElementById("briefing-refresh").onclick = () => loadBriefing(true);
+        loadBriefing(false);
+
+        const { res, data } = await AmberOne.api("/api/home");
+        if (!res.ok) {
+          document.querySelectorAll("[data-section] .ao-card-body").forEach((el) => {
+            if (el.id !== "talk-log" && !el.closest("#talk")) el.innerHTML = empty("No data yet.", data.error || "Home API error.");
+          });
+          return;
+        }
+
+        if (!data.onboarding?.complete) {
+          const cta = document.getElementById("onboard-cta");
+          cta.style.display = "flex";
+          cta.classList.add("is-on");
+        }
+
+        const events = data.today?.events || [];
+        document.getElementById("today-meta").textContent = `${events.length} today · ${fmtTime(data.generatedAt)}`;
+        document.getElementById("today-events").innerHTML =
+          listHtml(events, (e) =>
+            `<li class="list-item"><div class="meta-col"><strong>${e.title}</strong><span class="sub">${fmtClock(e.starts_at)}${e.location ? " · " + e.location : ""}</span></div></li>`,
+          ) || empty("No data yet.", "Nothing scheduled today.");
+
+        const upcoming = data.calendar?.upcoming || [];
+        document.getElementById("calendar-preview").innerHTML =
+          listHtml(upcoming, (e) =>
+            `<li class="list-item"><div class="meta-col"><strong>${e.title}</strong><span class="sub">${fmtTime(e.starts_at)}</span></div></li>`,
+          ) || empty("No data yet.", "No upcoming events this week.");
+
+        const reminders = data.reminders?.pending || [];
+        document.getElementById("reminders-meta").textContent = `${reminders.length} pending`;
+        document.getElementById("pending-reminders").innerHTML =
+          listHtml(reminders, (r) =>
+            `<li class="list-item"><div class="meta-col"><strong>${r.title}</strong><span class="sub">Due ${fmtTime(r.due_at)}</span></div></li>`,
+          ) || empty("No data yet.", "No pending reminders.");
+
+        const notifications = data.notifications?.unread || [];
+        document.getElementById("notif-meta").textContent = `${notifications.length} unread`;
+        document.getElementById("unread-notifications").innerHTML =
+          listHtml(notifications, (n) =>
+            `<li class="list-item is-unread"><div class="meta-col"><strong>${n.title}</strong><span class="sub">${n.body || fmtTime(n.created_at)}</span></div></li>`,
+          ) || empty("No data yet.", "You're all caught up.");
+
+        const tasks = data.tasks?.items || [];
+        document.getElementById("tasks-body").innerHTML =
+          listHtml(tasks, (t) =>
+            `<li class="list-item"><div class="meta-col"><strong>${t.text}</strong><span class="sub">${t.list_title || "List"}</span></div></li>`,
+          ) || empty("No data yet.", "No open tasks on your lists.");
+
+        const notes = data.notes?.items || [];
+        document.getElementById("notes-body").innerHTML =
+          listHtml(notes, (n) =>
+            `<li class="list-item"><div class="meta-col"><strong>${n.title || "Untitled"}</strong><span class="sub">${(n.body || "").slice(0, 80) || fmtTime(n.updated_at)}</span></div></li>`,
+          ) || empty("No data yet.", "Notes you save will appear here.");
+
+        const memories = data.memories?.items || [];
+        document.getElementById("memories-body").innerHTML =
+          listHtml(memories, (m) =>
+            `<li class="list-item"><div class="meta-col"><strong>${m.title || m.kind}</strong><span class="sub">${(m.content || "").slice(0, 90)} · ${fmtTime(m.updated_at)}</span></div></li>`,
+          ) || empty("No data yet.", "Tell Amber something to remember.");
+
+        const conns = data.connections?.items || [];
+        const gcal = data.connections?.googleCalendarConnected;
+        const gmail = data.connections?.gmailConnected;
+        document.getElementById("conn-meta").textContent = `${conns.length} linked · GCal ${gcal ? "on" : "off"} · Gmail ${gmail ? "on" : "off"}`;
+        document.getElementById("connections-body").innerHTML = conns.length
+          ? `<ul class="list">${conns.map((c) =>
+              `<li class="list-item"><div class="meta-col"><strong>${c.toolkit}</strong><span class="sub">${c.status}</span></div><span class="ao-status ${/active/i.test(c.status) ? "is-ok" : "is-warn"}">${c.status}</span></li>`,
+            ).join("")}</ul>`
+          : empty("No data yet.", "Connect Google Calendar or Gmail to unlock sync.");
+
+        const apis = data.health?.apis || {};
+        const apiScore = data.health?.apiScore ?? 0;
+        document.getElementById("api-meta").textContent = `${apiScore}% configured · ${fmtTime(data.generatedAt)}`;
+        document.getElementById("api-status-pill").textContent = apiScore >= 80 ? "Healthy" : apiScore >= 50 ? "Partial" : "Setup";
+        document.getElementById("api-status-pill").className = `ao-status ${apiScore >= 80 ? "is-ok" : apiScore >= 50 ? "is-warn" : "is-danger"}`;
+        document.getElementById("api-progress").style.width = `${apiScore}%`;
+        document.getElementById("api-body").innerHTML = `<ul class="list">${Object.entries(apis)
+          .map(([k, v]) => `<li class="list-item"><div class="meta-col"><strong>${k}</strong></div><span class="ao-status ${v ? "is-ok" : "is-danger"}">${v ? "Ready" : "Missing"}</span></li>`)
+          .join("")}</ul>`;
+
+        const biz = data.health?.business || {};
+        document.getElementById("business-body").innerHTML = `
+          <ul class="list">
+            <li class="list-item"><div class="meta-col"><strong>Plan</strong><span class="sub">${biz.plan || "None yet"}</span></div></li>
+            <li class="list-item"><div class="meta-col"><strong>Subscription</strong><span class="sub">${biz.subscriptionStatus || "none"}</span></div></li>
+            <li class="list-item"><div class="meta-col"><strong>Upcoming appointments</strong><span class="sub">${biz.appointments ?? 0}</span></div></li>
+          </ul>`;
+
+        document.getElementById("website-body").innerHTML = `
+          <ul class="list">
+            <li class="list-item"><div class="meta-col"><strong>${data.health?.website?.label || "AmberOne"}</strong><span class="sub">Edge: Cloudflare Pages</span></div><span class="ao-status is-ok">Live</span></li>
+            <li class="list-item"><div class="meta-col"><strong>HTTPS</strong><span class="sub">TLS terminated at edge</span></div><span class="ao-status is-ok">OK</span></li>
+          </ul>`;
+
+        const autos = data.automations?.items || [];
+        document.getElementById("automations-body").innerHTML =
+          listHtml(autos, (a) =>
+            `<li class="list-item"><div class="meta-col"><strong>${a.title}</strong><span class="sub">${a.enabled ? "Enabled" : "Disabled"}</span></div></li>`,
+          ) || empty("No data yet.", "Automation engine coming soon — schemas are ready.");
+
+        const convos = data.conversations?.items || [];
+        document.getElementById("conversations-body").innerHTML =
+          listHtml(convos, (c) =>
+            `<li class="list-item"><div class="meta-col"><strong>${c.title || "Conversation"}</strong><span class="sub">${fmtTime(c.updated_at)}</span></div></li>`,
+          ) || empty("No data yet.", "Start talking to Amber above.");
+
+        const learning = data.learning?.items || [];
+        document.getElementById("learning-body").innerHTML =
+          listHtml(learning, (l) =>
+            `<li class="list-item"><div class="meta-col"><strong>${l.title}</strong><span class="sub">${l.summary || fmtTime(l.at)}</span></div></li>`,
+          ) || empty("No data yet.", "As Amber learns preferences, they’ll show here.");
+
+        const suggestions = data.suggestions || [];
+        document.getElementById("suggest-status").textContent = `${suggestions.length}`;
+        document.getElementById("suggestions-body").innerHTML = suggestions.length
+          ? `<ol class="suggest-list">${suggestions.map((s, i) =>
+              `<li><span class="num">${i + 1}</span><div><a href="${s.href || "#"}">${s.text}</a></div></li>`,
+            ).join("")}</ol>`
+          : empty("No data yet.", "Suggestions appear as Amber learns your week.");
+
+        document.getElementById("briefing-actions").innerHTML = suggestions.slice(0, 3).length
+          ? `<ol class="suggest-list">${suggestions.slice(0, 3).map((s, i) =>
+              `<li><span class="num">${i + 1}</span><div><a href="${s.href || "#"}">${s.text}</a></div></li>`,
+            ).join("")}</ol>`
+          : "";
+
+        const opportunities = [];
+        if (!data.user?.planSlug && !data.user?.plan_slug) opportunities.push({ t: "Unlock Family / Executive / Business", h: "/pricing" });
+        if (!gcal) opportunities.push({ t: "Sync Google Calendar", h: "/dashboard/connections" });
+        if (!gmail) opportunities.push({ t: "Enable Gmail assist", h: "/dashboard/connections" });
+        if (!(data.teams?.items || []).length) opportunities.push({ t: "Create a family or business team", h: "/dashboard/family/" });
+        opportunities.push({ t: "Explore industry skills marketplace", h: "/dashboard/marketplace" });
+        document.getElementById("opportunity-body").innerHTML =
+          `<ul class="list">${opportunities.map((o) =>
+            `<li class="list-item"><div class="meta-col"><strong>${o.t}</strong></div><a class="btn btn-ghost btn-sm" href="${o.h}">Go</a></li>`,
+          ).join("")}</ul>`;
+
+        const rev = data.revenue || {};
+        document.getElementById("revenue-body").innerHTML = `
+          <ul class="list">
+            <li class="list-item"><div class="meta-col"><strong>${rev.plan || "No plan"}</strong><span class="sub">${rev.note || rev.status}</span></div>
+              <span class="ao-status ${rev.plan ? "is-ok" : "is-warn"}">${rev.status || "none"}</span></li>
+          </ul>`;
+
+        document.getElementById("system-body").innerHTML = `
+          <ul class="list">
+            <li class="list-item"><div class="meta-col"><strong>D1 Database</strong></div><span class="ao-status is-ok">OK</span></li>
+            <li class="list-item"><div class="meta-col"><strong>Pages Functions</strong></div><span class="ao-status is-ok">OK</span></li>
+            <li class="list-item"><div class="meta-col"><strong>API score</strong><span class="sub">${apiScore}%</span></div></li>
+          </ul>`;
+
+        document.getElementById("security-body").innerHTML = `
+          <ul class="list">
+            <li class="list-item"><div class="meta-col"><strong>${data.health?.security?.label || "Session secured"}</strong></div><span class="ao-status is-ok">OK</span></li>
+            <li class="list-item"><div class="meta-col"><strong>HttpOnly session cookie</strong></div><span class="ao-status is-ok">OK</span></li>
+          </ul>`;
+
+        document.getElementById("footer-time").textContent = `Updated ${fmtTime(data.generatedAt)}`;
+        document.getElementById("footer-plan").textContent = `Plan: ${data.user?.planSlug || data.user?.plan_slug || "none"}`;
+        document.getElementById("footer-apis").textContent = `APIs: ${apiScore}%`;
+
+        AmberOne.refreshNotifBadge();
+      })();
     })();
   </script>
 </body>

@@ -1,0 +1,7 @@
+{
+  "list": {
+    "status": 1,
+    "out": "📎 It looks like you are authenticating Wrangler via a custom API token set in an environment variable.\nPlease ensure it has the correct permissions for this operation.\n\nGetting User settings...\nℹ️  The API Token is read from the CLOUDFLARE_API_TOKEN environment variable.\n👋 You are logged in with an User API Token. Unable to retrieve email for this user. Are you missing the `User->User Details->Read` permission?\n┌──────────────────────────────────┬──────────────────────────────────┐\n│ Account Name                     │ Account ID                       │\n├──────────────────────────────────┼──────────────────────────────────┤\n│ Scubamike124@gmail.com's Account │ 735d0e617e9ba6a16d9b2a1ec05b4dd3 │\n└──────────────────────────────────┴──────────────────────────────────┘\n🔓 To see token permissions visit https://dash.cloudflare.com/profile/api-tokens.\n🎢 Unable to get membership roles. Make sure you have permissions to read the account. Are you missing the `User->Memberships->Read` permission?\n\u001b[31mX \u001b[41;31m[\u001b[41;97mERROR\u001b[41;31m]\u001b[0m \u001b[1mA request to the Cloudflare API (/accounts/735d0e617e9ba6a16d9b2a1ec05b4dd3/d1/database) failed.\u001b[0m\n\n  Authentication error [code: 10000]\n\n\n🪵  Logs were written to \"C:\\Users\\michael\\AppData\\Roaming\\xdg.config\\.wrangler\\logs\\wrangler-2026-07-29_13-34-13_585.log\""
+  },
+  "uuid": null
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Appointments · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/business/">Business</a>
+      <a href="/dashboard/business/appointments.html">Appointments</a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside data-dash-nav data-active="Business"></aside>
+      <div class="dash-main">
+        <header class="dash-header"><h1>Appointments</h1><p class="lede">Create and manage bookings.</p></header>
+        <article class="ao-card">
+          <form id="add-form" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+            <input class="field" name="title" placeholder="Title" required style="margin:0;flex:1;min-width:140px" />
+            <input class="field" name="starts_at" type="datetime-local" required style="margin:0" />
+            <input class="field" name="ends_at" type="datetime-local" style="margin:0" />
+            <input class="field" name="notes" placeholder="Notes" style="margin:0;flex:1;min-width:120px" />
+            <button class="btn btn-primary" type="submit">Create</button>
+          </form>
+          <div id="list"></div>
+        </article>
+      </div>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      await AmberOne.requireAuth();
+      async function load() {
+        const { data } = await AmberOne.api("/api/appointments");
+        const appts = Array.isArray(data) ? data : [];
+        document.getElementById("list").innerHTML = appts.length
+          ? `<ul class="list">${appts.map((a) => `<li class="list-item"><div class="meta-col"><strong>${a.title}</strong><span class="sub">${a.starts_at || ""} · ${a.status}</span></div><button class="btn btn-ghost btn-sm" data-del="${a.id}">Remove</button></li>`).join("")}</ul>`
+          : `<div class="empty-state"><strong>No data yet.</strong><div class="empty-hint">No appointments.</div></div>`;
+        document.querySelectorAll("[data-del]").forEach((b) => {
+          b.onclick = async () => { await AmberOne.api(`/api/appointments?id=${b.dataset.del}`, { method: "DELETE" }); load(); };
+        });
+      }
+      document.getElementById("add-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const body = Object.fromEntries(new FormData(e.target));
+        if (body.starts_at) body.starts_at = new Date(body.starts_at).toISOString();
+        if (body.ends_at) body.ends_at = new Date(body.ends_at).toISOString();
+        await AmberOne.api("/api/appointments", { method: "POST", body: JSON.stringify(body) });
+        e.target.reset(); load();
+      };
+      load();
+    })();
+  </script>
+</body>
+</html>

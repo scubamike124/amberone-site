@@ -1,0 +1,125 @@
+{
+  "at": "2026-07-29T16:42:41.210Z",
+  "steps": [
+    {
+      "step": "endpoint_exists",
+      "ok": true
+    },
+    {
+      "step": "signup",
+      "ok": true,
+      "userId": "user_ed0af0eaca754c7b862d1c101b441d8d"
+    },
+    {
+      "step": "customer",
+      "ok": true,
+      "customerId": "cus_UyXeDJn5aOFnQF"
+    },
+    {
+      "step": "subscription_trial",
+      "ok": true,
+      "subscriptionId": "sub_1TyaZ5PuIFB5w4OsDMJcdFEA",
+      "status": "trialing",
+      "error": null
+    },
+    {
+      "step": "webhook_checkout",
+      "ok": true,
+      "body": {
+        "received": true,
+        "type": "checkout.session.completed",
+        "eventId": "evt_verify_co_1785343361638",
+        "note": "verified"
+      },
+      "status": 200
+    },
+    {
+      "step": "webhook_duplicate",
+      "ok": true,
+      "body": {
+        "received": true,
+        "duplicate": true,
+        "type": "checkout.session.completed",
+        "eventId": "evt_verify_co_1785343361638"
+      }
+    },
+    {
+      "step": "webhook_sub_updated",
+      "ok": true,
+      "body": {
+        "received": true,
+        "type": "customer.subscription.updated",
+        "eventId": "evt_verify_sub_1785343361638",
+        "note": "verified"
+      }
+    },
+    {
+      "step": "webhook_invoice_paid",
+      "ok": true,
+      "body": {
+        "received": true,
+        "type": "invoice.paid",
+        "eventId": "evt_verify_paid_1785343361638",
+        "note": "verified"
+      }
+    },
+    {
+      "step": "d1_user_active",
+      "ok": true,
+      "user": {
+        "id": "user_ed0af0eaca754c7b862d1c101b441d8d",
+        "email": "billing.verify.1785343361638@example.com",
+        "name": "Billing Verify",
+        "planSlug": "personal",
+        "subscriptionStatus": "active",
+        "stripeCustomerId": "cus_UyXeDJn5aOFnQF"
+      }
+    },
+    {
+      "step": "checkout_live",
+      "ok": true,
+      "sessionId": "cs_live_b1e5BDhIyvW0KkQ40It6qOYwndueVxep44M6ViTlwhgZpy2z45hOPk3jFx",
+      "urlPrefix": "https://checkout.stripe.com/c/pay/cs_live_b1e5BD"
+    },
+    {
+      "step": "portal",
+      "ok": true,
+      "urlPrefix": "https://billing.stripe.com/p/session/live_YWNjdF",
+      "error": null
+    },
+    {
+      "step": "cancel_via_webhook",
+      "ok": true,
+      "user": {
+        "id": "user_ed0af0eaca754c7b862d1c101b441d8d",
+        "email": "billing.verify.1785343361638@example.com",
+        "name": "Billing Verify",
+        "planSlug": "personal",
+        "subscriptionStatus": "canceled",
+        "stripeCustomerId": "cus_UyXeDJn5aOFnQF"
+      }
+    },
+    {
+      "step": "cleanup_sub",
+      "ok": true,
+      "status": "canceled"
+    }
+  ],
+  "productionReady": false,
+  "endpoint": {
+    "id": "we_1TyYA6PuIFB5w4OsffjMshoU",
+    "url": "https://amberone.pages.dev/api/webhook",
+    "status": "enabled",
+    "enabled_events": [
+      "checkout.session.completed",
+      "customer.subscription.created",
+      "customer.subscription.updated",
+      "customer.subscription.deleted",
+      "invoice.paid",
+      "invoice.payment_failed"
+    ]
+  },
+  "pass": true,
+  "liveCardPayment": "requires_owner_approval_in_checkout_ui",
+  "declaration": "AmberOne Stripe webhook endpoint + signing secret + D1 billing updates PASS. Live card payment still requires owner in Checkout UI. Not declaring production-ready until owner confirms live payment."
+}

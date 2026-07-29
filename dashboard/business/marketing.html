@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marketing · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/business/">Business</a>
+      <a href="/dashboard/business/marketing.html">Marketing</a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside data-dash-nav data-active="Business"></aside>
+      <div class="dash-main">
+        <header class="dash-header"><h1>Marketing Assist</h1><p class="lede">Generate marketing copy with AI. Text only — no posting yet.</p></header>
+        <article class="ao-card is-hero">
+          <form id="gen-form" style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <select class="field" name="type" style="margin:0;width:auto">
+              <option value="social_post">Social Post</option>
+              <option value="promo">Promo / Sale</option>
+              <option value="announcement">Announcement</option>
+              <option value="email_campaign">Email Campaign</option>
+            </select>
+            <input class="field" name="topic" placeholder="Topic or product…" required style="margin:0;flex:1;min-width:180px" />
+            <button class="btn btn-primary" type="submit">Generate</button>
+          </form>
+          <div id="output" class="briefing-body" style="margin-top:1.1rem;min-height:100px;color:var(--sand-dim)">Your generated copy will appear here.</div>
+        </article>
+      </div>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      await AmberOne.requireAuth();
+      document.getElementById("gen-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const el = document.getElementById("output");
+        el.textContent = "Generating…";
+        const { data } = await AmberOne.api("/api/talk", {
+          method: "POST",
+          body: JSON.stringify({
+            message: `Generate a ${String(fd.get("type")).replace(/_/g, " ")} about: ${fd.get("topic")}. Make it engaging, professional, and ready to post. Include relevant hashtags if it's a social post.`,
+          }),
+        });
+        el.textContent = data.reply || data.content || "No output.";
+      };
+    })();
+  </script>
+</body>
+</html>

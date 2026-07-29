@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CRM · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/executive/">Executive</a>
+      <a href="/dashboard/executive/crm.html">CRM</a>
+      <a href="/dashboard/executive/follow-ups.html">Follow-ups</a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside data-dash-nav data-active="Executive"></aside>
+      <div class="dash-main">
+        <header class="dash-header"><h1>CRM Contacts</h1><p class="lede">Contacts and interaction log.</p></header>
+        <article class="ao-card">
+          <form id="add-form" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+            <input class="field" name="name" placeholder="Name" required style="margin:0;flex:1;min-width:140px" />
+            <input class="field" name="email" placeholder="Email" style="margin:0;flex:1;min-width:140px" />
+            <input class="field" name="company" placeholder="Company" style="margin:0;flex:1;min-width:120px" />
+            <button class="btn btn-primary" type="submit">Add Contact</button>
+          </form>
+          <div id="contacts"></div>
+        </article>
+        <article class="ao-card">
+          <div class="ao-card-head"><div class="ao-card-title"><span class="ao-icon">✎</span><div><h2>Log Interaction</h2></div></div></div>
+          <form id="int-form" style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <select class="field" name="contact_id" id="contact-select" required style="margin:0;width:auto"></select>
+            <select class="field" name="kind" style="margin:0;width:auto"><option value="call">Call</option><option value="email">Email</option><option value="meeting">Meeting</option><option value="note">Note</option></select>
+            <input class="field" name="summary" placeholder="Summary" required style="margin:0;flex:1;min-width:160px" />
+            <button class="btn btn-primary" type="submit">Log</button>
+          </form>
+        </article>
+      </div>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      await AmberOne.requireAuth();
+      async function load() {
+        const { data } = await AmberOne.api("/api/crm");
+        const contacts = Array.isArray(data) ? data : [];
+        document.getElementById("contacts").innerHTML = contacts.length
+          ? `<ul class="list">${contacts.map((c) => `<li class="list-item"><div class="meta-col"><strong>${c.name}</strong><span class="sub">${c.email || ""} ${c.company || ""}</span></div><button class="btn btn-ghost btn-sm" data-del="${c.id}">Remove</button></li>`).join("")}</ul>`
+          : `<div class="empty-state"><strong>No data yet.</strong><div class="empty-hint">No contacts.</div></div>`;
+        document.getElementById("contact-select").innerHTML = contacts.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
+        document.querySelectorAll("[data-del]").forEach((b) => {
+          b.onclick = async () => { await AmberOne.api(`/api/crm?id=${b.dataset.del}`, { method: "DELETE" }); load(); };
+        });
+      }
+      document.getElementById("add-form").onsubmit = async (e) => {
+        e.preventDefault();
+        await AmberOne.api("/api/crm", { method: "POST", body: JSON.stringify(Object.fromEntries(new FormData(e.target))) });
+        e.target.reset(); load();
+      };
+      document.getElementById("int-form").onsubmit = async (e) => {
+        e.preventDefault();
+        await AmberOne.api("/api/crm", { method: "POST", body: JSON.stringify({ type: "interaction", ...Object.fromEntries(new FormData(e.target)) }) });
+        e.target.reset(); load();
+      };
+      load();
+    })();
+  </script>
+</body>
+</html>

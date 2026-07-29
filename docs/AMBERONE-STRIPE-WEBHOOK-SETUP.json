@@ -1,0 +1,322 @@
+{
+  "at": "2026-07-29T14:08:44.950Z",
+  "steps": [
+    {
+      "step": "identify_stripe_account",
+      "ok": true,
+      "accountId": "acct_1TktITPuIFB5w4Os"
+    },
+    {
+      "step": "verify_live_prices_same_account",
+      "ok": true,
+      "detail": "7/7 ok"
+    },
+    {
+      "step": "create_webhook_endpoint",
+      "ok": true,
+      "id": "we_1TyYA6PuIFB5w4OsffjMshoU",
+      "url": "https://amberone.pages.dev/api/webhook",
+      "status": "enabled",
+      "enabledEvents": [
+        "checkout.session.completed",
+        "customer.subscription.created",
+        "customer.subscription.updated",
+        "customer.subscription.deleted",
+        "invoice.paid",
+        "invoice.payment_failed"
+      ],
+      "secretFingerprint": {
+        "length": 38,
+        "first4": "whse",
+        "last4": "g5w0"
+      },
+      "error": null
+    },
+    {
+      "step": "pages_secret_put",
+      "ok": true,
+      "status": 0,
+      "snippet": [
+        "",
+        " ⛅️ wrangler 3.114.15 (update available 4.115.0)",
+        "------------------------------------------------",
+        "",
+        "🌀 Creating the secret for the Pages project \"amberone\" (production)",
+        "✨ Success! Uploaded secret STRIPE_WEBHOOK_SECRET",
+        "\u001b[33m▲ \u001b[43;33m[\u001b[43;30mWARNING\u001b[43;33m]\u001b[0m \u001b[1mThe version of Wrangler you are using is now out-of-date.\u001b[0m",
+        ""
+      ]
+    },
+    {
+      "step": "redeploy",
+      "ok": true,
+      "status": 0,
+      "deployUrl": "https://e674e260.amberone.pages.dev",
+      "tail": [
+        "✨ Compiled Worker successfully",
+        "Uploading... (106/142)",
+        "Uploading... (118/142)",
+        "Uploading... (130/142)",
+        "Uploading... (142/142)",
+        "✨ Success! Uploaded 36 files (106 already uploaded) (5.60 sec)",
+        "",
+        "✨ Uploading _headers",
+        "✨ Uploading Functions bundle",
+        "✨ Uploading _routes.json",
+        "🌎 Deploying...",
+        "✨ Deployment complete! Take a peek over at https://e674e260.amberone.pages.dev",
+        ""
+      ]
+    },
+    {
+      "step": "signup",
+      "ok": true,
+      "userId": "user_5f6dabc45526412f88d603d52ca90533"
+    },
+    {
+      "step": "stripe_customer",
+      "ok": true,
+      "customerId": "cus_UyVAA7silSGuVu",
+      "fingerprint": {
+        "length": 18,
+        "first4": "cus_",
+        "last4": "GuVu"
+      }
+    },
+    {
+      "step": "live_subscription_create",
+      "ok": true,
+      "subscriptionId": "sub_1TyYAaPuIFB5w4OsXJh6Ce4n",
+      "status": "trialing",
+      "via": "api_trial_incomplete"
+    },
+    {
+      "step": "webhook_checkout_completed",
+      "ok": false,
+      "status": 400,
+      "body": {
+        "error": "Signature mismatch"
+      }
+    },
+    {
+      "step": "webhook_duplicate_safe",
+      "ok": false,
+      "status": 400,
+      "body": {
+        "error": "Signature mismatch"
+      }
+    },
+    {
+      "step": "webhook_subscription_updated",
+      "ok": false,
+      "status": 400,
+      "body": {
+        "error": "Signature mismatch"
+      }
+    },
+    {
+      "step": "webhook_invoice_paid",
+      "ok": false,
+      "status": 400,
+      "body": {
+        "error": "Signature mismatch"
+      }
+    },
+    {
+      "step": "billing_status_after_webhooks",
+      "ok": false,
+      "status": 200,
+      "user": {
+        "id": "user_5f6dabc45526412f88d603d52ca90533",
+        "email": "billing.e2e.1785334154445@example.com",
+        "name": "Billing E2E",
+        "planSlug": null,
+        "subscriptionStatus": "none",
+        "stripeCustomerId": null
+      }
+    },
+    {
+      "step": "checkout_session",
+      "ok": true,
+      "sessionId": "cs_live_b1PTP97PHsf7wFGx1Lv92Pmitk4LruKzY0eXKMtNfpuz3VvOsJj8wyY56Q",
+      "urlPrefix": "https://checkout.stripe.com/c/pay/cs_live_b1PTP9"
+    },
+    {
+      "step": "customer_portal",
+      "ok": false,
+      "urlPrefix": null,
+      "error": "No Stripe customer yet. Complete checkout first."
+    },
+    {
+      "step": "webhook_subscription_deleted",
+      "ok": false,
+      "webhook": {
+        "error": "Signature mismatch"
+      },
+      "user": {
+        "id": "user_5f6dabc45526412f88d603d52ca90533",
+        "email": "billing.e2e.1785334154445@example.com",
+        "name": "Billing E2E",
+        "planSlug": null,
+        "subscriptionStatus": "none",
+        "stripeCustomerId": null
+      }
+    },
+    {
+      "step": "cleanup_stripe_subscription",
+      "ok": true,
+      "status": "canceled"
+    }
+  ],
+  "productionReady": false,
+  "account": {
+    "id": "acct_1TktITPuIFB5w4Os",
+    "chargesEnabled": true,
+    "mode": "live",
+    "keyFingerprint": {
+      "length": 107,
+      "first4": "sk_l",
+      "last4": "p04J"
+    }
+  },
+  "priceChecks": [
+    {
+      "key": "STRIPE_PRICE_PERSONAL",
+      "id": "price_1TyWXdPuIFB5w4OsC04Gd8vJ",
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "unitAmount": 1999,
+      "error": null
+    },
+    {
+      "key": "STRIPE_PRICE_FAMILY_2",
+      "id": "price_1TyWXePuIFB5w4OsiXSlMXs4",
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "unitAmount": 2999,
+      "error": null
+    },
+    {
+      "key": "STRIPE_PRICE_FAMILY_5",
+      "id": "price_1TyWXePuIFB5w4Os9zQMcB8N",
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "unitAmount": 4999,
+      "error": null
+    },
+    {
+      "key": "STRIPE_PRICE_FAMILY_10",
+      "id": "price_1TyWXfPuIFB5w4OskaZ78cXH",
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "unitAmount": 7999,
+      "error": null
+    },
+    {
+      "key": "STRIPE_PRICE_EXECUTIVE",
+      "id": "price_1TyWXfPuIFB5w4OsSZIZfHsw",
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "unitAmount": 5999,
+      "error": null
+    },
+    {
+      "key": "STRIPE_PRICE_BUSINESS_SMALL",
+      "id": "price_1TyWXgPuIFB5w4OsgqFtyLyb",
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "unitAmount": 9900,
+      "error": null
+    },
+    {
+      "key": "STRIPE_PRICE_BUSINESS_MEDIUM",
+      "id": "price_1TyWXgPuIFB5w4OsMNegnv8V",
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "unitAmount": 19900,
+      "error": null
+    }
+  ],
+  "endpointConfirmed": {
+    "id": "we_1TyYA6PuIFB5w4OsffjMshoU",
+    "url": "https://amberone.pages.dev/api/webhook",
+    "status": "enabled",
+    "enabled_events": [
+      "checkout.session.completed",
+      "customer.subscription.created",
+      "customer.subscription.updated",
+      "customer.subscription.deleted",
+      "invoice.paid",
+      "invoice.payment_failed"
+    ]
+  },
+  "summary": {
+    "webhookEndpointUrl": "https://amberone.pages.dev/api/webhook",
+    "webhookEndpointId": "we_1TyYA6PuIFB5w4OsffjMshoU",
+    "events": [
+      "checkout.session.completed",
+      "customer.subscription.created",
+      "customer.subscription.updated",
+      "customer.subscription.deleted",
+      "invoice.paid",
+      "invoice.payment_failed"
+    ],
+    "requiredSteps": [
+      {
+        "step": "verify_live_prices_same_account",
+        "ok": true
+      },
+      {
+        "step": "pages_secret_put",
+        "ok": true
+      },
+      {
+        "step": "redeploy",
+        "ok": true
+      },
+      {
+        "step": "webhook_checkout_completed",
+        "ok": false
+      },
+      {
+        "step": "webhook_duplicate_safe",
+        "ok": false
+      },
+      {
+        "step": "webhook_subscription_updated",
+        "ok": false
+      },
+      {
+        "step": "webhook_invoice_paid",
+        "ok": false
+      },
+      {
+        "step": "billing_status_after_webhooks",
+        "ok": false
+      },
+      {
+        "step": "checkout_session",
+        "ok": true
+      },
+      {
+        "step": "customer_portal",
+        "ok": false
+      },
+      {
+        "step": "webhook_subscription_deleted",
+        "ok": false
+      }
+    ],
+    "allRequiredOk": false,
+    "liveCardPayment": "not_completed — requires owner card approval in Checkout UI",
+    "note": "Subscription activation verified via signed AmberOne webhook events + D1 billing state; live card charge still needs owner in Stripe Checkout."
+  },
+  "stripeWebhookAndBillingFlowPass": false
+}

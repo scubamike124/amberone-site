@@ -14,10 +14,12 @@
     "deploy": "node scripts/pages-create-deploy.mjs",
     "secrets:push": "node scripts/push-pages-secrets.mjs",
     "test:smoke": "node scripts/smoke.mjs",
-    "test:e2e": "node scripts/e2e-customer-journey.mjs"
+    "test:e2e": "node scripts/e2e-customer-journey.mjs",
+    "verify:phase1": "node scripts/verify-phase1-core.mjs"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250726.0",
+    "playwright": "^1.52.0",
     "typescript": "^5.8.3",
     "wrangler": "3.114.15"
   }

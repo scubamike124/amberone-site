@@ -146,6 +146,7 @@ if (checkout.ok && env.STRIPE_SECRET_KEY && env.STRIPE_WEBHOOK_SECRET && signup.
 
   if (cus.id) {
     const payload = JSON.stringify({
+      id: "evt_journey_" + stamp,
       type: "checkout.session.completed",
       data: {
         object: {

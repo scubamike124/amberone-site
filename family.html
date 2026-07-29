@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Family · AmberOne</title>
+  <meta name="description" content="Amber Family keeps shared calendars, chores, school, sports, and household life in one place." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/#capabilities">What it does</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/plans">Plans</a>
+      <a href="/family">Family</a>
+      <a href="/login">Sign in</a>
+      <a class="nav-cta" href="/signup">Get started</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <h1>Amber Family</h1>
+    <p class="lede">Shared calendars, chores, school &amp; sports, groceries, birthdays, and vacation planning — one household, one assistant.</p>
+
+    <ul class="capability-list" style="margin-bottom:2.5rem">
+      <li>
+        <span class="cap-mark" aria-hidden="true">✓</span>
+        <div><strong>Shared calendars</strong><span>Everyone sees the same school, sports, and family events.</span></div>
+      </li>
+      <li>
+        <span class="cap-mark" aria-hidden="true">✓</span>
+        <div><strong>Chores &amp; reminders</strong><span>Assign, track, and nudge without nagging from a spreadsheet.</span></div>
+      </li>
+      <li>
+        <span class="cap-mark" aria-hidden="true">✓</span>
+        <div><strong>Groceries &amp; lists</strong><span>Household lists that stay in sync across members.</span></div>
+      </li>
+      <li>
+        <span class="cap-mark" aria-hidden="true">✓</span>
+        <div><strong>Timeline &amp; travel</strong><span>Birthdays, milestones, and vacation planning in one thread with Amber.</span></div>
+      </li>
+    </ul>
+
+    <h2>Family pricing</h2>
+    <p class="lede">Choose seats for your household. Upgrade later from Billing anytime.</p>
+    <div id="banner" class="banner"></div>
+    <div class="pricing-summary" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+      <article class="panel">
+        <h3>Family (2)</h3>
+        <p class="price">$29.99 / mo</p>
+        <p class="meta">Two seats — couples or small homes.</p>
+        <button class="btn btn-primary btn-block" data-plan="family_2">Start Family (2)</button>
+      </article>
+      <article class="panel">
+        <h3>Family (5)</h3>
+        <p class="price">$49.99 / mo</p>
+        <p class="meta">Five seats — growing households.</p>
+        <button class="btn btn-primary btn-block" data-plan="family_5">Start Family (5)</button>
+      </article>
+      <article class="panel">
+        <h3>Family (10)</h3>
+        <p class="price">$79.99 / mo</p>
+        <p class="meta">Ten seats — extended family coordination.</p>
+        <button class="btn btn-primary btn-block" data-plan="family_10">Start Family (10)</button>
+      </article>
+    </div>
+    <p class="lede" style="margin-top:1.5rem">Want to compare against Personal, Executive, or Business? See <a href="/plans">all plans</a> or the full <a href="/pricing">pricing checkout</a>.</p>
+  </main>
+  <footer data-site-footer></footer>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/site-footer.js"></script>
+  <script>
+    const banner = document.getElementById("banner");
+    document.querySelectorAll("[data-plan]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        try {
+          await AmberOne.startCheckout(btn.dataset.plan, btn);
+        } catch (err) {
+          AmberOne.showBanner(banner, err.message || "Checkout unavailable", "err");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

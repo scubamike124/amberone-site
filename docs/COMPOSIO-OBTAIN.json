@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "rescuedFromKie": false,
+  "kieSlotCleared": false,
+  "note": null,
+  "vault": {
+    "COMPOSIO_API_KEY": true,
+    "fingerprint": {
+      "length": 23,
+      "first4": "ak_s",
+      "last4": "FZHk"
+    },
+    "COMPOSIO_GOOGLE_CALENDAR_AUTH_CONFIG_ID": false,
+    "gcalFingerprint": null,
+    "COMPOSIO_GMAIL_AUTH_CONFIG_ID": false,
+    "gmailFingerprint": null
+  },
+  "composioApi": {
+    "status": 200,
+    "authConfigCount": 0,
+    "googleCalendarAuthConfigs": [],
+    "gmailAuthConfigs": []
+  },
+  "pagesPush": [
+    {
+      "key": "COMPOSIO_API_KEY",
+      "ok": true,
+      "snippet": [
+        "",
+        " ⛅️ wrangler 3.114.15 (update available 4.115.0)",
+        "------------------------------------------------",
+        ""
+      ]
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calendar · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/">Home</a>
+      <a href="/dashboard/calendar">Calendar</a>
+      <a href="/dashboard/reminders">Reminders</a>
+      <a href="/dashboard/memories">Memories</a>
+      <a href="/dashboard/notes">Notes</a>
+      <a href="/dashboard/connections">Connections</a>
+      <a href="/dashboard/billing">Billing</a>
+      <a href="/dashboard/settings">Settings</a>
+      <a class="nav-notif" href="/dashboard/notifications">Notifications<span class="badge" data-notif-badge hidden>0</span></a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside data-dash-nav></aside>
+      <section>
+        <h1>Calendar</h1>
+        <p class="lede">Events for the next 30 days. Ask Amber to add something, or create it directly below.</p>
+        <div id="banner" class="banner"></div>
+
+        <div class="panel" style="margin-bottom:1.25rem">
+          <h2>New event</h2>
+          <form id="event-form">
+            <label class="label" for="title">Title</label>
+            <input class="field" id="title" required placeholder="Dentist appointment" />
+            <div style="display:grid;gap:0.75rem;grid-template-columns:1fr 1fr">
+              <div>
+                <label class="label" for="starts_at">Starts</label>
+                <input class="field" id="starts_at" type="datetime-local" required />
+              </div>
+              <div>
+                <label class="label" for="ends_at">Ends (optional)</label>
+                <input class="field" id="ends_at" type="datetime-local" />
+              </div>
+            </div>
+            <label class="label" for="location">Location (optional)</label>
+            <input class="field" id="location" placeholder="Home, office, address…" />
+            <label class="label" for="description">Notes (optional)</label>
+            <input class="field" id="description" placeholder="Anything to remember" />
+            <button class="btn btn-primary" type="submit">Add event</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <h2>Upcoming events</h2>
+          <div id="events-list"><p class="empty-state">Loading…</p></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      const user = await AmberOne.requireAuth();
+      if (!user) return;
+      const banner = document.getElementById("banner");
+
+      async function loadEvents() {
+        const { res, data } = await AmberOne.api("/api/calendar");
+        if (!res.ok) {
+          document.getElementById("events-list").innerHTML = `<p class="empty-state">${data.error || "Could not load events."}</p>`;
+          return;
+        }
+        const events = data.events || [];
+        document.getElementById("events-list").innerHTML = events.length
+          ? `<ul class="list">${events
+              .map(
+                (e) => `<li class="list-item">
+                  <div class="meta-col">
+                    <strong>${e.title}</strong>
+                    <span class="sub">${new Date(e.starts_at).toLocaleString()}${e.location ? " · " + e.location : ""}</span>
+                  </div>
+                  <div class="row-actions">
+                    <button class="btn btn-ghost btn-sm" data-delete="${e.id}">Delete</button>
+                  </div>
+                </li>`,
+              )
+              .join("")}</ul>`
+          : `<p class="empty-state">No upcoming events. Add one above or ask Amber to schedule it.</p>`;
+
+        document.querySelectorAll("[data-delete]").forEach((btn) => {
+          btn.onclick = async () => {
+            btn.disabled = true;
+            const { res, data } = await AmberOne.api(`/api/calendar?id=${encodeURIComponent(btn.dataset.delete)}`, { method: "DELETE" });
+            if (!res.ok) {
+              AmberOne.showBanner(banner, data.error || "Could not delete event", "err");
+              btn.disabled = false;
+              return;
+            }
+            loadEvents();
+          };
+        });
+      }
+
+      document.getElementById("event-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const title = document.getElementById("title").value.trim();
+        const starts_at = document.getElementById("starts_at").value;
+        const ends_at = document.getElementById("ends_at").value;
+        const location = document.getElementById("location").value.trim();
+        const description = document.getElementById("description").value.trim();
+        if (!title || !starts_at) return;
+        const { res, data } = await AmberOne.api("/api/calendar", {
+          method: "POST",
+          body: JSON.stringify({
+            title,
+            starts_at: new Date(starts_at).toISOString(),
+            ends_at: ends_at ? new Date(ends_at).toISOString() : null,
+            location: location || null,
+            description: description || null,
+          }),
+        });
+        if (!res.ok) {
+          AmberOne.showBanner(banner, data.error || "Could not create event", "err");
+          return;
+        }
+        document.getElementById("event-form").reset();
+        AmberOne.showBanner(banner, "Event added.", "ok");
+        loadEvents();
+      };
+
+      loadEvents();
+    })();
+  </script>
+</body>
+</html>

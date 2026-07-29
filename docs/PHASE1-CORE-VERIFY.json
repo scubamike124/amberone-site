@@ -1,0 +1,165 @@
+{
+  "at": "2026-07-29T17:35:55.672Z",
+  "base": "https://amberone.pages.dev",
+  "email": "phase1_1785346538720@example.com",
+  "userId": "user_cb91e754f54440aeb5da6eaed466f149",
+  "passed": 27,
+  "total": 27,
+  "failed": [],
+  "steps": [
+    {
+      "name": "signup",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "login",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "session valid",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "talk turn 1",
+      "ok": true,
+      "status": 200,
+      "source": "openai",
+      "conversationId": "conv_1d32e66e638247be81709b6832e3d687",
+      "toolsUsed": [
+        "save_memory"
+      ]
+    },
+    {
+      "name": "talk turn 2 (same conversation)",
+      "ok": true,
+      "status": 200,
+      "conversationId": "conv_1d32e66e638247be81709b6832e3d687"
+    },
+    {
+      "name": "create memory via API",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "memory via talk tool present",
+      "ok": true,
+      "status": 200,
+      "totalMemories": 2
+    },
+    {
+      "name": "create calendar event",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "list calendar events",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "create reminder (past due)",
+      "ok": true,
+      "status": 201,
+      "dispatchedOnCreate": 1
+    },
+    {
+      "name": "notifications after reminder dispatch",
+      "ok": true,
+      "status": 200,
+      "unreadCount": 1
+    },
+    {
+      "name": "home aggregate",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "onboarding GET",
+      "ok": true,
+      "status": 200,
+      "onboardingStep": "welcome"
+    },
+    {
+      "name": "onboarding step transition",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "onboarding complete",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "audit log entries present",
+      "ok": true,
+      "status": 200,
+      "count": 7
+    },
+    {
+      "name": "connections GET does not 500",
+      "ok": true,
+      "status": 200,
+      "composioConfigured": true
+    },
+    {
+      "name": "connected-services GET",
+      "ok": true,
+      "status": 200,
+      "composioConfigured": true
+    },
+    {
+      "name": "create note",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "list notes",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "create shopping list",
+      "ok": true,
+      "status": 201,
+      "listId": "list_0491cdf2a2c1417aafde63fe4a60c934"
+    },
+    {
+      "name": "add list item",
+      "ok": true,
+      "status": 201
+    },
+    {
+      "name": "complete list item",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "briefing generate",
+      "ok": true,
+      "status": 200,
+      "mode": "morning",
+      "source": "openai",
+      "cached": false
+    },
+    {
+      "name": "briefing cache hit",
+      "ok": true,
+      "status": 200,
+      "cached": true
+    },
+    {
+      "name": "evening recap generate",
+      "ok": true,
+      "status": 200,
+      "mode": "evening"
+    },
+    {
+      "name": "logout",
+      "ok": true,
+      "status": 200
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Customers · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/business/">Business</a>
+      <a href="/dashboard/business/customers.html">Customers</a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside data-dash-nav data-active="Business"></aside>
+      <div class="dash-main">
+        <header class="dash-header"><h1>Business Customers</h1><p class="lede">Customer CRM for your business.</p></header>
+        <article class="ao-card">
+          <form id="add-form" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+            <input class="field" name="name" placeholder="Name" required style="margin:0;flex:1;min-width:120px" />
+            <input class="field" name="email" placeholder="Email" style="margin:0;flex:1;min-width:120px" />
+            <input class="field" name="phone" placeholder="Phone" style="margin:0;flex:1;min-width:100px" />
+            <input class="field" name="company" placeholder="Company" style="margin:0;flex:1;min-width:100px" />
+            <button class="btn btn-primary" type="submit">Add Customer</button>
+          </form>
+          <div id="list"></div>
+        </article>
+      </div>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      await AmberOne.requireAuth();
+      async function load() {
+        const { data } = await AmberOne.api("/api/crm");
+        const contacts = Array.isArray(data) ? data : [];
+        document.getElementById("list").innerHTML = contacts.length
+          ? `<ul class="list">${contacts.map((c) => `<li class="list-item"><div class="meta-col"><strong>${c.name}</strong><span class="sub">${c.email || ""} ${c.company || ""}</span></div><button class="btn btn-ghost btn-sm" data-del="${c.id}">Remove</button></li>`).join("")}</ul>`
+          : `<div class="empty-state"><strong>No data yet.</strong><div class="empty-hint">No customers yet.</div></div>`;
+        document.querySelectorAll("[data-del]").forEach((b) => {
+          b.onclick = async () => { await AmberOne.api(`/api/crm?id=${b.dataset.del}`, { method: "DELETE" }); load(); };
+        });
+      }
+      document.getElementById("add-form").onsubmit = async (e) => {
+        e.preventDefault();
+        await AmberOne.api("/api/crm", { method: "POST", body: JSON.stringify(Object.fromEntries(new FormData(e.target))) });
+        e.target.reset(); load();
+      };
+      load();
+    })();
+  </script>
+</body>
+</html>

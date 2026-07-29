@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Notes & Lists · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/">Home</a>
+      <a href="/dashboard/calendar">Calendar</a>
+      <a href="/dashboard/reminders">Reminders</a>
+      <a href="/dashboard/memories">Memories</a>
+      <a href="/dashboard/notes">Notes</a>
+      <a href="/dashboard/connections">Connections</a>
+      <a href="/dashboard/billing">Billing</a>
+      <a href="/dashboard/settings">Settings</a>
+      <a class="nav-notif" href="/dashboard/notifications">Notifications<span class="badge" data-notif-badge hidden>0</span></a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside data-dash-nav></aside>
+      <section>
+        <h1>Notes &amp; Lists</h1>
+        <p class="lede">Jot notes and keep shopping or todo lists. Amber can also create and update these while you talk.</p>
+        <div id="banner" class="banner"></div>
+
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-bottom:1.25rem">
+          <div class="panel">
+            <h2>New note</h2>
+            <form id="note-form">
+              <label class="label" for="note-title">Title</label>
+              <input class="field" id="note-title" placeholder="Optional title" />
+              <label class="label" for="note-body">Note</label>
+              <textarea class="field" id="note-body" rows="4" required placeholder="What’s on your mind?"></textarea>
+              <button class="btn btn-primary" type="submit">Save note</button>
+            </form>
+          </div>
+          <div class="panel">
+            <h2>New list</h2>
+            <form id="list-form">
+              <label class="label" for="list-title">Title</label>
+              <input class="field" id="list-title" required placeholder="Groceries, weekend tasks…" />
+              <label class="label" for="list-kind">Kind</label>
+              <select class="field" id="list-kind">
+                <option value="shopping">Shopping</option>
+                <option value="todo">Todo</option>
+                <option value="custom">Custom</option>
+              </select>
+              <label class="label" for="list-items">Starter items (one per line)</label>
+              <textarea class="field" id="list-items" rows="4" placeholder="Milk&#10;Eggs&#10;Bread"></textarea>
+              <button class="btn btn-primary" type="submit">Create list</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom:1.25rem">
+          <h2>Notes</h2>
+          <div id="notes-list"><p class="empty-state">Loading…</p></div>
+        </div>
+
+        <div class="panel">
+          <h2>Lists</h2>
+          <div id="lists-panel"><p class="empty-state">Loading…</p></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      const user = await AmberOne.requireAuth();
+      if (!user) return;
+      const banner = document.getElementById("banner");
+
+      async function loadNotes() {
+        const { res, data } = await AmberOne.api("/api/notes");
+        if (!res.ok) {
+          document.getElementById("notes-list").innerHTML = `<p class="empty-state">${data.error || "Could not load notes."}</p>`;
+          return;
+        }
+        const notes = data.notes || [];
+        document.getElementById("notes-list").innerHTML = notes.length
+          ? `<ul class="list">${notes
+              .map(
+                (n) => `<li class="list-item">
+                  <div class="meta-col">
+                    <strong>${n.title || "Untitled"}</strong>
+                    <span class="sub">${(n.body || "").replace(/</g, "&lt;")}</span>
+                  </div>
+                  <div class="row-actions">
+                    <button class="btn btn-ghost btn-sm" data-delete-note="${n.id}">Delete</button>
+                  </div>
+                </li>`,
+              )
+              .join("")}</ul>`
+          : `<p class="empty-state">No notes yet. Add one above, or ask Amber in Talk.</p>`;
+
+        document.querySelectorAll("[data-delete-note]").forEach((btn) => {
+          btn.onclick = async () => {
+            btn.disabled = true;
+            const { res, data } = await AmberOne.api(`/api/notes?id=${encodeURIComponent(btn.dataset.deleteNote)}`, { method: "DELETE" });
+            if (!res.ok) {
+              AmberOne.showBanner(banner, data.error || "Could not delete note", "err");
+              btn.disabled = false;
+              return;
+            }
+            loadNotes();
+          };
+        });
+      }
+
+      async function loadLists() {
+        const { res, data } = await AmberOne.api("/api/lists");
+        if (!res.ok) {
+          document.getElementById("lists-panel").innerHTML = `<p class="empty-state">${data.error || "Could not load lists."}</p>`;
+          return;
+        }
+        const lists = data.lists || [];
+        if (!lists.length) {
+          document.getElementById("lists-panel").innerHTML = `<p class="empty-state">No lists yet. Create a shopping or todo list above.</p>`;
+          return;
+        }
+
+        const blocks = [];
+        for (const summary of lists) {
+          const detail = await AmberOne.api(`/api/lists?id=${encodeURIComponent(summary.id)}`);
+          const list = detail.data?.list || { ...summary, items: [] };
+          const items = list.items || [];
+          blocks.push(`<div class="list-block" style="margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--line)">
+            <div style="display:flex;justify-content:space-between;gap:0.75rem;align-items:center;margin-bottom:0.5rem">
+              <div>
+                <strong>${list.title}</strong>
+                <span class="sub"> · ${list.kind}</span>
+              </div>
+              <button class="btn btn-ghost btn-sm" data-delete-list="${list.id}">Delete list</button>
+            </div>
+            <ul class="list">${items
+              .map(
+                (item) => `<li class="list-item">
+                  <label style="display:flex;gap:0.5rem;align-items:center;flex:1">
+                    <input type="checkbox" data-toggle-item="${item.id}" ${item.checked ? "checked" : ""} />
+                    <span style="${item.checked ? "text-decoration:line-through;opacity:0.65" : ""}">${String(item.text || "").replace(/</g, "&lt;")}</span>
+                  </label>
+                  <button class="btn btn-ghost btn-sm" data-delete-item="${item.id}">Remove</button>
+                </li>`,
+              )
+              .join("") || `<li class="empty-state">No items yet.</li>`}</ul>
+            <form data-add-item="${list.id}" style="display:flex;gap:0.5rem;margin-top:0.75rem">
+              <input class="field" style="margin:0" name="text" placeholder="Add item…" required />
+              <button class="btn btn-primary btn-sm" type="submit">Add</button>
+            </form>
+          </div>`);
+        }
+        document.getElementById("lists-panel").innerHTML = blocks.join("");
+
+        document.querySelectorAll("[data-delete-list]").forEach((btn) => {
+          btn.onclick = async () => {
+            btn.disabled = true;
+            const { res, data } = await AmberOne.api(`/api/lists?id=${encodeURIComponent(btn.dataset.deleteList)}`, { method: "DELETE" });
+            if (!res.ok) {
+              AmberOne.showBanner(banner, data.error || "Could not delete list", "err");
+              btn.disabled = false;
+              return;
+            }
+            loadLists();
+          };
+        });
+
+        document.querySelectorAll("[data-delete-item]").forEach((btn) => {
+          btn.onclick = async () => {
+            btn.disabled = true;
+            const { res, data } = await AmberOne.api(`/api/lists?item_id=${encodeURIComponent(btn.dataset.deleteItem)}`, { method: "DELETE" });
+            if (!res.ok) {
+              AmberOne.showBanner(banner, data.error || "Could not remove item", "err");
+              btn.disabled = false;
+              return;
+            }
+            loadLists();
+          };
+        });
+
+        document.querySelectorAll("[data-toggle-item]").forEach((box) => {
+          box.onchange = async () => {
+            const { res, data } = await AmberOne.api("/api/lists", {
+              method: "PATCH",
+              body: JSON.stringify({ item_id: box.dataset.toggleItem, checked: box.checked }),
+            });
+            if (!res.ok) {
+              AmberOne.showBanner(banner, data.error || "Could not update item", "err");
+              box.checked = !box.checked;
+              return;
+            }
+            loadLists();
+          };
+        });
+
+        document.querySelectorAll("[data-add-item]").forEach((form) => {
+          form.onsubmit = async (e) => {
+            e.preventDefault();
+            const text = new FormData(form).get("text");
+            const { res, data } = await AmberOne.api("/api/lists", {
+              method: "POST",
+              body: JSON.stringify({ list_id: form.dataset.addItem, text }),
+            });
+            if (!res.ok) {
+              AmberOne.showBanner(banner, data.error || "Could not add item", "err");
+              return;
+            }
+            form.reset();
+            loadLists();
+          };
+        });
+      }
+
+      document.getElementById("note-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const title = document.getElementById("note-title").value.trim();
+        const body = document.getElementById("note-body").value.trim();
+        if (!body) return;
+        const { res, data } = await AmberOne.api("/api/notes", {
+          method: "POST",
+          body: JSON.stringify({ title, body }),
+        });
+        if (!res.ok) {
+          AmberOne.showBanner(banner, data.error || "Could not save note", "err");
+          return;
+        }
+        document.getElementById("note-form").reset();
+        AmberOne.showBanner(banner, "Note saved.", "ok");
+        loadNotes();
+      };
+
+      document.getElementById("list-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const title = document.getElementById("list-title").value.trim();
+        const kind = document.getElementById("list-kind").value;
+        const items = document
+          .getElementById("list-items")
+          .value.split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .map((text) => ({ text }));
+        if (!title) return;
+        const { res, data } = await AmberOne.api("/api/lists", {
+          method: "POST",
+          body: JSON.stringify({ title, kind, items }),
+        });
+        if (!res.ok) {
+          AmberOne.showBanner(banner, data.error || "Could not create list", "err");
+          return;
+        }
+        document.getElementById("list-form").reset();
+        AmberOne.showBanner(banner, "List created.", "ok");
+        loadLists();
+      };
+
+      loadNotes();
+      loadLists();
+    })();
+  </script>
+</body>
+</html>
