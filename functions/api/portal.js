@@ -13,7 +13,7 @@ export async function onRequestPost(context) {
   }
 
   const body = await readJson(context.request);
-  const returnUrl = body.returnUrl || `${originFrom(context.request)}/dashboard/billing.html`;
+  const returnUrl = body.returnUrl || `${originFrom(context.request)}/dashboard/billing`;
   const params = new URLSearchParams();
   params.set("customer", user.stripe_customer_id);
   params.set("return_url", returnUrl);

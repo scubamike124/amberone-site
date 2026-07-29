@@ -1,0 +1,90 @@
+{
+  "at": "2026-07-29T12:44:04.724Z",
+  "accountId": "735d0e617e9ba6a16d9b2a1ec05b4dd3",
+  "probes": [
+    {
+      "name": "token verify",
+      "ok": true,
+      "status": 200,
+      "statusText": "active"
+    },
+    {
+      "name": "d1 list",
+      "ok": false,
+      "status": 401,
+      "errors": [
+        {
+          "code": 10000,
+          "message": "Authentication error"
+        }
+      ],
+      "count": null
+    },
+    {
+      "name": "d1 create",
+      "ok": false,
+      "status": 401,
+      "errors": [
+        {
+          "code": 10000,
+          "message": "Authentication error"
+        }
+      ],
+      "uuid": null,
+      "nameResult": null
+    },
+    {
+      "name": "kv list",
+      "ok": false,
+      "status": 401,
+      "errors": [
+        {
+          "code": 10000,
+          "message": "Authentication error"
+        }
+      ],
+      "count": null
+    },
+    {
+      "name": "kv create",
+      "ok": false,
+      "status": 401,
+      "errors": [
+        {
+          "code": 10000,
+          "message": "Authentication error"
+        }
+      ],
+      "id": null
+    },
+    {
+      "name": "pages list",
+      "ok": true,
+      "status": 200,
+      "projects": [
+        {
+          "name": "amberone",
+          "subdomain": "amberone.pages.dev",
+          "domains": [
+            "amberone.pages.dev"
+          ]
+        },
+        {
+          "name": "myforma3d",
+          "subdomain": "myforma3d.pages.dev",
+          "domains": [
+            "myforma3d.pages.dev"
+          ]
+        },
+        {
+          "name": "grantpilot",
+          "subdomain": "grantpilot-bil.pages.dev",
+          "domains": [
+            "grantpilot-bil.pages.dev",
+            "www.grantaipilot.com"
+          ]
+        }
+      ]
+    }
+  ]
+}

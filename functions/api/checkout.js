@@ -26,11 +26,11 @@ export async function onRequestPost(context) {
   params.set("mode", "subscription");
   params.set(
     "success_url",
-    `${origin}/dashboard/billing.html?checkout=success&plan=${encodeURIComponent(planId)}`,
+    `${origin}/dashboard/billing?checkout=success&plan=${encodeURIComponent(planId)}`,
   );
   params.set(
     "cancel_url",
-    `${origin}/pricing.html?checkout=cancel&plan=${encodeURIComponent(planId)}`,
+    `${origin}/pricing?checkout=cancel&plan=${encodeURIComponent(planId)}`,
   );
   params.set("allow_promotion_codes", "true");
   params.set("billing_address_collection", "required");

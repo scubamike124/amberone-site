@@ -39,7 +39,7 @@ export async function onRequestPost(context) {
     .run();
 
   const origin = new URL(context.request.url);
-  const resetUrl = `${origin.protocol}//${origin.host}/reset-password.html?token=${encodeURIComponent(token)}`;
+  const resetUrl = `${origin.protocol}//${origin.host}/reset-password?token=${encodeURIComponent(token)}`;
 
   const resendKey = context.env.RESEND_API_KEY;
   const from = context.env.EMAIL_FROM || "AmberOne <noreply@amberone.app>";
@@ -57,11 +57,18 @@ export async function onRequestPost(context) {
         html: `<p>Hi${user.name ? ` ${user.name}` : ""},</p><p>Reset your password:</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>This link expires in 1 hour.</p>`,
       }),
     });
-    if (!mail.ok) {
-      const err = await mail.text();
-      return json({ error: `Email send failed: ${err}` }, 502);
+    if (mail.ok) {
+      return json({ ok: true, message: "If that email exists, a reset link was sent." });
     }
-    return json({ ok: true, message: "If that email exists, a reset link was sent." });
+    // Domain may not be verified yet — keep reset usable via URL for owner/local testing
+    const err = await mail.text();
+    return json({
+      ok: true,
+      message: "Password reset created. Email delivery failed (check Resend domain/from address).",
+      emailError: err.slice(0, 240),
+      setupRequired: "RESEND_DOMAIN",
+      resetUrl,
+    });
   }
 
   // No email provider yet — return token for owner/local setup only

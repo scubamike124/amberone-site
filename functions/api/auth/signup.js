@@ -50,7 +50,7 @@ export async function onRequestPost(context) {
     .first();
 
   return json(
-    { ok: true, user: publicUser(user), next: plan ? `/pricing.html?plan=${encodeURIComponent(plan)}` : "/dashboard/" },
+    { ok: true, user: publicUser(user), next: plan ? `/pricing?plan=${encodeURIComponent(plan)}` : "/dashboard/" },
     201,
     { "Set-Cookie": sessionCookie(session.token, context.request) },
   );

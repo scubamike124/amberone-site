@@ -20,7 +20,7 @@ window.AmberOne = {
     return new URLSearchParams(location.search).get(name);
   },
 
-  async requireAuth(redirect = "/login.html") {
+  async requireAuth(redirect = "/login") {
     const { res, data } = await this.api("/api/auth/me");
     if (!res.ok || !data.user) {
       location.href = `${redirect}?next=${encodeURIComponent(location.pathname + location.search)}`;
@@ -56,7 +56,7 @@ window.AmberOne = {
     }
     const me = await this.api("/api/auth/me");
     if (!me.res.ok || !me.data.user) {
-      location.href = `/signup.html?plan=${encodeURIComponent(plan)}`;
+      location.href = `/signup?plan=${encodeURIComponent(plan)}`;
       return;
     }
     const { res, data } = await this.api("/api/checkout", {

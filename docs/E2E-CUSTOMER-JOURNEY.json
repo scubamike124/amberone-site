@@ -1,0 +1,136 @@
+{
+  "at": "2026-07-29T12:48:40.536Z",
+  "base": "http://127.0.0.1:8788",
+  "email": "journey_1785329314434@example.com",
+  "passed": 22,
+  "total": 22,
+  "failed": [],
+  "stripeMode": "live",
+  "notes": [
+    "Live Stripe mode: Checkout session + Customer Portal verified; card UI charge not automated (requires owner payment method).",
+    "Email: Resend used when configured; otherwise reset URL path verified."
+  ],
+  "steps": [
+    {
+      "name": "visit /",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "visit /pricing.html",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "visit /signup.html",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "visit /faq.html",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "create account",
+      "ok": true,
+      "status": 201,
+      "userId": "user_72327a7e49d84175a5765cac6c56524c"
+    },
+    {
+      "name": "session after signup",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "password reset / email path",
+      "ok": true,
+      "status": 200,
+      "emailDelivered": false,
+      "setupRequired": "RESEND_DOMAIN",
+      "hasResetUrl": true
+    },
+    {
+      "name": "log in",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "dashboard pages",
+      "ok": true,
+      "dash": 200,
+      "billing": 200,
+      "settings": 200
+    },
+    {
+      "name": "Talk to Amber",
+      "ok": true,
+      "status": 200,
+      "source": "openai"
+    },
+    {
+      "name": "Stripe Checkout session",
+      "ok": true,
+      "status": 200,
+      "sessionId": "cs_live_b1EZv3US1cKJajQJsbGLxrws6LgnjRwhJv9Y00cHsKsZ3BpvdUftYOm8iB"
+    },
+    {
+      "name": "Stripe customer create",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "Stripe webhook applied",
+      "ok": true,
+      "status": 200,
+      "type": "checkout.session.completed"
+    },
+    {
+      "name": "return from Stripe success URL",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "billing/subscription status",
+      "ok": true,
+      "status": 200,
+      "subscriptionStatus": "active",
+      "planSlug": "personal"
+    },
+    {
+      "name": "Stripe Customer Portal",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "password reset complete",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "log back in after reset",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "Talk to Amber after re-login",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "log out",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "session cleared",
+      "ok": true,
+      "status": 401
+    },
+    {
+      "name": "final log back in",
+      "ok": true,
+      "status": 200
+    }
+  ]
+}

@@ -11,8 +11,10 @@
     "db:migrate:local": "wrangler d1 execute amberone --local --file=./schema.sql",
     "db:migrate:remote": "wrangler d1 execute amberone --remote --file=./schema.sql",
     "stripe:catalog": "node scripts/stripe-catalog.mjs",
-    "deploy": "wrangler pages deploy . --project-name=amberone",
-    "test:smoke": "node scripts/smoke.mjs"
+    "deploy": "node scripts/pages-create-deploy.mjs",
+    "secrets:push": "node scripts/push-pages-secrets.mjs",
+    "test:smoke": "node scripts/smoke.mjs",
+    "test:e2e": "node scripts/e2e-customer-journey.mjs"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250726.0",
