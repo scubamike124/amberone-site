@@ -208,19 +208,12 @@ export async function onRequestPost(context) {
 
   } catch (err) {
 
-    return json(
+    // Detail used to be returned to the caller. This endpoint is deliberately
+    // vague about whether an address exists; leaking the raw error undoes that
+    // care as soon as anything throws. Logged instead.
+    console.error("forgot-password failed", err);
 
-      {
-
-        error: "Forgot password failed",
-
-        detail: err instanceof Error ? err.message : String(err),
-
-      },
-
-      500,
-
-    );
+    return json({ error: "Forgot password failed" }, 500);
 
   }
 

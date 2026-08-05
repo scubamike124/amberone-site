@@ -80,6 +80,24 @@ export async function hashPassword(password, saltHex) {
   return bytesToHex(new Uint8Array(bits));
 }
 
+/**
+ * Constant-time string comparison.
+ *
+ * `a === b` on a password hash short-circuits at the first differing character,
+ * so how long the comparison takes leaks how much of the hash was matched. That
+ * is a narrow channel — an attacker has to guess the stored hash rather than the
+ * password — but it costs nothing to close and there is no reason to leave a
+ * credential check data-dependent.
+ */
+export function timingSafeEqual(a, b) {
+  const x = String(a ?? "");
+  const y = String(b ?? "");
+  let diff = x.length ^ y.length;
+  const len = Math.max(x.length, y.length);
+  for (let i = 0; i < len; i++) diff |= (x.charCodeAt(i) || 0) ^ (y.charCodeAt(i) || 0);
+  return diff === 0;
+}
+
 export function randomSaltHex(bytes = 16) {
   const arr = new Uint8Array(bytes);
   crypto.getRandomValues(arr);

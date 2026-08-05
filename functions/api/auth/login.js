@@ -14,7 +14,14 @@ import {
 
   ensureSchema,
 
+  timingSafeEqual,
+
 } from "../../_lib/core.js";
+
+
+
+/** Fixed, non-secret salt used only to spend the same work on unknown users. */
+const ENUMERATION_DECOY_SALT = "00000000000000000000000000000000";
 
 
 
@@ -56,13 +63,23 @@ export async function onRequestPost(context) {
 
       .first();
 
-    if (!user) return json({ error: "Invalid email or password" }, 401);
-
-
+    /*
+     * An unknown address used to return here immediately, while a known one
+     * paid for a PBKDF2 derivation first. The reply is deliberately identical
+     * either way, but the time taken was not, so timing the endpoint told you
+     * whether an address had an account. Hashing against a throwaway salt
+     * costs the same work and removes the signal.
+     */
+    if (!user) {
+      await hashPassword(password, ENUMERATION_DECOY_SALT);
+      return json({ error: "Invalid email or password" }, 401);
+    }
 
     const hash = await hashPassword(password, user.password_salt);
 
-    if (hash !== user.password_hash) return json({ error: "Invalid email or password" }, 401);
+    if (!timingSafeEqual(hash, user.password_hash)) {
+      return json({ error: "Invalid email or password" }, 401);
+    }
 
 
 
@@ -80,19 +97,13 @@ export async function onRequestPost(context) {
 
   } catch (err) {
 
-    return json(
+    // The detail used to be returned to the caller. On an unauthenticated
+    // endpoint that hands anyone who can trigger an exception the D1 error
+    // text — table and column names, constraint names, sometimes the failing
+    // statement. It belongs in the logs, not the response body.
+    console.error("login failed", err);
 
-      {
-
-        error: "Login failed",
-
-        detail: err instanceof Error ? err.message : String(err),
-
-      },
-
-      500,
-
-    );
+    return json({ error: "Login failed" }, 500);
 
   }
 

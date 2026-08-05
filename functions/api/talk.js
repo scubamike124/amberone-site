@@ -931,13 +931,11 @@ export async function onRequestPost(context) {
 
     return json({ reply: finalReply, source, conversationId, toolsUsed: toolsUsed.map((t) => ({ name: t.name, summary: t.summary })) });
   } catch (err) {
-    return json(
-      {
-        error: "Talk failed",
-        detail: err instanceof Error ? err.message : String(err),
-      },
-      500,
-    );
+    // Detail used to be returned to the caller, exposing upstream provider and
+    // D1 error text — including, on a bad request to a model provider, parts of
+    // the prompt we sent. Logged instead.
+    console.error("talk failed", err);
+    return json({ error: "Talk failed" }, 500);
   }
 }
 

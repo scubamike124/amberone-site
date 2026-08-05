@@ -120,21 +120,13 @@ export async function onRequestPost(context) {
 
   } catch (err) {
 
-    return json(
+    // The message and error name used to be returned to the caller. On an
+    // unauthenticated endpoint that hands anyone who can trigger an exception
+    // the underlying D1 error text — table and column names, constraint names,
+    // sometimes the failing statement. It belongs in the logs.
+    console.error("signup failed", err);
 
-      {
-
-        error: "Signup failed",
-
-        detail: err instanceof Error ? err.message : String(err),
-
-        name: err instanceof Error ? err.name : undefined,
-
-      },
-
-      500,
-
-    );
+    return json({ error: "Signup failed" }, 500);
 
   }
 

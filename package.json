@@ -13,6 +13,7 @@
     "stripe:catalog": "node scripts/stripe-catalog.mjs",
     "deploy": "node scripts/pages-create-deploy.mjs",
     "secrets:push": "node scripts/push-pages-secrets.mjs",
+    "test:auth": "node scripts/auth-hardening.test.mjs",
     "test:smoke": "node scripts/smoke.mjs",
     "test:e2e": "node scripts/e2e-customer-journey.mjs",
     "verify:phase1": "node scripts/verify-phase1-core.mjs"
