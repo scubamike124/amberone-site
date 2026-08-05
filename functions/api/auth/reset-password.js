@@ -5,6 +5,7 @@ import {
   randomSaltHex,
   readJson,
   sha256Hex,
+  targetIterations,
 } from "../../_lib/core.js";
 
 export async function onRequestPost(context) {
@@ -27,12 +28,17 @@ export async function onRequestPost(context) {
   if (!row || row.used_at) return json({ error: "Invalid or used reset link" }, 400);
   if (row.expires_at < nowIso()) return json({ error: "Reset link expired" }, 400);
 
+  // A reset writes a fresh hash, so it goes in at the current target and records
+  // the cost — resetting upgrades an old account without waiting for a login.
+  const iterations = targetIterations(context.env);
   const salt = randomSaltHex();
-  const passwordHash = await hashPassword(password, salt);
+  const passwordHash = await hashPassword(password, salt, iterations);
   const ts = nowIso();
   await db
-    .prepare("UPDATE users SET password_hash = ?, password_salt = ?, updated_at = ? WHERE id = ?")
-    .bind(passwordHash, salt, ts, row.user_id)
+    .prepare(
+      "UPDATE users SET password_hash = ?, password_salt = ?, password_iterations = ?, updated_at = ? WHERE id = ?",
+    )
+    .bind(passwordHash, salt, iterations, ts, row.user_id)
     .run();
   await db
     .prepare("UPDATE password_resets SET used_at = ? WHERE id = ?")

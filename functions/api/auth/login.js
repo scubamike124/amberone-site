@@ -16,6 +16,14 @@ import {
 
   timingSafeEqual,
 
+  iterationsForStoredHash,
+
+  targetIterations,
+
+  randomSaltHex,
+
+  nowIso,
+
 } from "../../_lib/core.js";
 
 
@@ -55,7 +63,7 @@ export async function onRequestPost(context) {
 
       .prepare(
 
-        "SELECT id, email, name, password_hash, password_salt, stripe_customer_id, plan_slug, subscription_status, stripe_subscription_id FROM users WHERE email = ?",
+        "SELECT id, email, name, password_hash, password_salt, password_iterations, stripe_customer_id, plan_slug, subscription_status, stripe_subscription_id FROM users WHERE email = ?",
 
       )
 
@@ -75,13 +83,46 @@ export async function onRequestPost(context) {
       return json({ error: "Invalid email or password" }, 401);
     }
 
-    const hash = await hashPassword(password, user.password_salt);
+    /*
+     * Verify at the cost this hash was actually created with, not the current
+     * target. Rows that predate the password_iterations column were all derived
+     * at 10,000; verifying them at today's target would reject every correct
+     * password in the table.
+     */
+    const storedIterations = iterationsForStoredHash(user);
+    const hash = await hashPassword(password, user.password_salt, storedIterations);
 
     if (!timingSafeEqual(hash, user.password_hash)) {
       return json({ error: "Invalid email or password" }, 401);
     }
 
-
+    /*
+     * Correct password, weak hash — re-derive at the current target and store
+     * it. This is the migration: accounts upgrade silently as people sign in,
+     * so nobody is locked out and no bulk rewrite is needed. A bulk rewrite is
+     * impossible in any case, since the plaintext only exists at this moment.
+     *
+     * A fresh salt goes with the new hash: it costs nothing here and means a
+     * pre-upgrade hash and its replacement share nothing.
+     *
+     * Wrapped so it can never cost anyone a login. If the write fails the old
+     * hash stays, which still verifies, and the next sign-in tries again.
+     */
+    const target = targetIterations(context.env);
+    if (storedIterations < target) {
+      try {
+        const upgradedSalt = randomSaltHex();
+        const upgradedHash = await hashPassword(password, upgradedSalt, target);
+        await db
+          .prepare(
+            "UPDATE users SET password_hash = ?, password_salt = ?, password_iterations = ?, updated_at = ? WHERE id = ?",
+          )
+          .bind(upgradedHash, upgradedSalt, target, nowIso(), user.id)
+          .run();
+      } catch (err) {
+        console.error("password rehash failed", err);
+      }
+    }
 
     const session = await createSession(db, user.id);
 

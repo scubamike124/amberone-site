@@ -68,7 +68,11 @@ export async function onRequestPost(context) {
 
     const salt = randomSaltHex();
 
-    const passwordHash = await hashPassword(password, salt);
+    // New accounts are created at the current target and record it, so they
+    // never need the lazy upgrade on login.
+    const iterations = targetIterations(context.env);
+
+    const passwordHash = await hashPassword(password, salt, iterations);
 
     const id = uid("user");
 
@@ -80,13 +84,13 @@ export async function onRequestPost(context) {
 
       .prepare(
 
-        `INSERT INTO users (id, email, name, password_hash, password_salt, plan_slug, subscription_status, created_at, updated_at)
+        `INSERT INTO users (id, email, name, password_hash, password_salt, password_iterations, plan_slug, subscription_status, created_at, updated_at)
 
-         VALUES (?, ?, ?, ?, ?, ?, 'none', ?, ?)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, 'none', ?, ?)`,
 
       )
 
-      .bind(id, email, name || email.split("@")[0], passwordHash, salt, plan, ts, ts)
+      .bind(id, email, name || email.split("@")[0], passwordHash, salt, iterations, plan, ts, ts)
 
       .run();
 

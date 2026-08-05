@@ -9,6 +9,7 @@ import {
   readJson,
   sessionCookie,
   sha256Hex,
+  targetIterations,
   uid,
 } from "../../_lib/core.js";
 
@@ -29,19 +30,23 @@ async function ensureMagicTable(db) {
   await db.prepare(`CREATE INDEX IF NOT EXISTS idx_magic_logins_hash ON magic_logins(token_hash)`).run();
 }
 
-async function ensureAssistUser(db, email, name) {
+async function ensureAssistUser(db, email, name, env) {
   const existing = await db.prepare("SELECT id, email, name FROM users WHERE email = ?").bind(email).first();
   if (existing) return existing;
   const id = uid("user");
   const salt = randomSaltHex();
-  const passwordHash = await hashPassword(randomToken(24), salt);
+  // The password here is a random token nobody ever learns, but it is still a
+  // credential sitting in the table, so it is created at the current target and
+  // records its cost like any other.
+  const iterations = targetIterations(env);
+  const passwordHash = await hashPassword(randomToken(24), salt, iterations);
   const ts = nowIso();
   await db
     .prepare(
-      `INSERT INTO users (id, email, name, password_hash, password_salt, stripe_customer_id, plan_slug, subscription_status, stripe_subscription_id, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, NULL, NULL, 'none', NULL, ?, ?)`,
+      `INSERT INTO users (id, email, name, password_hash, password_salt, password_iterations, stripe_customer_id, plan_slug, subscription_status, stripe_subscription_id, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, 'none', NULL, ?, ?)`,
     )
-    .bind(id, email, name, passwordHash, salt, ts, ts)
+    .bind(id, email, name, passwordHash, salt, iterations, ts, ts)
     .run();
   return { id, email, name };
 }
@@ -66,7 +71,7 @@ export async function onRequestPost(context) {
     : "/dashboard/connections";
   const name = String(body.name || "AmberOne Owner").trim() || "AmberOne Owner";
 
-  const user = await ensureAssistUser(db, email, name);
+  const user = await ensureAssistUser(db, email, name, context.env);
   const token = randomToken(32);
   const tokenHash = await sha256Hex(token);
   const id = uid("magic");
