@@ -1,0 +1,8 @@
+name = "amberoneai-www-redirect"
+main = "index.js"
+compatibility_date = "2025-07-18"
+account_id = "735d0e617e9ba6a16d9b2a1ec05b4dd3"
+
+routes = [
+  { pattern = "www.amberoneai.com/*", zone_name = "amberoneai.com" }
+]
