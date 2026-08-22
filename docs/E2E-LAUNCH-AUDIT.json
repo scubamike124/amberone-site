@@ -1,0 +1,133 @@
+{
+  "at": "2026-08-18T22:20:37.571Z",
+  "base": "https://amberoneai.com",
+  "pass": 26,
+  "fail": 0,
+  "total": 26,
+  "failed": [],
+  "steps": [
+    {
+      "name": "health",
+      "ok": true,
+      "detail": "{\"ok\":true,\"service\":\"amberone-site\",\"status\":\"up\",\"db\":true,\"timestamp\":\"2026-08-18T22:20:27.830Z\"}"
+    },
+    {
+      "name": "robots.txt",
+      "ok": true,
+      "detail": "text/plain; charset=utf-8"
+    },
+    {
+      "name": "sitemap.xml",
+      "ok": true,
+      "detail": "application/xml"
+    },
+    {
+      "name": "contact page",
+      "ok": true,
+      "detail": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name="
+    },
+    {
+      "name": "signup rejects bad email",
+      "ok": true
+    },
+    {
+      "name": "signup A",
+      "ok": true,
+      "detail": "ao.audit.a.msz87o05@example.com"
+    },
+    {
+      "name": "signup duplicate",
+      "ok": true
+    },
+    {
+      "name": "session after signup",
+      "ok": true
+    },
+    {
+      "name": "create memory",
+      "ok": true,
+      "detail": "mem_1ab16ead241c4c6abaffab96463028ab"
+    },
+    {
+      "name": "create note",
+      "ok": true,
+      "detail": "note_59a123ba119e4a1fa3204bf770587ed3"
+    },
+    {
+      "name": "create calendar event",
+      "ok": true,
+      "detail": "evt_0cc55ed51ef34982b53cc850b98caebb"
+    },
+    {
+      "name": "create reminder",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "name": "create list",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "name": "authenticated talk",
+      "ok": true,
+      "detail": "openai"
+    },
+    {
+      "name": "home dashboard api",
+      "ok": true,
+      "detail": "user,greeting,generatedAt,today,calendar,reminders,notifications,memories"
+    },
+    {
+      "name": "create family team",
+      "ok": true,
+      "detail": "team_7761ce4232574cb7a40a38c1926451fc"
+    },
+    {
+      "name": "list chores after team",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "stripe checkout session",
+      "ok": true,
+      "detail": "https://checkout.stripe.com/g/pay/cs_live_b1M7Q2GI2kdDaLrUI4"
+    },
+    {
+      "name": "unknown plan blocked",
+      "ok": true
+    },
+    {
+      "name": "logout",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "session cleared",
+      "ok": true
+    },
+    {
+      "name": "signup B",
+      "ok": true,
+      "detail": "ao.audit.b.msz87o05@example.com"
+    },
+    {
+      "name": "tenant isolation notes",
+      "ok": true,
+      "detail": "404"
+    },
+    {
+      "name": "tenant isolation memories",
+      "ok": true,
+      "detail": "isolated"
+    },
+    {
+      "name": "login wrong password",
+      "ok": true
+    },
+    {
+      "name": "login A",
+      "ok": true
+    }
+  ]
+}

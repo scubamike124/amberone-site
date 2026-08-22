@@ -162,11 +162,23 @@ export async function onRequestPatch(context) {
   const existing = await db.prepare("SELECT * FROM reminders WHERE id = ? AND user_id = ?").bind(id, user.id).first();
   if (!existing) return json({ error: "Reminder not found" }, 404);
 
-  const status = body.complete ? "completed" : body.status || existing.status;
+  let status = existing.status;
+  if (body.complete) status = "completed";
+  else if (body.reopen) status = "pending";
+  else if (body.status) status = String(body.status);
+  if (!["pending", "sent", "completed", "cancelled"].includes(status)) {
+    return json({ error: "Invalid reminder status" }, 400);
+  }
+
   const ts = nowIso();
+  const title = body.title !== undefined ? String(body.title).slice(0, 200) : existing.title;
+  const reminderBody = body.body !== undefined ? body.body : existing.body;
+  const dueAt = body.due_at || body.dueAt || existing.due_at;
+  const sentAt = status === "pending" ? null : existing.sent_at;
+
   await db
-    .prepare("UPDATE reminders SET status = ?, updated_at = ? WHERE id = ? AND user_id = ?")
-    .bind(status, ts, id, user.id)
+    .prepare("UPDATE reminders SET title = ?, body = ?, due_at = ?, status = ?, sent_at = ?, updated_at = ? WHERE id = ? AND user_id = ?")
+    .bind(title, reminderBody, dueAt, status, sentAt, ts, id, user.id)
     .run();
 
   await writeAudit(db, { userId: user.id, action: "reminder.update", resourceType: "reminder", resourceId: id, meta: { status } });

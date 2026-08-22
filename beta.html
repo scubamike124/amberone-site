@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Beta access · AmberOne</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <main class="wrap" style="max-width:36rem;padding:3rem 1.25rem">
+    <h1>Amber One beta</h1>
+    <p class="lede" id="msg">Opening your temporary test workspace…</p>
+  </main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const token = params.get("token");
+    const error = params.get("error");
+    const msg = document.getElementById("msg");
+    if (error === "expired") msg.textContent = "This beta link has expired. Ask Michael for a new one.";
+    else if (error === "revoked") msg.textContent = "This beta link was revoked.";
+    else if (error === "invalid") msg.textContent = "This beta link is not valid.";
+    else if (token) location.replace("/api/auth/beta-invite?token=" + encodeURIComponent(token));
+    else msg.textContent = "This page needs a private invite link. Ask Michael to send you one.";
+  </script>
+</body>
+</html>

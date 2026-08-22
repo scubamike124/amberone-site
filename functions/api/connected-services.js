@@ -6,6 +6,8 @@ import {
   linkAccount,
   listConnectedAccounts,
 } from "../_lib/composio.js";
+import { isGoogleCalendarOAuthConfigured } from "../_lib/google-calendar.js";
+import { isNextdoorOAuthConfigured } from "../_lib/nextdoor.js";
 
 /**
  * Connected Services API (Composio hub).
@@ -17,6 +19,8 @@ import {
 const SUPPORTED_TOOLKITS = {
   googlecalendar: { provider: "google", label: "Google Calendar" },
   gmail: { provider: "google", label: "Gmail" },
+  instagram: { provider: "meta", label: "Instagram" },
+  nextdoor: { provider: "nextdoor", label: "Nextdoor" },
 };
 
 export async function onRequestGet(context) {
@@ -27,6 +31,8 @@ export async function onRequestGet(context) {
   if (!user) return json({ error: "Unauthorized" }, 401);
 
   const composioConfigured = isComposioConfigured(context.env);
+  const nativeGoogleCalendar = isGoogleCalendarOAuthConfigured(context.env);
+  const nativeNextdoor = isNextdoorOAuthConfigured(context.env);
   let composioSyncError = null;
   let remoteItems = [];
 
@@ -103,13 +109,21 @@ export async function onRequestGet(context) {
   return json({
     connections,
     composioConfigured,
+    nativeGoogleCalendar,
+    nativeNextdoor,
     composioSyncError,
-    availableToolkits: Object.entries(SUPPORTED_TOOLKITS).map(([toolkit, meta]) => ({
-      toolkit,
-      label: meta.label,
-      configured: Boolean(authConfigIdForToolkit(context.env, toolkit)),
-      connected: connections.some((c) => c.toolkit === toolkit && String(c.status).toUpperCase() === "ACTIVE"),
-    })),
+    availableToolkits: Object.entries(SUPPORTED_TOOLKITS).map(([toolkit, meta]) => {
+      const composioReady = Boolean(authConfigIdForToolkit(context.env, toolkit));
+      const nativeReady =
+        (toolkit === "googlecalendar" && nativeGoogleCalendar) || (toolkit === "nextdoor" && nativeNextdoor);
+      return {
+        toolkit,
+        label: meta.label,
+        configured: nativeReady || composioReady,
+        connectable: nativeReady || (composioConfigured && composioReady),
+        connected: connections.some((c) => c.toolkit === toolkit && String(c.status).toUpperCase() === "ACTIVE"),
+      };
+    }),
   });
 }
 
@@ -124,6 +138,30 @@ export async function onRequestPost(context) {
   const toolkit = String(body.toolkit || "").toLowerCase();
   if (!SUPPORTED_TOOLKITS[toolkit]) {
     return json({ error: `Unsupported toolkit. Choose one of: ${Object.keys(SUPPORTED_TOOLKITS).join(", ")}` }, 400);
+  }
+
+  if (toolkit === "nextdoor") {
+    if (!isNextdoorOAuthConfigured(context.env)) {
+      return json(
+        {
+          error:
+            "Nextdoor publishing is not configured on Amber One yet. Amber needs a Nextdoor Publish API client id and secret from Nextdoor’s partner program.",
+          code: "nextdoor_not_configured",
+        },
+        503,
+      );
+    }
+    return json({
+      ok: true,
+      redirectUrl: `${originFrom(context.request)}/api/nextdoor-oauth`,
+    });
+  }
+
+  if (toolkit === "googlecalendar" && isGoogleCalendarOAuthConfigured(context.env)) {
+    return json({
+      ok: true,
+      redirectUrl: `${originFrom(context.request)}/api/google-calendar-oauth`,
+    });
   }
 
   if (!isComposioConfigured(context.env)) {

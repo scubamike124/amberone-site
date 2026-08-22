@@ -26,6 +26,18 @@ window.AmberOne = {
       location.href = `${redirect}?next=${encodeURIComponent(location.pathname + location.search)}`;
       return null;
     }
+    if (data.user.isBeta) {
+      const host = document.querySelector("main") || document.body;
+      if (host && !document.getElementById("ao-beta-banner")) {
+        const bar = document.createElement("div");
+        bar.id = "ao-beta-banner";
+        bar.className = "banner is-on warn";
+        bar.style.margin = "0 0 1rem";
+        const until = data.user.betaExpiresAt ? new Date(data.user.betaExpiresAt).toLocaleString() : "the end of the beta";
+        bar.textContent = `Beta test workspace — full product access until ${until}. Live publish, billing, and owner credentials are off-limits.`;
+        host.prepend(bar);
+      }
+    }
     return data.user;
   },
 

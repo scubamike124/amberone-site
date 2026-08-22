@@ -1,0 +1,145 @@
+{
+  "at": "2026-08-19T01:15:13.421Z",
+  "clientIdPresent": true,
+  "clientSecretPresent": true,
+  "clientIdLastFour": ".com",
+  "clientIdKind": "oauth-client-id",
+  "clientSecretKind": "GOCSPX",
+  "cfTokenPresent": true,
+  "cfAccountPresent": true,
+  "pagesBefore": {
+    "http": 200,
+    "productionKeys": [
+      "env_vars",
+      "d1_databases",
+      "r2_buckets",
+      "fail_open",
+      "always_use_latest_compatibility_date",
+      "compatibility_date",
+      "compatibility_flags",
+      "build_image_major_version",
+      "usage_model",
+      "wrangler_config_hash"
+    ],
+    "r2": {
+      "present": true,
+      "keys": [
+        "MEDIA_BUCKET"
+      ]
+    },
+    "d1Present": true,
+    "envKeys": [
+      "ASSIST_LOGIN_SECRET",
+      "COMPOSIO_API_KEY",
+      "COMPOSIO_GMAIL_AUTH_CONFIG_ID",
+      "COMPOSIO_GOOGLE_CALENDAR_AUTH_CONFIG_ID",
+      "EMAIL_FROM",
+      "OPENAI_API_KEY",
+      "RESEND_API_KEY",
+      "STRIPE_PRICE_BUSINESS_MEDIUM",
+      "STRIPE_PRICE_BUSINESS_SMALL",
+      "STRIPE_PRICE_EXECUTIVE",
+      "STRIPE_PRICE_FAMILY_10",
+      "STRIPE_PRICE_FAMILY_2",
+      "STRIPE_PRICE_FAMILY_5",
+      "STRIPE_PRICE_PERSONAL",
+      "STRIPE_SECRET_KEY",
+      "STRIPE_WEBHOOK_SECRET"
+    ]
+  },
+  "r2Patch": {
+    "http": 200,
+    "success": true,
+    "errors": [],
+    "r2": {
+      "present": true,
+      "keys": [
+        "MEDIA_BUCKET"
+      ]
+    }
+  },
+  "pagesSecrets": {
+    "GOOGLE_CALENDAR_CLIENT_ID": {
+      "ok": true,
+      "status": 0,
+      "snippet": [
+        " ⛅️ wrangler 3.114.15 (update available 4.124.0)",
+        "------------------------------------------------",
+        "🌀 Creating the secret for the Pages project \"amberone\" (production)",
+        "✨ Success! Uploaded secret GOOGLE_CALENDAR_CLIENT_ID",
+        "\u001b[33m▲ \u001b[43;33m[\u001b[43;30mWARNING\u001b[43;33m]\u001b[0m \u001b[1mThe version of Wrangler you are using is now out-of-date.\u001b[0m",
+        "  Please update to the latest version to prevent critical errors.",
+        "  Run `npm install --save-dev wrangler@4` to update to the latest version.",
+        "  After installation, run Wrangler with `npx wrangler`."
+      ]
+    },
+    "GOOGLE_CALENDAR_CLIENT_SECRET": {
+      "ok": true,
+      "status": 0,
+      "snippet": [
+        " ⛅️ wrangler 3.114.15 (update available 4.124.0)",
+        "------------------------------------------------",
+        "🌀 Creating the secret for the Pages project \"amberone\" (production)",
+        "✨ Success! Uploaded secret GOOGLE_CALENDAR_CLIENT_SECRET",
+        "\u001b[33m▲ \u001b[43;33m[\u001b[43;30mWARNING\u001b[43;33m]\u001b[0m \u001b[1mThe version of Wrangler you are using is now out-of-date.\u001b[0m",
+        "  Please update to the latest version to prevent critical errors.",
+        "  Run `npm install --save-dev wrangler@4` to update to the latest version.",
+        "  After installation, run Wrangler with `npx wrangler`."
+      ]
+    }
+  },
+  "deploy": {
+    "ok": true,
+    "status": 0,
+    "snippet": [
+      "✨ Compiled Worker successfully",
+      "Uploading... (282/288)",
+      "Uploading... (284/288)",
+      "Uploading... (286/288)",
+      "Uploading... (288/288)",
+      "✨ Success! Uploaded 6 files (282 already uploaded) (1.33 sec)",
+      "✨ Uploading _headers",
+      "✨ Uploading Functions bundle",
+      "✨ Uploading _routes.json",
+      "🌎 Deploying...",
+      "✨ Deployment complete! Take a peek over at https://0bbb2413.amberone.pages.dev"
+    ]
+  },
+  "pagesAfter": {
+    "http": 200,
+    "r2": {
+      "present": true,
+      "keys": [
+        "MEDIA_BUCKET"
+      ]
+    },
+    "envKeys": [
+      "ASSIST_LOGIN_SECRET",
+      "COMPOSIO_API_KEY",
+      "COMPOSIO_GMAIL_AUTH_CONFIG_ID",
+      "COMPOSIO_GOOGLE_CALENDAR_AUTH_CONFIG_ID",
+      "EMAIL_FROM",
+      "GOOGLE_CALENDAR_CLIENT_ID",
+      "GOOGLE_CALENDAR_CLIENT_SECRET",
+      "OPENAI_API_KEY",
+      "RESEND_API_KEY",
+      "STRIPE_PRICE_BUSINESS_MEDIUM",
+      "STRIPE_PRICE_BUSINESS_SMALL",
+      "STRIPE_PRICE_EXECUTIVE",
+      "STRIPE_PRICE_FAMILY_10",
+      "STRIPE_PRICE_FAMILY_2",
+      "STRIPE_PRICE_FAMILY_5",
+      "STRIPE_PRICE_PERSONAL",
+      "STRIPE_SECRET_KEY",
+      "STRIPE_WEBHOOK_SECRET"
+    ],
+    "gcalClientIdPresent": true,
+    "gcalClientSecretPresent": true
+  },
+  "liveHealth": {
+    "ok": true,
+    "db": true,
+    "r2": true,
+    "googleCalendarOAuth": true
+  }
+}

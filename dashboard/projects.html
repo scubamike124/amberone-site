@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Projects · AmberOne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Primary">
+    <a class="nav-brand" href="/dashboard/">Amber<span>One</span></a>
+    <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
+    <div class="nav-links" data-nav-links>
+      <a href="/dashboard/">Home</a>
+      <a href="/dashboard/projects">Projects</a>
+      <a href="/dashboard/calendar">Calendar</a>
+      <a class="nav-notif" href="/dashboard/notifications">Notifications<span class="badge" data-notif-badge hidden>0</span></a>
+      <a href="#" data-logout>Log out</a>
+    </div>
+  </nav>
+  <main class="wrap">
+    <div class="dash-shell">
+      <aside data-dash-nav></aside>
+      <section>
+        <h1>Projects</h1>
+        <p class="lede">Create a project, invite people, assign work, comment, message the team, and attach files.</p>
+        <div id="banner" class="banner"></div>
+
+        <div id="invites-panel" class="panel" style="margin-bottom:1.25rem;display:none">
+          <h2>Pending invitations</h2>
+          <div id="invites-list"></div>
+        </div>
+
+        <div class="panel" style="margin-bottom:1.25rem">
+          <h2>New project</h2>
+          <form id="project-form">
+            <label class="label" for="proj-name">Name</label>
+            <input class="field" id="proj-name" required placeholder="Kitchen remodel, Q3 launch…" />
+            <label class="label" for="proj-desc">Description</label>
+            <textarea class="field" id="proj-desc" rows="3" placeholder="What this project is for"></textarea>
+            <label class="label" for="proj-deadline">Deadline (optional)</label>
+            <input class="field" id="proj-deadline" type="date" />
+            <button class="btn btn-primary" type="submit">Create project</button>
+          </form>
+        </div>
+
+        <div class="panel" style="margin-bottom:1.25rem">
+          <h2>Your projects</h2>
+          <div id="project-list"><p class="empty-state">Loading…</p></div>
+        </div>
+
+        <div id="detail" class="panel" hidden>
+          <h2 id="detail-name">Project</h2>
+          <p class="lede" id="detail-meta"></p>
+
+          <h3>Invite people</h3>
+          <form id="invite-form" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+            <input class="field" id="invite-email" type="email" required placeholder="person@example.com" style="margin:0;flex:1;min-width:180px" />
+            <select class="field" id="invite-role" style="margin:0;width:auto">
+              <option value="member">Member</option>
+              <option value="admin">Admin</option>
+              <option value="viewer">Viewer</option>
+            </select>
+            <button class="btn btn-primary" type="submit">Invite</button>
+          </form>
+          <div id="members-list"></div>
+
+          <h3>Tasks</h3>
+          <form id="task-form" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+            <input class="field" id="task-title" required placeholder="New task" style="margin:0;flex:1;min-width:160px" />
+            <input class="field" id="task-body" placeholder="Details" style="margin:0;flex:1;min-width:160px" />
+            <button class="btn btn-primary" type="submit">Add task</button>
+          </form>
+          <div id="tasks-list"></div>
+
+          <h3>Files</h3>
+          <form id="file-form" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+            <input class="field" id="file-input" type="file" required style="margin:0;flex:1" />
+            <button class="btn btn-primary" type="submit">Attach</button>
+          </form>
+          <div id="files-list"></div>
+
+          <h3>Discussion</h3>
+          <form id="comment-form" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+            <input class="field" id="comment-body" required placeholder="Comment" style="margin:0;flex:1" />
+            <button class="btn btn-primary" type="submit">Comment</button>
+          </form>
+          <div id="comments-list"></div>
+
+          <h3>Project messages</h3>
+          <form id="message-form" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+            <input class="field" id="message-body" required placeholder="Message the project team (in-app, not email)" style="margin:0;flex:1" />
+            <button class="btn btn-primary" type="submit">Send</button>
+          </form>
+          <div id="messages-list"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="/assets/app.js"></script>
+  <script src="/assets/dash-chrome.js"></script>
+  <script>
+    (async () => {
+      const user = await AmberOne.requireAuth();
+      if (!user) return;
+      const banner = document.getElementById("banner");
+      let currentId = null;
+
+      async function loadInvites() {
+        const { res, data } = await AmberOne.api("/api/projects?action=invites");
+        const invites = res.ok ? data.invites || [] : [];
+        const panel = document.getElementById("invites-panel");
+        if (!invites.length) { panel.style.display = "none"; return; }
+        panel.style.display = "";
+        document.getElementById("invites-list").innerHTML = `<ul class="list">${invites.map((i) =>
+          `<li class="list-item"><div class="meta-col"><strong>${i.project_name}</strong><span class="sub">${i.role}</span></div>
+            <div class="row-actions">
+              <button class="btn btn-primary btn-sm" data-accept="${i.id}">Accept</button>
+              <button class="btn btn-ghost btn-sm" data-reject="${i.id}">Decline</button>
+            </div></li>`).join("")}</ul>`;
+        document.querySelectorAll("[data-accept]").forEach((btn) => {
+          btn.onclick = async () => {
+            await AmberOne.api("/api/projects", { method: "PATCH", body: JSON.stringify({ action: "accept", member_id: btn.dataset.accept }) });
+            loadInvites(); loadProjects();
+          };
+        });
+        document.querySelectorAll("[data-reject]").forEach((btn) => {
+          btn.onclick = async () => {
+            await AmberOne.api("/api/projects", { method: "PATCH", body: JSON.stringify({ action: "reject", member_id: btn.dataset.reject }) });
+            loadInvites();
+          };
+        });
+      }
+
+      async function loadProjects() {
+        const { res, data } = await AmberOne.api("/api/projects");
+        if (!res.ok) {
+          document.getElementById("project-list").innerHTML = `<p class="empty-state">${data.error || "Could not load projects."}</p>`;
+          return;
+        }
+        const projects = data.projects || [];
+        document.getElementById("project-list").innerHTML = projects.length
+          ? `<ul class="list">${projects.map((p) =>
+              `<li class="list-item"><div class="meta-col"><strong>${String(p.name).replace(/</g,"&lt;")}</strong><span class="sub">${p.deadline || p.status}</span></div>
+                <div class="row-actions"><button class="btn btn-ghost btn-sm" data-open="${p.id}">Open</button></div></li>`).join("")}</ul>`
+          : `<p class="empty-state">No projects yet. Create one above.</p>`;
+        document.querySelectorAll("[data-open]").forEach((btn) => {
+          btn.onclick = () => openProject(btn.dataset.open);
+        });
+      }
+
+      async function openProject(id) {
+        currentId = id;
+        const { res, data } = await AmberOne.api(`/api/projects?id=${encodeURIComponent(id)}`);
+        if (!res.ok) {
+          AmberOne.showBanner(banner, data.error || "Could not open project", "err");
+          return;
+        }
+        const p = data.project;
+        document.getElementById("detail").hidden = false;
+        document.getElementById("detail-name").textContent = p.name;
+        document.getElementById("detail-meta").textContent = `${p.description || ""} ${p.deadline ? " · due " + p.deadline : ""}`;
+        document.getElementById("members-list").innerHTML = `<ul class="list">${(data.members || []).map((m) =>
+          `<li class="list-item"><div class="meta-col"><strong>${m.invited_email || m.user_id}</strong><span class="sub">${m.role}</span></div><span class="ao-status ${m.status === "active" ? "is-ok" : "is-warn"}">${m.status}</span></li>`).join("")}</ul>`;
+        document.getElementById("tasks-list").innerHTML = (data.tasks || []).length
+          ? `<ul class="list">${data.tasks.map((t) =>
+              `<li class="list-item"><div class="meta-col"><strong>${String(t.title).replace(/</g,"&lt;")}</strong><span class="sub">${t.status}${t.body ? " · " + String(t.body).replace(/</g,"&lt;") : ""}</span></div>
+                <div class="row-actions">
+                  ${t.status === "open" || t.status === "reopened" ? `<button class="btn btn-ghost btn-sm" data-done="${t.id}">Complete</button>` : `<button class="btn btn-ghost btn-sm" data-reopen="${t.id}">Reopen</button>`}
+                  <button class="btn btn-ghost btn-sm" data-deltask="${t.id}">Delete</button>
+                </div></li>`).join("")}</ul>`
+          : `<p class="empty-state">No tasks yet.</p>`;
+        document.getElementById("files-list").innerHTML = (data.files || []).length
+          ? `<ul class="list">${data.files.map((f) =>
+              `<li class="list-item"><div class="meta-col"><strong>${String(f.name).replace(/</g,"&lt;")}</strong><span class="sub">${f.size} bytes</span></div>
+                <div class="row-actions">
+                  <a class="btn btn-ghost btn-sm" href="${f.url}">Download</a>
+                  <button class="btn btn-ghost btn-sm" data-delfile="${f.id}">Remove</button>
+                </div></li>`).join("")}</ul>`
+          : `<p class="empty-state">No files attached yet.</p>`;
+        document.getElementById("comments-list").innerHTML = (data.comments || []).length
+          ? `<ul class="list">${data.comments.map((c) => `<li class="list-item"><div class="meta-col"><span class="sub">${String(c.body).replace(/</g,"&lt;")}</span></div></li>`).join("")}</ul>`
+          : `<p class="empty-state">No comments yet.</p>`;
+        document.getElementById("messages-list").innerHTML = (data.messages || []).length
+          ? `<ul class="list">${data.messages.map((m) => `<li class="list-item"><div class="meta-col"><span class="sub">${String(m.body).replace(/</g,"&lt;")}</span></div></li>`).join("")}</ul>`
+          : `<p class="empty-state">No messages yet.</p>`;
+
+        document.querySelectorAll("[data-done]").forEach((btn) => {
+          btn.onclick = async () => {
+            await AmberOne.api("/api/projects", { method: "PATCH", body: JSON.stringify({ action: "task_update", task_id: btn.dataset.done, status: "done" }) });
+            openProject(currentId);
+          };
+        });
+        document.querySelectorAll("[data-reopen]").forEach((btn) => {
+          btn.onclick = async () => {
+            await AmberOne.api("/api/projects", { method: "PATCH", body: JSON.stringify({ action: "task_update", task_id: btn.dataset.reopen, status: "reopened" }) });
+            openProject(currentId);
+          };
+        });
+        document.querySelectorAll("[data-deltask]").forEach((btn) => {
+          btn.onclick = async () => {
+            await AmberOne.api(`/api/projects?task_id=${encodeURIComponent(btn.dataset.deltask)}`, { method: "DELETE" });
+            openProject(currentId);
+          };
+        });
+        document.querySelectorAll("[data-delfile]").forEach((btn) => {
+          btn.onclick = async () => {
+            await AmberOne.api(`/api/files?id=${encodeURIComponent(btn.dataset.delfile)}`, { method: "DELETE" });
+            openProject(currentId);
+          };
+        });
+      }
+
+      document.getElementById("project-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const { res, data } = await AmberOne.api("/api/projects", {
+          method: "POST",
+          body: JSON.stringify({
+            name: document.getElementById("proj-name").value.trim(),
+            description: document.getElementById("proj-desc").value.trim(),
+            deadline: document.getElementById("proj-deadline").value || null,
+          }),
+        });
+        if (!res.ok) {
+          AmberOne.showBanner(banner, data.error || "Could not create project", "err");
+          return;
+        }
+        e.target.reset();
+        AmberOne.showBanner(banner, "Project created.", "ok");
+        await loadProjects();
+        if (data.project?.id) openProject(data.project.id);
+      };
+
+      document.getElementById("invite-form").onsubmit = async (e) => {
+        e.preventDefault();
+        if (!currentId) return;
+        const { res, data } = await AmberOne.api("/api/projects", {
+          method: "PATCH",
+          body: JSON.stringify({
+            action: "invite",
+            project_id: currentId,
+            email: document.getElementById("invite-email").value,
+            role: document.getElementById("invite-role").value,
+          }),
+        });
+        if (!res.ok) {
+          AmberOne.showBanner(banner, data.error || "Could not invite", "err");
+          return;
+        }
+        e.target.reset();
+        AmberOne.showBanner(banner, "Invite sent (in-app if they already have an account).", "ok");
+        openProject(currentId);
+      };
+
+      document.getElementById("task-form").onsubmit = async (e) => {
+        e.preventDefault();
+        if (!currentId) return;
+        const { res, data } = await AmberOne.api("/api/projects", {
+          method: "POST",
+          body: JSON.stringify({
+            action: "task",
+            project_id: currentId,
+            title: document.getElementById("task-title").value.trim(),
+            body: document.getElementById("task-body").value.trim(),
+          }),
+        });
+        if (!res.ok) {
+          AmberOne.showBanner(banner, data.error || "Could not add task", "err");
+          return;
+        }
+        e.target.reset();
+        openProject(currentId);
+      };
+
+      document.getElementById("comment-form").onsubmit = async (e) => {
+        e.preventDefault();
+        if (!currentId) return;
+        await AmberOne.api("/api/projects", {
+          method: "POST",
+          body: JSON.stringify({ action: "comment", project_id: currentId, body: document.getElementById("comment-body").value.trim() }),
+        });
+        e.target.reset();
+        openProject(currentId);
+      };
+
+      document.getElementById("message-form").onsubmit = async (e) => {
+        e.preventDefault();
+        if (!currentId) return;
+        await AmberOne.api("/api/projects", {
+          method: "POST",
+          body: JSON.stringify({ action: "message", project_id: currentId, body: document.getElementById("message-body").value.trim() }),
+        });
+        e.target.reset();
+        openProject(currentId);
+      };
+
+      document.getElementById("file-form").onsubmit = async (e) => {
+        e.preventDefault();
+        if (!currentId) return;
+        const input = document.getElementById("file-input");
+        const file = input.files?.[0];
+        if (!file) return;
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("project_id", currentId);
+        const res = await fetch("/api/files", { method: "POST", credentials: "include", body: fd });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          AmberOne.showBanner(banner, data.error || "Upload failed", "err");
+          return;
+        }
+        input.value = "";
+        openProject(currentId);
+      };
+
+      loadInvites();
+      loadProjects();
+    })();
+  </script>
+</body>
+</html>

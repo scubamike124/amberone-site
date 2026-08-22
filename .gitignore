@@ -8,3 +8,6 @@ dist/
 .DS_Store
 *.log
 .tmp/
+
+# D1 exports contain password hashes and customer data — never commit.
+backups/

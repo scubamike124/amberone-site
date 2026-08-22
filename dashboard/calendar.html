@@ -31,12 +31,18 @@
       <aside data-dash-nav></aside>
       <section>
         <h1>Calendar</h1>
-        <p class="lede">Events for the next 30 days. Ask Amber to add something, or create it directly below.</p>
+        <p class="lede">Create, edit, reschedule, and share events. Connect Google Calendar to pull in your live schedule.</p>
         <div id="banner" class="banner"></div>
+        <div class="row-actions" style="margin-bottom:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+          <a class="btn btn-primary" href="/api/google-calendar-oauth">Connect Google Calendar</a>
+          <button class="btn btn-ghost" type="button" id="sync-google">Sync from Google</button>
+          <a class="btn btn-ghost" href="/dashboard/connections">Connections</a>
+        </div>
 
         <div class="panel" style="margin-bottom:1.25rem">
-          <h2>New event</h2>
+          <h2 id="form-heading">New event</h2>
           <form id="event-form">
+            <input type="hidden" id="event_id" />
             <label class="label" for="title">Title</label>
             <input class="field" id="title" required placeholder="Dentist appointment" />
             <div style="display:grid;gap:0.75rem;grid-template-columns:1fr 1fr">
@@ -53,7 +59,45 @@
             <input class="field" id="location" placeholder="Home, office, address…" />
             <label class="label" for="description">Notes (optional)</label>
             <input class="field" id="description" placeholder="Anything to remember" />
-            <button class="btn btn-primary" type="submit">Add event</button>
+            <label class="label" for="people">People (optional, comma-separated)</label>
+            <input class="field" id="people" placeholder="Alex, Jordan, Sam" />
+            <div style="display:grid;gap:0.75rem;grid-template-columns:1fr 1fr 1fr">
+              <div>
+                <label class="label" for="recurrence">Repeat</label>
+                <select class="field" id="recurrence">
+                  <option value="none">Does not repeat</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+              </div>
+              <div>
+                <label class="label" for="visibility">Privacy</label>
+                <select class="field" id="visibility">
+                  <option value="private">Private (only me)</option>
+                  <option value="shared">Shared with family/team</option>
+                </select>
+              </div>
+              <div>
+                <label class="label" for="remind_minutes">Remind me</label>
+                <select class="field" id="remind_minutes">
+                  <option value="">No reminder</option>
+                  <option value="0">At start time</option>
+                  <option value="15">15 minutes before</option>
+                  <option value="30" selected>30 minutes before</option>
+                  <option value="60">1 hour before</option>
+                  <option value="1440">1 day before</option>
+                </select>
+              </div>
+            </div>
+            <label class="label" style="display:flex;gap:0.5rem;align-items:center">
+              <input type="checkbox" id="all_day" /> All day
+            </label>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+              <button class="btn btn-primary" type="submit" id="save-btn">Add event</button>
+              <button class="btn btn-ghost" type="button" id="cancel-edit" hidden>Cancel edit</button>
+            </div>
           </form>
         </div>
 
@@ -72,6 +116,31 @@
       if (!user) return;
       const banner = document.getElementById("banner");
 
+      const toLocal = (iso) => {
+        if (!iso) return "";
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return "";
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      };
+      const peopleText = (raw) => {
+        if (!raw) return "";
+        try {
+          const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+          if (Array.isArray(parsed)) return parsed.map((p) => p.name || p.email || p).filter(Boolean).join(", ");
+        } catch {}
+        return String(raw);
+      };
+
+      function resetForm() {
+        document.getElementById("event_id").value = "";
+        document.getElementById("event-form").reset();
+        document.getElementById("remind_minutes").value = "30";
+        document.getElementById("form-heading").textContent = "New event";
+        document.getElementById("save-btn").textContent = "Add event";
+        document.getElementById("cancel-edit").hidden = true;
+      }
+
       async function loadEvents() {
         const { res, data } = await AmberOne.api("/api/calendar");
         if (!res.ok) {
@@ -81,17 +150,22 @@
         const events = data.events || [];
         document.getElementById("events-list").innerHTML = events.length
           ? `<ul class="list">${events
-              .map(
-                (e) => `<li class="list-item">
+              .map((e) => {
+                const mine = e.user_id === user.id || !e.user_id;
+                const people = peopleText(e.attendees);
+                return `<li class="list-item">
                   <div class="meta-col">
-                    <strong>${e.title}</strong>
-                    <span class="sub">${new Date(e.starts_at).toLocaleString()}${e.location ? " · " + e.location : ""}</span>
+                    <strong>${String(e.title || "").replace(/</g, "&lt;")}</strong>
+                    <span class="sub">${new Date(e.starts_at).toLocaleString()}${e.location ? " · " + String(e.location).replace(/</g, "&lt;") : ""}${e.recurrence ? " · repeats " + e.recurrence : ""}${e.visibility === "shared" ? " · shared" : " · private"}</span>
+                    ${people ? `<span class="sub">People: ${String(people).replace(/</g, "&lt;")}</span>` : ""}
+                    ${e.description ? `<span class="sub">${String(e.description).replace(/</g, "&lt;")}</span>` : ""}
                   </div>
                   <div class="row-actions">
-                    <button class="btn btn-ghost btn-sm" data-delete="${e.id}">Delete</button>
+                    ${mine ? `<button class="btn btn-ghost btn-sm" data-edit='${JSON.stringify({ id: e.id, title: e.title, starts_at: e.starts_at, ends_at: e.ends_at, location: e.location, description: e.description, attendees: people, recurrence: e.recurrence || "none", visibility: e.visibility || "private", all_day: e.all_day }).replace(/'/g, "&#39;")}'>Edit</button>` : ""}
+                    ${mine ? `<button class="btn btn-ghost btn-sm" data-delete="${e.id}">Delete</button>` : ""}
                   </div>
-                </li>`,
-              )
+                </li>`;
+              })
               .join("")}</ul>`
           : `<p class="empty-state">No upcoming events. Add one above or ask Amber to schedule it.</p>`;
 
@@ -107,33 +181,83 @@
             loadEvents();
           };
         });
+        document.querySelectorAll("[data-edit]").forEach((btn) => {
+          btn.onclick = () => {
+            let ev = {};
+            try { ev = JSON.parse(btn.dataset.edit); } catch { return; }
+            document.getElementById("event_id").value = ev.id || "";
+            document.getElementById("title").value = ev.title || "";
+            document.getElementById("starts_at").value = toLocal(ev.starts_at);
+            document.getElementById("ends_at").value = toLocal(ev.ends_at);
+            document.getElementById("location").value = ev.location || "";
+            document.getElementById("description").value = ev.description || "";
+            document.getElementById("people").value = ev.attendees || "";
+            document.getElementById("recurrence").value = ev.recurrence || "none";
+            document.getElementById("visibility").value = ev.visibility || "private";
+            document.getElementById("all_day").checked = Boolean(ev.all_day);
+            document.getElementById("form-heading").textContent = "Edit event";
+            document.getElementById("save-btn").textContent = "Save changes";
+            document.getElementById("cancel-edit").hidden = false;
+            document.getElementById("title").focus();
+          };
+        });
       }
+
+      document.getElementById("cancel-edit").onclick = () => resetForm();
 
       document.getElementById("event-form").onsubmit = async (e) => {
         e.preventDefault();
+        const id = document.getElementById("event_id").value;
         const title = document.getElementById("title").value.trim();
         const starts_at = document.getElementById("starts_at").value;
         const ends_at = document.getElementById("ends_at").value;
         const location = document.getElementById("location").value.trim();
         const description = document.getElementById("description").value.trim();
+        const people = document.getElementById("people").value.trim();
+        const recurrence = document.getElementById("recurrence").value;
+        const visibility = document.getElementById("visibility").value;
+        const remind_minutes = document.getElementById("remind_minutes").value;
+        const all_day = document.getElementById("all_day").checked;
         if (!title || !starts_at) return;
+        const payload = {
+          title,
+          starts_at: new Date(starts_at).toISOString(),
+          ends_at: ends_at ? new Date(ends_at).toISOString() : null,
+          location: location || null,
+          description: description || null,
+          people,
+          recurrence,
+          visibility,
+          all_day,
+        };
+        if (remind_minutes !== "") payload.remind_minutes = Number(remind_minutes);
+        if (id) payload.id = id;
         const { res, data } = await AmberOne.api("/api/calendar", {
-          method: "POST",
-          body: JSON.stringify({
-            title,
-            starts_at: new Date(starts_at).toISOString(),
-            ends_at: ends_at ? new Date(ends_at).toISOString() : null,
-            location: location || null,
-            description: description || null,
-          }),
+          method: id ? "PATCH" : "POST",
+          body: JSON.stringify(payload),
         });
         if (!res.ok) {
-          AmberOne.showBanner(banner, data.error || "Could not create event", "err");
+          AmberOne.showBanner(banner, data.error || "Could not save event", "err");
           return;
         }
-        document.getElementById("event-form").reset();
-        AmberOne.showBanner(banner, "Event added.", "ok");
+        resetForm();
+        AmberOne.showBanner(banner, id ? "Event updated." : "Event added.", "ok");
         loadEvents();
+      };
+
+      document.getElementById("sync-google").onclick = async () => {
+        const btn = document.getElementById("sync-google");
+        btn.disabled = true;
+        btn.textContent = "Syncing…";
+        const { res, data } = await AmberOne.api("/api/calendar-sync", { method: "POST", body: "{}" });
+        if (!res.ok) {
+          AmberOne.showBanner(banner, data.error || "Sync failed", "err");
+        } else {
+          AmberOne.showBanner(banner, `Synced ${data.synced || 0} event(s) from Google Calendar.`, "ok");
+          loadEvents();
+        }
+        btn.disabled = false;
+        btn.textContent = "Sync from Google";
       };
 
       loadEvents();

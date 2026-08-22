@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Marketing · AmberOne</title>
+  <title>Social posts · AmberOne</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -15,7 +15,8 @@
     <button type="button" class="nav-toggle" data-nav-toggle aria-label="Menu">Menu</button>
     <div class="nav-links" data-nav-links>
       <a href="/dashboard/business/">Business</a>
-      <a href="/dashboard/business/marketing.html">Marketing</a>
+      <a href="/dashboard/business/marketing.html">Social posts</a>
+      <a href="/dashboard/connections">Connections</a>
       <a href="#" data-logout>Log out</a>
     </div>
   </nav>
@@ -23,19 +24,68 @@
     <div class="dash-shell">
       <aside data-dash-nav data-active="Business"></aside>
       <div class="dash-main">
-        <header class="dash-header"><h1>Marketing Assist</h1><p class="lede">Generate marketing copy with AI. Text only — no posting yet.</p></header>
-        <article class="ao-card is-hero">
-          <form id="gen-form" style="display:flex;gap:.5rem;flex-wrap:wrap">
-            <select class="field" name="type" style="margin:0;width:auto">
-              <option value="social_post">Social Post</option>
-              <option value="promo">Promo / Sale</option>
-              <option value="announcement">Announcement</option>
-              <option value="email_campaign">Email Campaign</option>
-            </select>
-            <input class="field" name="topic" placeholder="Topic or product…" required style="margin:0;flex:1;min-width:180px" />
-            <button class="btn btn-primary" type="submit">Generate</button>
+        <header class="dash-header">
+          <h1>Social posts</h1>
+          <p class="lede">Amber studies the business, writes posts, generates matching images, and keeps anything under 95/100. Ask Amber to schedule the next 14 days, or use the campaign button below — the cloud job keeps working after you close the browser.</p>
+        </header>
+        <div id="banner" class="banner"></div>
+
+        <article class="ao-card" style="margin-bottom:1rem">
+          <h2 style="font-size:1.05rem;margin:0 0 .5rem">Business Amber will write for</h2>
+          <form id="brief-form">
+            <label class="label" for="biz-name">Business name</label>
+            <input class="field" id="biz-name" required />
+            <label class="label" for="biz-sells">What you sell / do</label>
+            <textarea class="field" id="biz-sells" rows="2" required></textarea>
+            <label class="label" for="biz-audience">Who it is for</label>
+            <textarea class="field" id="biz-audience" rows="2" required></textarea>
+            <label class="label" for="biz-offer">Strongest offer or benefit</label>
+            <textarea class="field" id="biz-offer" rows="2" required></textarea>
+            <label class="label" for="biz-location">Location</label>
+            <input class="field" id="biz-location" />
+            <label class="label" for="biz-tone">Tone</label>
+            <input class="field" id="biz-tone" placeholder="calm, precise, warm…" />
+            <label class="label" for="biz-objective">This post’s purpose</label>
+            <input class="field" id="biz-objective" placeholder="Fill Thursday evening consults" />
+            <button class="btn btn-ghost" type="submit">Save business brief</button>
           </form>
-          <div id="output" class="briefing-body" style="margin-top:1.1rem;min-height:100px;color:var(--sand-dim)">Your generated copy will appear here.</div>
+        </article>
+
+        <article class="ao-card" style="margin-bottom:1rem">
+          <h2 style="font-size:1.05rem;margin:0 0 .5rem">Accounts</h2>
+          <p id="account-status" class="lede" style="margin:0 0 .75rem">Checking Instagram and Nextdoor…</p>
+          <div class="row-actions" style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <button class="btn btn-ghost" type="button" id="connect-ig">Connect Instagram</button>
+            <button class="btn btn-ghost" type="button" id="connect-nd">Connect Nextdoor</button>
+          </div>
+        </article>
+
+        <article class="ao-card is-hero" style="margin-bottom:1rem">
+          <h2 style="font-size:1.05rem;margin:0 0 .75rem">Create with Amber</h2>
+          <p class="lede">Every network uses the same 95/100 quality gate. Scheduling the next 14 days creates Instagram and Nextdoor posts together. The cloud job writes, scores, calendars, and auto-publishes each network when that account is connected.</p>
+          <select class="field" id="platform">
+            <option value="all">Instagram + Nextdoor</option>
+            <option value="instagram">Instagram only</option>
+            <option value="nextdoor">Nextdoor only</option>
+          </select>
+          <p id="platform-note" class="lede"></p>
+          <div class="row-actions" style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.5rem 0 1rem">
+            <button class="btn btn-primary" type="button" id="compose-btn">Create post with Amber</button>
+            <button class="btn btn-ghost" type="button" id="campaign-btn">Schedule next 14 days</button>
+          </div>
+          <p id="stage" class="lede" style="margin-top:.75rem"></p>
+          <div id="score-box" hidden style="margin-top:1rem"></div>
+          <img id="preview-img" alt="Post preview" hidden style="max-width:420px;width:100%;border-radius:12px;margin:1rem 0" />
+          <pre id="preview-caption" class="briefing-body" style="white-space:pre-wrap;margin:0"></pre>
+          <div class="row-actions" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem">
+            <button class="btn btn-ghost" type="button" id="prepare-btn" disabled>Prepare</button>
+            <button class="btn btn-ghost" type="button" id="publish-btn" disabled>Publish</button>
+          </div>
+        </article>
+
+        <article class="ao-card">
+          <h2 style="font-size:1.05rem;margin:0 0 .5rem">Your drafts</h2>
+          <div id="post-list"><p class="empty-state">Loading…</p></div>
         </article>
       </div>
     </div>
@@ -45,19 +95,196 @@
   <script>
     (async () => {
       await AmberOne.requireAuth();
-      document.getElementById("gen-form").onsubmit = async (e) => {
+      const banner = document.getElementById("banner");
+      let currentId = null;
+      let platforms = [];
+
+      function scoreHtml(score, attempts) {
+        if (!score) return "";
+        const cats = score.categories || {};
+        const rows = Object.entries(cats).map(([k, v]) => `<li>${k}: <strong>${v}</strong></li>`).join("");
+        const att = (attempts || [])
+          .map((a) => `<li>${a.kind} · ${a.total}/100 ${a.passed ? "pass" : "FAIL — regenerated"} — ${String(a.captionPreview || "").replace(/</g, "&lt;")}</li>`)
+          .join("");
+        return `<p><strong>Quality ${score.total}/100</strong> ${score.passed ? "(pass)" : "(fail)"}</p>
+          <ul>${rows}</ul>
+          <p class="lede">${(score.reasons || []).join(" ")}</p>
+          <p><strong>Gate log</strong></p>
+          <ul>${att}</ul>`;
+      }
+
+      async function loadBrief() {
+        const { data } = await AmberOne.api("/api/business-profile");
+        const p = data.profile || {};
+        document.getElementById("biz-name").value = p.name || "";
+        document.getElementById("biz-sells").value = p.sells || "";
+        document.getElementById("biz-audience").value = p.audience || "";
+        document.getElementById("biz-offer").value = p.offer || "";
+        document.getElementById("biz-location").value = p.location || "";
+        document.getElementById("biz-tone").value = p.tone || "";
+        document.getElementById("biz-objective").value = p.objective || "";
+      }
+
+      async function load() {
+        const { res, data } = await AmberOne.api("/api/social-posts");
+        if (!res.ok) {
+          AmberOne.showBanner(banner, data.error || "Could not load social posts.", "err");
+          return;
+        }
+        platforms = data.platforms || [];
+        const select = document.getElementById("platform");
+        const previous = select.value;
+        if (!["all", "instagram", "nextdoor"].includes(previous)) select.value = "all";
+        const ig = platforms.find((p) => p.id === "instagram");
+        const nd = platforms.find((p) => p.id === "nextdoor");
+        const igLine = ig?.connected ? "Instagram is connected." : "Instagram is not connected yet.";
+        const ndLine = nd?.connected ? "Nextdoor is connected." : "Nextdoor is not connected yet.";
+        document.getElementById("account-status").textContent = `${igLine} ${ndLine} You can still create scored drafts.`;
+        document.getElementById("connect-ig").style.display = ig?.connected ? "none" : "";
+        document.getElementById("connect-nd").style.display = nd?.connected ? "none" : "";
+        function updatePlatformNote() {
+          if (select.value === "all") {
+            document.getElementById("platform-note").textContent =
+              "Amber schedules Instagram and Nextdoor together. Each must score 95/100. Each auto-publishes from the cloud when connected.";
+            return;
+          }
+          const chosen = platforms.find((p) => p.id === select.value);
+          document.getElementById("platform-note").textContent = chosen?.canPublish
+            ? `${chosen.label} drafts must score 95/100. Cloud auto-publish runs when the account is connected.`
+            : chosen?.reason || "This network can be drafted under the 95/100 gate.";
+        }
+        select.onchange = updatePlatformNote;
+        updatePlatformNote();
+        const posts = data.posts || [];
+        document.getElementById("post-list").innerHTML = posts.length
+          ? `<ul class="list">${posts.map((p) => `<li class="list-item"><div class="meta-col"><strong>${String(p.platform)}</strong><span class="sub">${String(p.status)}${p.scheduled_at ? " · " + String(p.scheduled_at).slice(0, 16) : ""} · ${(p.caption || "").slice(0, 90)}</span></div></li>`).join("")}</ul>`
+          : `<p class="empty-state">No drafts yet.</p>`;
+      }
+
+      document.getElementById("brief-form").onsubmit = async (e) => {
         e.preventDefault();
-        const fd = new FormData(e.target);
-        const el = document.getElementById("output");
-        el.textContent = "Generating…";
-        const { data } = await AmberOne.api("/api/talk", {
+        const { res, data } = await AmberOne.api("/api/business-profile", {
           method: "POST",
           body: JSON.stringify({
-            message: `Generate a ${String(fd.get("type")).replace(/_/g, " ")} about: ${fd.get("topic")}. Make it engaging, professional, and ready to post. Include relevant hashtags if it's a social post.`,
+            name: document.getElementById("biz-name").value,
+            sells: document.getElementById("biz-sells").value,
+            audience: document.getElementById("biz-audience").value,
+            offer: document.getElementById("biz-offer").value,
+            location: document.getElementById("biz-location").value,
+            tone: document.getElementById("biz-tone").value,
+            objective: document.getElementById("biz-objective").value,
           }),
         });
-        el.textContent = data.reply || data.content || "No output.";
+        if (!res.ok) {
+          AmberOne.showBanner(banner, data.error || "Could not save the brief.", "err");
+          return;
+        }
+        AmberOne.showBanner(banner, "Business brief saved. Amber will write from this, not from filler templates.", "ok");
       };
+
+      document.getElementById("campaign-btn").onclick = async () => {
+        const btn = document.getElementById("campaign-btn");
+        btn.disabled = true;
+        const { res, data } = await AmberOne.api("/api/social-posts", {
+          method: "POST",
+          body: JSON.stringify({
+            action: "schedule-campaign",
+            platform: document.getElementById("platform").value || "all",
+            days: 14,
+          }),
+        });
+        AmberOne.showBanner(
+          banner,
+          res.ok
+            ? `${data.campaign?.posts?.length || 0} posts queued. Amber writes, scores, and calendars them in the cloud — you can close this tab.`
+            : (data.error || "Could not schedule"),
+          res.ok ? "ok" : "err",
+        );
+        btn.disabled = false;
+        load();
+      };
+
+      document.getElementById("compose-btn").onclick = async () => {
+        const btn = document.getElementById("compose-btn");
+        btn.disabled = true;
+        btn.textContent = "Amber is writing…";
+        document.getElementById("stage").textContent = "Reading the business brief, rejecting filler, and writing a tailored caption.";
+        const platform = document.getElementById("platform").value === "all" ? "instagram" : document.getElementById("platform").value;
+        const composed = await AmberOne.api("/api/social-posts", {
+          method: "POST",
+          body: JSON.stringify({ action: "compose", platform }),
+        });
+        const box = document.getElementById("score-box");
+        box.hidden = false;
+        box.innerHTML = scoreHtml(composed.data.score, composed.data.attempts);
+        if (!composed.res.ok) {
+          AmberOne.showBanner(banner, composed.data.error || "Compose failed", "err");
+          document.getElementById("stage").textContent = "Quality gate held the caption back. Nothing was published.";
+          btn.disabled = false;
+          btn.textContent = "Create post with Amber";
+          load();
+          return;
+        }
+        currentId = composed.data.post?.id || null;
+        document.getElementById("preview-caption").textContent = composed.data.post?.caption || "";
+        document.getElementById("stage").textContent = "Caption passed the first gate. Generating a matching photograph…";
+        btn.textContent = "Amber is generating the image…";
+        const rendered = await AmberOne.api("/api/social-posts", {
+          method: "POST",
+          body: JSON.stringify({ action: "render-image", id: currentId }),
+        });
+        box.innerHTML = scoreHtml(rendered.data.score, rendered.data.attempts);
+        if (!rendered.res.ok) {
+          AmberOne.showBanner(banner, rendered.data.error || "Image step failed", "err");
+          document.getElementById("stage").textContent = "Quality gate held the post back after the image. Nothing was published.";
+        } else {
+          document.getElementById("preview-caption").textContent = rendered.data.post?.caption || "";
+          const img = document.getElementById("preview-img");
+          img.src = rendered.data.post?.image_url || "";
+          img.hidden = !rendered.data.post?.image_url;
+          const chosen = platforms.find((p) => p.id === document.getElementById("platform").value);
+          document.getElementById("prepare-btn").disabled = !(currentId && chosen?.canPrepare);
+          document.getElementById("publish-btn").disabled = true;
+          document.getElementById("stage").textContent = chosen?.canPrepare
+            ? `Draft ready at ${rendered.data.score?.total}/100. Prepare is optional. Publish stays off.`
+            : `Draft ready at ${rendered.data.score?.total}/100. ${chosen?.reason || "Live publishing is not connected for this network yet."}`;
+          AmberOne.showBanner(banner, `Saved at ${rendered.data.score?.total}/100. Not published.`, "ok");
+        }
+        btn.disabled = false;
+        btn.textContent = "Create post with Amber";
+        load();
+      };
+
+      document.getElementById("prepare-btn").onclick = async () => {
+        if (!currentId) return;
+        const btn = document.getElementById("prepare-btn");
+        btn.disabled = true;
+        const { res, data } = await AmberOne.api("/api/social-posts", { method: "POST", body: JSON.stringify({ action: "prepare", id: currentId }) });
+        AmberOne.showBanner(banner, data.error || data.message || "Prepare finished", res.ok ? "ok" : "err");
+        btn.disabled = false;
+      };
+      document.getElementById("publish-btn").onclick = async () => {
+        AmberOne.showBanner(banner, "Publish is blocked so this test cannot go live.", "warn");
+      };
+      document.getElementById("connect-ig").onclick = async () => {
+        const { res, data } = await AmberOne.api("/api/connected-services", { method: "POST", body: JSON.stringify({ toolkit: "instagram" }) });
+        if (!res.ok || !data.redirectUrl) {
+          AmberOne.showBanner(banner, data.error || "Could not start Instagram connect.", "err");
+          return;
+        }
+        location.href = data.redirectUrl;
+      };
+      document.getElementById("connect-nd").onclick = async () => {
+        const { res, data } = await AmberOne.api("/api/connected-services", { method: "POST", body: JSON.stringify({ toolkit: "nextdoor" }) });
+        if (!res.ok || !data.redirectUrl) {
+          AmberOne.showBanner(banner, data.error || "Could not start Nextdoor connect.", "err");
+          return;
+        }
+        location.href = data.redirectUrl;
+      };
+
+      loadBrief();
+      load();
     })();
   </script>
 </body>

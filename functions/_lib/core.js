@@ -21,6 +21,33 @@ export function json(body, status = 200, headers = {}) {
   });
 }
 
+export function isValidEmail(value) {
+  const email = String(value || "").trim().toLowerCase();
+  if (!email || email.length > 254) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+export function normalizeEmail(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+/** Best-effort in-app notification. Never throws. */
+export async function createNotification(db, { userId, kind = "info", title, body = null, href = null }) {
+  if (!db || !userId || !title) return null;
+  try {
+    const id = uid("notif");
+    await db
+      .prepare(
+        "INSERT INTO notifications (id, user_id, kind, title, body, href, read_at, created_at) VALUES (?, ?, ?, ?, ?, ?, NULL, ?)",
+      )
+      .bind(id, userId, String(kind).slice(0, 40), String(title).slice(0, 200), body || null, href || null, nowIso())
+      .run();
+    return id;
+  } catch {
+    return null;
+  }
+}
+
 export function nowIso() {
   return new Date().toISOString();
 }
@@ -168,12 +195,13 @@ function hexToBytes(hex) {
   return out;
 }
 
-export async function createSession(db, userId) {
+export async function createSession(db, userId, { maxAgeSec } = {}) {
   const token = randomToken(32);
   const tokenHash = await sha256Hex(token);
   const id = uid("sess");
   const created = nowIso();
-  const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString();
+  const ttl = Number.isFinite(maxAgeSec) && maxAgeSec > 0 ? Math.floor(maxAgeSec) : 60 * 60 * 24 * 30;
+  const expires = new Date(Date.now() + ttl * 1000).toISOString();
   await db
     .prepare(
       "INSERT INTO sessions (id, user_id, token_hash, expires_at, created_at) VALUES (?, ?, ?, ?, ?)",
@@ -184,12 +212,15 @@ export async function createSession(db, userId) {
 }
 
 export async function getUserFromRequest(db, request) {
+  if (!db) return null;
+  await ensureSchema(db);
   const token = getCookie(request, "ao_session");
   if (!token) return null;
   const tokenHash = await sha256Hex(token);
   const row = await db
     .prepare(
-      `SELECT u.id, u.email, u.name, u.stripe_customer_id, u.plan_slug, u.subscription_status, u.stripe_subscription_id, s.id AS session_id
+      `SELECT u.id, u.email, u.name, u.stripe_customer_id, u.plan_slug, u.subscription_status, u.stripe_subscription_id,
+              u.account_kind, u.beta_expires_at, s.id AS session_id
        FROM sessions s
        JOIN users u ON u.id = s.user_id
        WHERE s.token_hash = ? AND s.expires_at > ?
@@ -197,7 +228,22 @@ export async function getUserFromRequest(db, request) {
     )
     .bind(tokenHash, nowIso())
     .first();
-  return row || null;
+  if (!row) return null;
+  if (String(row.account_kind || "") === "beta") {
+    if (!row.beta_expires_at || row.beta_expires_at < nowIso()) return null;
+  }
+  return row;
+}
+
+export function publicStripeError(message) {
+  const raw = String(message || "Checkout failed");
+  if (/expired api key/i.test(raw)) {
+    return "Billing is temporarily unavailable. The operator needs to rotate the Stripe secret on AmberOne hosting.";
+  }
+  if (/invalid api key/i.test(raw)) {
+    return "Billing is temporarily unavailable. The payment processor is not configured correctly.";
+  }
+  return raw.replace(/sk_(live|test)_[A-Za-z0-9*_]+/gi, "[redacted]");
 }
 
 export async function stripeForm(secret, path, params) {
@@ -209,7 +255,13 @@ export async function stripeForm(secret, path, params) {
     },
     body: params.toString(),
   });
-  const data = await res.json();
+  const text = await res.text();
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = { error: { message: `Stripe returned a non-JSON response (${res.status})` } };
+  }
   return { ok: res.ok, status: res.status, data };
 }
 
@@ -249,13 +301,16 @@ export function originFrom(request) {
 
 export function publicUser(row) {
   if (!row) return null;
+  const isBeta = String(row.account_kind || "") === "beta" || String(row.plan_slug || "") === "beta_full";
   return {
     id: row.id,
     email: row.email,
     name: row.name,
     planSlug: row.plan_slug || null,
     subscriptionStatus: row.subscription_status || "none",
-    stripeCustomerId: row.stripe_customer_id || null,
+    stripeCustomerId: isBeta ? null : row.stripe_customer_id || null,
+    isBeta,
+    betaExpiresAt: row.beta_expires_at || null,
   };
 }
 
@@ -336,6 +391,9 @@ export async function ensureSchema(db) {
   ends_at TEXT,
   all_day INTEGER NOT NULL DEFAULT 0,
   recurrence TEXT,
+  attendees TEXT,
+  visibility TEXT NOT NULL DEFAULT 'private',
+  team_id TEXT,
   external_id TEXT,
   external_source TEXT,
   created_at TEXT NOT NULL,
@@ -522,8 +580,66 @@ export async function ensureSchema(db) {
   started_at TEXT NOT NULL,
   finished_at TEXT
 )`,
+    `CREATE TABLE IF NOT EXISTS projects (
+  id TEXT PRIMARY KEY,
+  owner_user_id TEXT NOT NULL,
+  team_id TEXT,
+  name TEXT NOT NULL DEFAULT '',
+  description TEXT,
+  deadline TEXT,
+  status TEXT NOT NULL DEFAULT 'active',
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+)`,
+    `CREATE TABLE IF NOT EXISTS project_members (
+  id TEXT PRIMARY KEY,
+  project_id TEXT NOT NULL,
+  user_id TEXT,
+  role TEXT NOT NULL DEFAULT 'member',
+  invited_email TEXT,
+  status TEXT NOT NULL DEFAULT 'pending',
+  created_at TEXT NOT NULL
+)`,
+    `CREATE TABLE IF NOT EXISTS project_tasks (
+  id TEXT PRIMARY KEY,
+  project_id TEXT NOT NULL,
+  assigned_user_id TEXT,
+  title TEXT NOT NULL DEFAULT '',
+  body TEXT,
+  due_at TEXT,
+  status TEXT NOT NULL DEFAULT 'open',
+  position INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+)`,
+    `CREATE TABLE IF NOT EXISTS project_comments (
+  id TEXT PRIMARY KEY,
+  project_id TEXT NOT NULL,
+  task_id TEXT,
+  user_id TEXT NOT NULL,
+  body TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL
+)`,
+    `CREATE TABLE IF NOT EXISTS project_messages (
+  id TEXT PRIMARY KEY,
+  project_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  body TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL
+)`,
     `CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id)`,
     `CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at)`,
+    `CREATE TABLE IF NOT EXISTS beta_invites (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  token_hash TEXT NOT NULL UNIQUE,
+  label TEXT,
+  expires_at TEXT NOT NULL,
+  revoked_at TEXT,
+  last_redeemed_at TEXT,
+  created_at TEXT NOT NULL
+)`,
+    `CREATE INDEX IF NOT EXISTS idx_beta_invites_hash ON beta_invites(token_hash)`,
     `CREATE INDEX IF NOT EXISTS idx_resets_user ON password_resets(user_id)`,
     `CREATE INDEX IF NOT EXISTS idx_users_stripe_customer ON users(stripe_customer_id)`,
     `CREATE INDEX IF NOT EXISTS idx_conversations_user ON conversations(user_id)`,
@@ -556,6 +672,54 @@ export async function ensureSchema(db) {
     `CREATE INDEX IF NOT EXISTS idx_meeting_prep_user ON meeting_prep(user_id, calendar_event_id)`,
     `CREATE INDEX IF NOT EXISTS idx_automations_user ON automations(user_id)`,
     `CREATE INDEX IF NOT EXISTS idx_automation_runs ON automation_runs(automation_id)`,
+    `CREATE INDEX IF NOT EXISTS idx_projects_owner ON projects(owner_user_id)`,
+    `CREATE INDEX IF NOT EXISTS idx_project_members_project ON project_members(project_id)`,
+    `CREATE INDEX IF NOT EXISTS idx_project_members_user ON project_members(user_id)`,
+    `CREATE INDEX IF NOT EXISTS idx_project_members_email ON project_members(invited_email)`,
+    `CREATE INDEX IF NOT EXISTS idx_project_tasks_project ON project_tasks(project_id, status)`,
+    `CREATE INDEX IF NOT EXISTS idx_project_comments_project ON project_comments(project_id)`,
+    `CREATE INDEX IF NOT EXISTS idx_project_messages_project ON project_messages(project_id, created_at)`,
+    `CREATE TABLE IF NOT EXISTS files (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  project_id TEXT,
+  name TEXT NOT NULL DEFAULT '',
+  content_type TEXT,
+  size INTEGER NOT NULL DEFAULT 0,
+  r2_key TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+)`,
+    `CREATE INDEX IF NOT EXISTS idx_files_user ON files(user_id, created_at)`,
+    `CREATE INDEX IF NOT EXISTS idx_files_project ON files(project_id)`,
+    `CREATE TABLE IF NOT EXISTS social_posts (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  platform TEXT NOT NULL,
+  caption TEXT NOT NULL DEFAULT '',
+  image_url TEXT,
+  status TEXT NOT NULL DEFAULT 'draft',
+  connected_account_id TEXT,
+  ig_user_id TEXT,
+  ig_username TEXT,
+  creation_id TEXT,
+  error TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+)`,
+    `CREATE INDEX IF NOT EXISTS idx_social_posts_user ON social_posts(user_id, created_at)`,
+    `CREATE TABLE IF NOT EXISTS business_profiles (
+  user_id TEXT PRIMARY KEY,
+  name TEXT NOT NULL DEFAULT '',
+  sells TEXT NOT NULL DEFAULT '',
+  audience TEXT NOT NULL DEFAULT '',
+  offer TEXT NOT NULL DEFAULT '',
+  tone TEXT NOT NULL DEFAULT '',
+  location TEXT NOT NULL DEFAULT '',
+  objective TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+)`,
   ];
   for (const sql of statements) {
     await db.prepare(sql).run();
@@ -563,6 +727,8 @@ export async function ensureSchema(db) {
   // Add team_id to existing tables (safe to fail if column already exists)
   const alters = [
     "ALTER TABLE calendar_events ADD COLUMN team_id TEXT",
+    "ALTER TABLE calendar_events ADD COLUMN attendees TEXT",
+    "ALTER TABLE calendar_events ADD COLUMN visibility TEXT",
     "ALTER TABLE reminders ADD COLUMN team_id TEXT",
     "ALTER TABLE lists ADD COLUMN team_id TEXT",
     "ALTER TABLE list_items ADD COLUMN team_id TEXT",
@@ -577,10 +743,24 @@ export async function ensureSchema(db) {
      * every existing user would fail to log in.
      */
     "ALTER TABLE users ADD COLUMN password_iterations INTEGER",
+    "ALTER TABLE users ADD COLUMN account_kind TEXT",
+    "ALTER TABLE users ADD COLUMN beta_expires_at TEXT",
+    "ALTER TABLE social_posts ADD COLUMN quality_json TEXT",
+    "ALTER TABLE social_posts ADD COLUMN brief_json TEXT",
+    "ALTER TABLE social_posts ADD COLUMN attempts_json TEXT",
+    "ALTER TABLE social_posts ADD COLUMN image_token TEXT",
+    "ALTER TABLE social_posts ADD COLUMN image_prompt TEXT",
+    "ALTER TABLE social_posts ADD COLUMN campaign_id TEXT",
+    "ALTER TABLE social_posts ADD COLUMN scheduled_at TEXT",
+    "ALTER TABLE social_posts ADD COLUMN published_at TEXT",
+    "ALTER TABLE social_posts ADD COLUMN calendar_event_id TEXT",
   ];
   for (const sql of alters) {
     try { await db.prepare(sql).run(); } catch (_) {}
   }
+  try {
+    await db.prepare("CREATE INDEX IF NOT EXISTS idx_social_posts_cron ON social_posts(status, scheduled_at)").run();
+  } catch (_) {}
   ensureSchema._done = true;
 }
 

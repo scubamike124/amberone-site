@@ -1,5 +1,13 @@
 import { json, nowIso, uid, getUserFromRequest, ensureSchema } from "../_lib/core.js";
-import { resolveTeam } from "../_lib/team-gate.js";
+import { resolveTeam, userIsTeamMember } from "../_lib/team-gate.js";
+
+async function appointmentVisible(db, user, id) {
+  const row = await db.prepare("SELECT * FROM appointments WHERE id = ?").bind(id).first();
+  if (!row) return null;
+  if (row.user_id === user.id) return row;
+  if (row.team_id && (await userIsTeamMember(db, user.id, row.team_id))) return row;
+  return null;
+}
 
 export async function onRequest(context) {
   const { request, env } = context;
@@ -29,20 +37,41 @@ export async function onRequest(context) {
     const id = uid("appt");
     const now = nowIso();
     await db
-      .prepare("INSERT INTO appointments (id, team_id, user_id, contact_id, title, starts_at, ends_at, status, notes, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)")
-      .bind(id, team?.id || null, user.id, body.contact_id || null, body.title || "", body.starts_at, body.ends_at || null, "scheduled", body.notes || null, now, now)
+      .prepare(
+        "INSERT INTO appointments (id, team_id, user_id, contact_id, title, starts_at, ends_at, status, notes, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+      )
+      .bind(
+        id,
+        team?.id || null,
+        user.id,
+        body.contact_id || null,
+        body.title || "",
+        body.starts_at,
+        body.ends_at || null,
+        "scheduled",
+        body.notes || null,
+        now,
+        now,
+      )
       .run();
     return json({ id }, 201);
   }
 
   if (method === "PATCH") {
     const body = await request.json();
+    const existing = await appointmentVisible(db, user, body.id);
+    if (!existing) return json({ error: "Not found" }, 404);
     const sets = [];
     const vals = [];
     for (const k of ["title", "starts_at", "ends_at", "status", "notes", "contact_id"]) {
-      if (body[k] !== undefined) { sets.push(`${k} = ?`); vals.push(body[k]); }
+      if (body[k] !== undefined) {
+        sets.push(`${k} = ?`);
+        vals.push(body[k]);
+      }
     }
-    sets.push("updated_at = ?"); vals.push(nowIso());
+    if (!sets.length) return json({ error: "Nothing to update" }, 400);
+    sets.push("updated_at = ?");
+    vals.push(nowIso());
     vals.push(body.id);
     await db.prepare(`UPDATE appointments SET ${sets.join(", ")} WHERE id = ?`).bind(...vals).run();
     return json({ ok: true });
@@ -50,6 +79,8 @@ export async function onRequest(context) {
 
   if (method === "DELETE") {
     const id = url.searchParams.get("id");
+    const existing = await appointmentVisible(db, user, id);
+    if (!existing) return json({ error: "Not found" }, 404);
     await db.prepare("DELETE FROM appointments WHERE id = ?").bind(id).run();
     return json({ deleted: true });
   }

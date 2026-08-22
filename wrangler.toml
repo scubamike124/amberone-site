@@ -7,3 +7,13 @@ binding = "DB"
 database_name = "amberone"
 database_id = "0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a"
 preview_database_id = "0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a"
+
+# Existing Reelo R2 bucket. AmberOne objects live under amberone/.
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "myreelo"
+
+[vars]
+# SHA-256 of a local bootstrap token in .tmp/beta-bootstrap.json (never the token itself).
+BETA_BOOTSTRAP_HASH = "487af7742502e246bf069bb7258b2671684a43b908bc27b9adc401bce159d7df"
+CRON_SECRET_HASH = "0cd4804e6f11b14d729193f6c6014d43ecf5537823ca3505fccb799a1816a539"

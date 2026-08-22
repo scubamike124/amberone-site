@@ -1,14 +1,13 @@
 {
   "product": "amberone",
-  "createdAt": "2026-07-29",
+  "updatedAt": "2026-08-18T22:18:34.599Z",
   "prices": {
-    "STRIPE_PRICE_PERSONAL": "price_1TyWXdPuIFB5w4OsC04Gd8vJ",
-    "STRIPE_PRICE_FAMILY_2": "price_1TyWXePuIFB5w4OsiXSlMXs4",
-    "STRIPE_PRICE_FAMILY_5": "price_1TyWXePuIFB5w4Os9zQMcB8N",
-    "STRIPE_PRICE_FAMILY_10": "price_1TyWXfPuIFB5w4OskaZ78cXH",
-    "STRIPE_PRICE_EXECUTIVE": "price_1TyWXfPuIFB5w4OsSZIZfHsw",
-    "STRIPE_PRICE_BUSINESS_SMALL": "price_1TyWXgPuIFB5w4OsgqFtyLyb",
-    "STRIPE_PRICE_BUSINESS_MEDIUM": "price_1TyWXgPuIFB5w4OsMNegnv8V"
-  },
-  "note": "Set these as Cloudflare Pages secrets/vars. Checkout falls back to inline price_data if unset."
+    "STRIPE_PRICE_PERSONAL": "price_1U5vL5KDbVMTgaXy2X6wG1Uq",
+    "STRIPE_PRICE_FAMILY_2": "price_1U5vL6KDbVMTgaXyQWUoCaYD",
+    "STRIPE_PRICE_FAMILY_5": "price_1U5vL6KDbVMTgaXypzfYfpUb",
+    "STRIPE_PRICE_FAMILY_10": "price_1U5vL7KDbVMTgaXyQ5tf3cIu",
+    "STRIPE_PRICE_EXECUTIVE": "price_1U5vL7KDbVMTgaXy45dvtvEv",
+    "STRIPE_PRICE_BUSINESS_SMALL": "price_1U5vL8KDbVMTgaXyMYMmI5sK",
+    "STRIPE_PRICE_BUSINESS_MEDIUM": "price_1U5vL8KDbVMTgaXye9q2Zjhx"
+  }
 }

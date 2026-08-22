@@ -1,0 +1,717 @@
+{
+  "at": "2026-08-19T01:29:14.987Z",
+  "base": "https://amberoneai.com",
+  "accounts": {
+    "emailOwner": "ao.owner.mszexqa9@example.com",
+    "emailMember": "ao.member.mszexqa9@example.com",
+    "emailOut": "ao.out.mszexqa9@example.com",
+    "emailReject": "ao.reject.mszexqa9@example.com"
+  },
+  "pass": 115,
+  "fail": 2,
+  "total": 117,
+  "failed": [
+    "billing: stripe checkout session (no charge)",
+    "billing: unknown plan blocked"
+  ],
+  "steps": [
+    {
+      "feature": "marketing/ui",
+      "action": "open /",
+      "ok": true,
+      "detail": "status 200"
+    },
+    {
+      "feature": "marketing/ui",
+      "action": "open /pricing",
+      "ok": true,
+      "detail": "status 200"
+    },
+    {
+      "feature": "marketing/ui",
+      "action": "open /signup",
+      "ok": true,
+      "detail": "status 200"
+    },
+    {
+      "feature": "marketing/ui",
+      "action": "open /login",
+      "ok": true,
+      "detail": "status 200"
+    },
+    {
+      "feature": "marketing/ui",
+      "action": "open /forgot-password",
+      "ok": true,
+      "detail": "status 200"
+    },
+    {
+      "feature": "marketing/ui",
+      "action": "open /contact",
+      "ok": true,
+      "detail": "status 200"
+    },
+    {
+      "feature": "marketing/ui",
+      "action": "open /faq",
+      "ok": true,
+      "detail": "status 200"
+    },
+    {
+      "feature": "marketing/ui",
+      "action": "open /privacy",
+      "ok": true,
+      "detail": "status 200"
+    },
+    {
+      "feature": "marketing/ui",
+      "action": "open /dashboard/projects",
+      "ok": true,
+      "detail": "status 200"
+    },
+    {
+      "feature": "marketing/ui",
+      "action": "open /dashboard/calendar",
+      "ok": true,
+      "detail": "status 200"
+    },
+    {
+      "feature": "signup",
+      "action": "reject invalid email",
+      "ok": true,
+      "detail": "Valid email required"
+    },
+    {
+      "feature": "signup",
+      "action": "create owner",
+      "ok": true,
+      "detail": "ao.owner.mszexqa9@example.com"
+    },
+    {
+      "feature": "signup",
+      "action": "duplicate rejected",
+      "ok": true,
+      "detail": "409"
+    },
+    {
+      "feature": "session",
+      "action": "session after signup",
+      "ok": true,
+      "detail": "ao.owner.mszexqa9@example.com"
+    },
+    {
+      "feature": "logout",
+      "action": "logout owner",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "logout",
+      "action": "session cleared",
+      "ok": true,
+      "detail": "401"
+    },
+    {
+      "feature": "login",
+      "action": "wrong password",
+      "ok": true,
+      "detail": "401"
+    },
+    {
+      "feature": "login",
+      "action": "login owner",
+      "ok": true
+    },
+    {
+      "feature": "signup",
+      "action": "create member",
+      "ok": true
+    },
+    {
+      "feature": "signup",
+      "action": "create outsider",
+      "ok": true
+    },
+    {
+      "feature": "signup",
+      "action": "create rejecter",
+      "ok": true
+    },
+    {
+      "feature": "password reset",
+      "action": "forgot-password no token leak",
+      "ok": true,
+      "detail": "If that email exists, a reset link was sent. If you don’t see it, check spam or try again shortly."
+    },
+    {
+      "feature": "password reset",
+      "action": "unknown email still ok (no enumeration)",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "onboarding",
+      "action": "complete onboarding",
+      "ok": true,
+      "detail": "done"
+    },
+    {
+      "feature": "notes",
+      "action": "create note",
+      "ok": "note_5fd30962c59f4a20a64d4845b48e3a6a",
+      "detail": "note_5fd30962c59f4a20a64d4845b48e3a6a"
+    },
+    {
+      "feature": "notes",
+      "action": "edit note",
+      "ok": true,
+      "detail": "Maya at 3:30 from the south lot."
+    },
+    {
+      "feature": "notes",
+      "action": "stored note matches edit",
+      "ok": 1,
+      "detail": "Maya at 3:30 from the south lot."
+    },
+    {
+      "feature": "lists",
+      "action": "create list with items",
+      "ok": true,
+      "detail": "list_2257a78494754c2d8312236d59961205"
+    },
+    {
+      "feature": "lists",
+      "action": "add list item",
+      "ok": "li_ddf635e43d2d451e9220799ec685bb21",
+      "detail": "li_ddf635e43d2d451e9220799ec685bb21"
+    },
+    {
+      "feature": "lists",
+      "action": "complete task",
+      "ok": true,
+      "detail": "checked"
+    },
+    {
+      "feature": "lists",
+      "action": "reopen task",
+      "ok": true,
+      "detail": "unchecked"
+    },
+    {
+      "feature": "lists",
+      "action": "rename list",
+      "ok": true,
+      "detail": "Weekend household"
+    },
+    {
+      "feature": "memories",
+      "action": "create memory",
+      "ok": "mem_21299253fe55410db8f4c8566cd9d290",
+      "detail": "mem_21299253fe55410db8f4c8566cd9d290"
+    },
+    {
+      "feature": "memories",
+      "action": "edit memory",
+      "ok": true,
+      "detail": "Maya is allergic to peanuts and cashews."
+    },
+    {
+      "feature": "calendar",
+      "action": "create event with people/recurrence/reminder",
+      "ok": true,
+      "detail": "evt_f215b39dd0c143cba18e0f7aca35d035"
+    },
+    {
+      "feature": "calendar",
+      "action": "edit and reschedule event",
+      "ok": true,
+      "detail": "2026-08-20T03:28:49.760Z"
+    },
+    {
+      "feature": "calendar",
+      "action": "create already-due event reminder",
+      "ok": true,
+      "detail": "evt_aae8ebaaa3cb4cb18f18e0d47589fe50"
+    },
+    {
+      "feature": "family",
+      "action": "create family team",
+      "ok": "team_e9ed8be9b5ff4452b2425a4acecc8b7d",
+      "detail": "team_e9ed8be9b5ff4452b2425a4acecc8b7d"
+    },
+    {
+      "feature": "calendar",
+      "action": "create shared family event",
+      "ok": true,
+      "detail": "evt_d1d7779797c94a05806be877eeb0319d"
+    },
+    {
+      "feature": "calendar",
+      "action": "live health reports Google OAuth + R2",
+      "ok": true,
+      "detail": "gcal=true r2=true"
+    },
+    {
+      "feature": "calendar",
+      "action": "Google Calendar is connectable without Composio",
+      "ok": true,
+      "detail": "native=true connectable=true composio=false"
+    },
+    {
+      "feature": "calendar",
+      "action": "Connect returns Google OAuth start URL",
+      "ok": true,
+      "detail": "https://amberoneai.com/api/google-calendar-oauth"
+    },
+    {
+      "feature": "calendar",
+      "action": "Connect redirects to Google with Amber One callback",
+      "ok": true,
+      "detail": "https://accounts.google.com/o/oauth2/v2/auth?client_id=PRESENT&redirect_uri=https%3A%2F%2Famberoneai.com%2Fapi%2Fgoogle-calendar-oauth&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar+https%3A%"
+    },
+    {
+      "feature": "calendar",
+      "action": "Google accepts the Calendar redirect URI",
+      "ok": true,
+      "detail": "http 302"
+    },
+    {
+      "feature": "calendar",
+      "action": "Sync before connect returns an honest error",
+      "ok": true,
+      "detail": "Google Calendar is not fully connected yet. Open Connections and connect Google Calendar, then Sync."
+    },
+    {
+      "feature": "reminders",
+      "action": "create past-due reminder (fires on create)",
+      "ok": true,
+      "detail": "[\"rem_484a3f0edbc348699e518f07b38c86fc\",\"rem_68e18a8ce22e4ee596022c6a9222f145\"]"
+    },
+    {
+      "feature": "notifications",
+      "action": "in-app notification created for due reminder",
+      "ok": true,
+      "detail": "2 matching"
+    },
+    {
+      "feature": "notifications",
+      "action": "due reminder not duplicated on second poll",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "feature": "notifications",
+      "action": "mark one read",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "notifications",
+      "action": "mark all read",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "reminders",
+      "action": "complete reminder",
+      "ok": true,
+      "detail": "completed"
+    },
+    {
+      "feature": "reminders",
+      "action": "reopen reminder",
+      "ok": true,
+      "detail": "pending"
+    },
+    {
+      "feature": "invitations",
+      "action": "invalid email rejected",
+      "ok": true,
+      "detail": "A valid email address is required"
+    },
+    {
+      "feature": "invitations",
+      "action": "invite member",
+      "ok": "tm_4aed9e86e1ff47cbb3d872fe0bd1056a",
+      "detail": "tm_4aed9e86e1ff47cbb3d872fe0bd1056a"
+    },
+    {
+      "feature": "invitations",
+      "action": "invite rejecter",
+      "ok": "tm_c1837cf0edfb4bd992b4f6d81570f156",
+      "detail": "tm_c1837cf0edfb4bd992b4f6d81570f156"
+    },
+    {
+      "feature": "invitations",
+      "action": "outsider cannot accept someone else's invite",
+      "ok": true,
+      "detail": "403"
+    },
+    {
+      "feature": "invitations",
+      "action": "member sees pending invite",
+      "ok": true,
+      "detail": "[{\"id\":\"tm_4aed9e86e1ff47cbb3d872fe0bd1056a\",\"team_id\":\"team_e9ed8be9b5ff4452b2425a4acecc8b7d\",\"role\":\"member\",\"invited_"
+    },
+    {
+      "feature": "invitations",
+      "action": "member received invite notification",
+      "ok": true,
+      "detail": "Family invite: Rivera Family"
+    },
+    {
+      "feature": "invitations",
+      "action": "member accepts invite",
+      "ok": true,
+      "detail": "active"
+    },
+    {
+      "feature": "invitations",
+      "action": "rejecter declines invite",
+      "ok": true,
+      "detail": "rejected"
+    },
+    {
+      "feature": "family",
+      "action": "member list shows accepted user",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "feature": "calendar",
+      "action": "member can see shared family dinner",
+      "ok": true,
+      "detail": "Family dinner"
+    },
+    {
+      "feature": "calendar",
+      "action": "member cannot see private soccer event",
+      "ok": true,
+      "detail": "private hidden"
+    },
+    {
+      "feature": "calendar",
+      "action": "outsider cannot see shared family event",
+      "ok": true,
+      "detail": "isolated"
+    },
+    {
+      "feature": "family chores",
+      "action": "create assigned chore",
+      "ok": "chore_19d229dc3978413888ffc546137ad7c3",
+      "detail": "chore_19d229dc3978413888ffc546137ad7c3"
+    },
+    {
+      "feature": "family chores",
+      "action": "member sees team chore",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "feature": "family chores",
+      "action": "complete chore",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "family chores",
+      "action": "reopen chore",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "family chores",
+      "action": "outsider has no team chores",
+      "ok": true,
+      "detail": "400"
+    },
+    {
+      "feature": "contacts",
+      "action": "create contact (email stored, even if unused)",
+      "ok": "contact_312cedc020c24a2281bad02a29119b01",
+      "detail": "contact_312cedc020c24a2281bad02a29119b01"
+    },
+    {
+      "feature": "contacts",
+      "action": "add interaction",
+      "ok": true,
+      "detail": "int_27a01ab1d1184930ad355607bfb34122"
+    },
+    {
+      "feature": "contacts",
+      "action": "outsider cannot read contact",
+      "ok": true,
+      "detail": "404"
+    },
+    {
+      "feature": "appointments",
+      "action": "create appointment",
+      "ok": "appt_fb874874f21c42718f2f0fc052c4c528",
+      "detail": "appt_fb874874f21c42718f2f0fc052c4c528"
+    },
+    {
+      "feature": "projects",
+      "action": "create project",
+      "ok": "proj_8c26bbe51fc74e56bd43e74773d6e7ce",
+      "detail": "proj_8c26bbe51fc74e56bd43e74773d6e7ce"
+    },
+    {
+      "feature": "projects",
+      "action": "invite 20 unique people",
+      "ok": true,
+      "detail": "20/20"
+    },
+    {
+      "feature": "projects",
+      "action": "invalid invite email rejected",
+      "ok": true,
+      "detail": "A valid email address is required"
+    },
+    {
+      "feature": "projects",
+      "action": "wrong user cannot accept project invite",
+      "ok": true,
+      "detail": "403"
+    },
+    {
+      "feature": "projects",
+      "action": "member accepts project invite",
+      "ok": true,
+      "detail": "active"
+    },
+    {
+      "feature": "projects",
+      "action": "rejecter declines project invite",
+      "ok": true,
+      "detail": "rejected"
+    },
+    {
+      "feature": "projects",
+      "action": "create and assign task",
+      "ok": "ptask_b26ff6fe808649d283c91746b3271f9d",
+      "detail": "ptask_b26ff6fe808649d283c91746b3271f9d"
+    },
+    {
+      "feature": "projects",
+      "action": "reassign/edit task",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "projects",
+      "action": "complete task",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "projects",
+      "action": "reopen task",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "projects",
+      "action": "member comments",
+      "ok": true,
+      "detail": "pcom_096487bc05764408bea9c882b8f75f46"
+    },
+    {
+      "feature": "projects",
+      "action": "member sends in-app project message",
+      "ok": true,
+      "detail": "pmsg_d2847e001760464f832933d48d4610f0"
+    },
+    {
+      "feature": "projects",
+      "action": "owner sees comment and message stored",
+      "ok": true,
+      "detail": "comments 1 messages 1"
+    },
+    {
+      "feature": "projects",
+      "action": "owner notified of member communication",
+      "ok": true,
+      "detail": "Project message from Alex Member | Alex Member commented | Alex Member joined Kitchen remodel | Alex Member joined Rivera Family | Upcoming: Due reminder event"
+    },
+    {
+      "feature": "projects",
+      "action": "outsider cannot open project",
+      "ok": true,
+      "detail": "404"
+    },
+    {
+      "feature": "projects",
+      "action": "outsider cannot message project",
+      "ok": true,
+      "detail": "404"
+    },
+    {
+      "feature": "projects",
+      "action": "non-owner cannot delete project",
+      "ok": true,
+      "detail": "404"
+    },
+    {
+      "feature": "files",
+      "action": "upload text file to R2",
+      "ok": "file_79cf33ad50434a0fb67bb5edff209037",
+      "detail": "file_79cf33ad50434a0fb67bb5edff209037"
+    },
+    {
+      "feature": "files",
+      "action": "list includes uploaded file",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "feature": "files",
+      "action": "download matches stored text",
+      "ok": true,
+      "detail": "paint samples for the kitchen"
+    },
+    {
+      "feature": "files",
+      "action": "outsider cannot download private file",
+      "ok": true,
+      "detail": "404"
+    },
+    {
+      "feature": "files",
+      "action": "outsider list does not include owner file",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "feature": "files",
+      "action": "delete private file",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "search",
+      "action": "find allergy memory",
+      "ok": true,
+      "detail": "\"Allergy\""
+    },
+    {
+      "feature": "search",
+      "action": "too-short query rejected",
+      "ok": true,
+      "detail": "Search needs at least 2 characters"
+    },
+    {
+      "feature": "talk",
+      "action": "authenticated talk returns a reply",
+      "ok": true,
+      "detail": "guided"
+    },
+    {
+      "feature": "home",
+      "action": "home dashboard includes calendar and reminders",
+      "ok": true,
+      "detail": "user,greeting,generatedAt,today,calendar,reminders,notifications,memories"
+    },
+    {
+      "feature": "briefing",
+      "action": "briefing returns summary",
+      "ok": true,
+      "detail": "briefing"
+    },
+    {
+      "feature": "billing",
+      "action": "stripe checkout session (no charge)",
+      "ok": false,
+      "detail": "Stripe not configured yet. Add STRIPE_SECRET_KEY."
+    },
+    {
+      "feature": "billing",
+      "action": "unknown plan blocked",
+      "ok": false,
+      "detail": "Stripe not configured yet. Add STRIPE_SECRET_KEY."
+    },
+    {
+      "feature": "billing",
+      "action": "billing status readable",
+      "ok": true,
+      "detail": "{\"user\":{\"id\":\"user_c31ac09775c84e44bb0f6f20e7387a1f\",\"email\":\"ao.owner.mszexqa9"
+    },
+    {
+      "feature": "billing",
+      "action": "customer portal (may 400 without stripe customer yet)",
+      "ok": true,
+      "detail": "Stripe not configured yet."
+    },
+    {
+      "feature": "persistence",
+      "action": "re-login owner",
+      "ok": true,
+      "detail": "ao.owner.mszexqa9@example.com"
+    },
+    {
+      "feature": "persistence",
+      "action": "rescheduled event still stored after re-login",
+      "ok": true,
+      "detail": "Due reminder event,Maya soccer (rescheduled),Family dinner"
+    },
+    {
+      "feature": "persistence",
+      "action": "edited note still stored after re-login",
+      "ok": true,
+      "detail": "Maya at 3:30 from the south lot."
+    },
+    {
+      "feature": "persistence",
+      "action": "project still stored after re-login",
+      "ok": true,
+      "detail": "Kitchen remodel"
+    },
+    {
+      "feature": "calendar",
+      "action": "delete private event",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "calendar",
+      "action": "deleted event gone",
+      "ok": true,
+      "detail": "gone"
+    },
+    {
+      "feature": "notes",
+      "action": "delete note",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "lists",
+      "action": "delete list",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "reminders",
+      "action": "delete reminder",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "settings",
+      "action": "audit trail has actions",
+      "ok": true,
+      "detail": "50"
+    },
+    {
+      "feature": "connections",
+      "action": "connections endpoint responds",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "feature": "marketplace",
+      "action": "marketplace page loads (may be placeholder)",
+      "ok": true,
+      "detail": "200"
+    }
+  ]
+}

@@ -64,11 +64,23 @@ export async function onRequestPost(context) {
 
 
 
-    const user = await db.prepare("SELECT id, email, name FROM users WHERE email = ?").bind(email).first();
+    const user = await db.prepare("SELECT id, email, name, account_kind, plan_slug FROM users WHERE email = ?").bind(email).first();
 
     // Always return ok to avoid account enumeration
 
     if (!user) {
+
+      return json({
+
+        ok: true,
+
+        message: "If that email exists, a reset link was sent.",
+
+      });
+
+    }
+
+    if (String(user.account_kind || "") === "beta" || String(user.plan_slug || "") === "beta_full") {
 
       return json({
 

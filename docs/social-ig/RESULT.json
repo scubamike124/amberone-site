@@ -1,0 +1,68 @@
+{
+  "at": "2026-08-19T01:50:06.477Z",
+  "base": "https://amberoneai.com",
+  "email": "ao.social.mszfp1j3@example.com",
+  "pass": 13,
+  "fail": 0,
+  "total": 13,
+  "failed": [],
+  "steps": [
+    {
+      "name": "signup into product",
+      "ok": true,
+      "detail": "https://amberoneai.com/dashboard/"
+    },
+    {
+      "name": "social page loads",
+      "ok": true
+    },
+    {
+      "name": "instagram option present",
+      "ok": true
+    },
+    {
+      "name": "nextdoor option present",
+      "ok": true
+    },
+    {
+      "name": "image preview present",
+      "ok": true
+    },
+    {
+      "name": "caption filled",
+      "ok": true
+    },
+    {
+      "name": "nextdoor shows unavailable copy",
+      "ok": true
+    },
+    {
+      "name": "save instagram draft",
+      "ok": true,
+      "detail": "Draft saved. Review the preview, then Prepare. | Draft saved. Next: Prepare for Instagram. Publish stays off until the draft is accepted."
+    },
+    {
+      "name": "prepare button enabled after draft",
+      "ok": true
+    },
+    {
+      "name": "prepare reached Instagram or honest connect-required",
+      "ok": true,
+      "detail": "Instagram is not connected yet. Open Connections, connect Instagram, then Prepare this post. Connect Instagram, then Prepare again. Amber has not published anything."
+    },
+    {
+      "name": "instagram connect button present",
+      "ok": true
+    },
+    {
+      "name": "connect opens real Instagram/Meta OAuth",
+      "ok": true,
+      "detail": "https://dashboard.composio.dev/link/lk_Ln8zJoMJFaXG"
+    },
+    {
+      "name": "did not click Publish",
+      "ok": true,
+      "detail": "intentionally stopped before live submission"
+    }
+  ]
+}

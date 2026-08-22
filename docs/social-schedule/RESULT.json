@@ -1,0 +1,314 @@
+{
+  "at": "2026-08-19T09:01:28.409Z",
+  "base": "https://amberoneai.com",
+  "email": "ao.sched.mszv0514@example.com",
+  "steps": [
+    {
+      "name": "cron secret present locally",
+      "ok": true,
+      "detail": "keys=token,hash"
+    },
+    {
+      "name": "cron secret hash matches Pages CRON_SECRET_HASH",
+      "ok": true,
+      "detail": "sha256=0cd4804e…"
+    },
+    {
+      "name": "signup throwaway customer",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "name": "save Harborline brief",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "Instagram compose supported",
+      "ok": true,
+      "detail": "{\"id\":\"instagram\",\"label\":\"Instagram\",\"canCompose\":true,\"canPrepare\":true,\"canPublish\":true,\"autoPublish\":\"cloud_cron_if_connected\",\"connected\":false,\"qualityPass\":95,\"reason\":null}"
+    },
+    {
+      "name": "Instagram not connected on throwaway customer (expected)",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "name": "Nextdoor compose supported",
+      "ok": true,
+      "detail": "{\"id\":\"nextdoor\",\"label\":\"Nextdoor\",\"canCompose\":true,\"canPrepare\":true,\"canPublish\":true,\"autoPublish\":\"cloud_cron_if_connected\",\"connected\":false,\"qualityPass\":95,\"reason\":null}"
+    },
+    {
+      "name": "Nextdoor auto-publish pipeline claimed on",
+      "ok": true,
+      "detail": "{\"id\":\"nextdoor\",\"label\":\"Nextdoor\",\"canCompose\":true,\"canPrepare\":true,\"canPublish\":true,\"autoPublish\":\"cloud_cron_if_connected\",\"connected\":false,\"qualityPass\":95,\"reason\":null}"
+    },
+    {
+      "name": "cron rejects missing secret",
+      "ok": true,
+      "detail": "401"
+    },
+    {
+      "name": "one campaign queues Instagram and Nextdoor together",
+      "ok": true,
+      "detail": "201 platforms=instagram,nextdoor count=6"
+    },
+    {
+      "name": "dual campaign reports both can auto-publish",
+      "ok": true,
+      "detail": "Instagram and Nextdoor both run from the same cloud job. Each network publishes when that account is connected. You can close the browser."
+    },
+    {
+      "name": "cloud cron moved a queued post with this computer idle",
+      "ok": true,
+      "detail": "spost_a1c5a8bc03424712bb0cc8f3e178b0b6:pending_compose,spost_f5de7eb3066243378c0623b6638c9ee2:pending_compose,spost_8b92968d9d724150b426205d1e7e9b57:composing,spost_21658e5a28e2411f90f6b18de04dcaa5:pending_compose,spost_90a464e45b154a12be5afbeff4c1c6b3:pending_compose,spost_6f072565e0f5489db78b5d26c0209df4:composing"
+    },
+    {
+      "name": "cron drained compose+image for tracked posts",
+      "ok": true,
+      "detail": "ticks=6"
+    },
+    {
+      "name": "finished posts scored >= 95",
+      "ok": true,
+      "detail": "nextdoor:scheduled:97 | nextdoor:scheduled:95 | nextdoor:publish_failed:97 | instagram:publish_failed:95"
+    },
+    {
+      "name": "Harborline brand in at least one caption",
+      "ok": true,
+      "detail": "Attention Ballard residents! If you’ve been putting off braces due to your busy  || Are you a busy professional in Ballard looking to enhance your smile without dis || Are you a busy professional in Ballard struggling with your smile? At Harborline ||  ||  || Have you delayed your orthodontic treatment due to a busy schedule? At Harborlin"
+    },
+    {
+      "name": "calendar events attached",
+      "ok": true,
+      "detail": "evt_1f96f6b51d87442bb58ed27671d3a980,evt_908bef3869e5438392666f4bb8348602,evt_28a6cdf798074cecb20ed262c192b921,evt_9204dc27f0164b6da2cb8e584de0d832"
+    },
+    {
+      "name": "calendar lists social slots on multiple dates",
+      "ok": true,
+      "detail": "events=4 status=200"
+    },
+    {
+      "name": "cron picked up due posts",
+      "ok": true,
+      "detail": "ticks=0"
+    },
+    {
+      "name": "publish probe queued both networks",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "name": "Instagram publish probe reached a non-live terminal or due-publish state",
+      "ok": true,
+      "detail": "publish_failed:Instagram is not connected. Connect a Business account, then Amber can auto-publish from the cloud."
+    },
+    {
+      "name": "Instagram probe did not fake a live publish",
+      "ok": true,
+      "detail": "publish_failed"
+    },
+    {
+      "name": "Nextdoor publish probe ran (not_connected or not_configured — not skipped)",
+      "ok": true,
+      "detail": "publish_failed:Nextdoor publishing is not configured on Amber One yet."
+    },
+    {
+      "name": "Instagram and Nextdoor both have scored campaign posts",
+      "ok": true,
+      "detail": "nextdoor:scheduled:97 | nextdoor:scheduled:95 | nextdoor:publish_failed:97 | instagram:pending_compose: | instagram:pending_compose: | instagram:publish_failed:95"
+    },
+    {
+      "name": "future Instagram posts remain on the calendar",
+      "ok": false,
+      "detail": "pending_compose:2026-08-21T08:58:29.829Z | pending_compose:2026-08-20T08:58:29.829Z"
+    },
+    {
+      "name": "future Nextdoor posts remain on the calendar",
+      "ok": true,
+      "detail": "scheduled:2026-08-21T08:58:29.829Z | scheduled:2026-08-20T08:58:29.829Z"
+    },
+    {
+      "name": "Talk calls schedule_social_campaign",
+      "ok": true,
+      "detail": "200 tools=schedule_social_campaign I've successfully created and scheduled your social media content for the next 2 days on both Instagram and Nextdoor. Here are the details:\n\n**Instagram Posts:*"
+    },
+    {
+      "name": "cron worker health",
+      "ok": true,
+      "detail": "{\"ok\":true,\"service\":\"amberone-social-cron\",\"cadence\":\"* * * * *\"}"
+    }
+  ],
+  "ticks": [
+    {
+      "status": 200,
+      "ms": 18970,
+      "tick": "instagram:render/requeue_compose nextdoor:render/schedule",
+      "did": "requeue_compose+schedule"
+    },
+    {
+      "status": 200,
+      "ms": 2580,
+      "tick": "instagram:compose/compose nextdoor:compose/compose",
+      "did": "compose+compose"
+    },
+    {
+      "status": 200,
+      "ms": 17700,
+      "tick": "instagram:render/schedule nextdoor:render/schedule",
+      "did": "schedule+schedule"
+    },
+    {
+      "status": 200,
+      "ms": 150,
+      "tick": "instagram:publish/not_connected nextdoor:publish/not_configured",
+      "did": "not_connected+not_configured"
+    },
+    {
+      "status": 200,
+      "ms": 5034,
+      "tick": "instagram:compose/compose nextdoor:compose/compose",
+      "did": "compose+compose"
+    },
+    {
+      "status": 200,
+      "ms": 18300,
+      "tick": "instagram:render/requeue_compose nextdoor:render/schedule",
+      "did": "requeue_compose+schedule"
+    },
+    {
+      "status": 200,
+      "ms": 2524,
+      "tick": "instagram:compose/compose nextdoor:compose/compose",
+      "did": "compose+compose"
+    },
+    {
+      "status": 200,
+      "ms": 20741,
+      "tick": "instagram:render/requeue_compose nextdoor:render/schedule",
+      "did": "requeue_compose+schedule"
+    },
+    {
+      "status": 200,
+      "ms": 2444,
+      "tick": "instagram:compose/compose nextdoor:publish/not_configured",
+      "did": "compose+not_configured"
+    },
+    {
+      "status": 200,
+      "ms": 15327,
+      "tick": "instagram:render/schedule nextdoor:idle/none",
+      "did": "schedule+none"
+    },
+    {
+      "status": 200,
+      "ms": 138,
+      "tick": "instagram:publish/not_connected nextdoor:idle/none",
+      "did": "not_connected+none"
+    }
+  ],
+  "posts": [
+    {
+      "id": "spost_e8be59e1264c4eb0b0c1b29e4a7881ad",
+      "platform": "nextdoor",
+      "status": "pending_compose",
+      "scheduled_at": "2026-08-21T19:00:00.078Z",
+      "calendar_event_id": null,
+      "error": null
+    },
+    {
+      "id": "spost_9fad81e0c16c421e84af16f6a171b721",
+      "platform": "nextdoor",
+      "status": "pending_compose",
+      "scheduled_at": "2026-08-20T19:00:00.078Z",
+      "calendar_event_id": null,
+      "error": null
+    },
+    {
+      "id": "spost_d03417ca7e724e2ebd3c06e2ee914ca6",
+      "platform": "instagram",
+      "status": "pending_compose",
+      "scheduled_at": "2026-08-21T17:00:00.078Z",
+      "calendar_event_id": null,
+      "error": null
+    },
+    {
+      "id": "spost_d41cdceff99343fc9a0e84c410366127",
+      "platform": "instagram",
+      "status": "pending_compose",
+      "scheduled_at": "2026-08-20T17:00:00.078Z",
+      "calendar_event_id": null,
+      "error": null
+    },
+    {
+      "id": "spost_24465e8ebc7c4b1a81b23a0915ee6336",
+      "platform": "nextdoor",
+      "status": "publish_failed",
+      "scheduled_at": "2026-08-19T09:00:22.339Z",
+      "score": 95,
+      "calendar_event_id": "evt_dffea84156064b23a17babb7091a2c46",
+      "error": "Nextdoor publishing is not configured on Amber One yet."
+    },
+    {
+      "id": "spost_91e8ba3c563641b1a4481abbb543b9a9",
+      "platform": "instagram",
+      "status": "publish_failed",
+      "scheduled_at": "2026-08-19T09:00:22.339Z",
+      "score": 95,
+      "calendar_event_id": "evt_deff57adea644b32b81bf02b850b102e",
+      "error": "Instagram is not connected. Connect a Business account, then Amber can auto-publish from the cloud."
+    },
+    {
+      "id": "spost_a1c5a8bc03424712bb0cc8f3e178b0b6",
+      "platform": "nextdoor",
+      "status": "scheduled",
+      "scheduled_at": "2026-08-21T08:58:29.829Z",
+      "score": 97,
+      "calendar_event_id": "evt_3cd90d2efdf24465aff1bdd775362a41",
+      "error": null
+    },
+    {
+      "id": "spost_f5de7eb3066243378c0623b6638c9ee2",
+      "platform": "nextdoor",
+      "status": "scheduled",
+      "scheduled_at": "2026-08-20T08:58:29.829Z",
+      "score": 95,
+      "calendar_event_id": "evt_908bef3869e5438392666f4bb8348602",
+      "error": null
+    },
+    {
+      "id": "spost_8b92968d9d724150b426205d1e7e9b57",
+      "platform": "nextdoor",
+      "status": "publish_failed",
+      "scheduled_at": "2026-08-19T08:59:59.829Z",
+      "score": 97,
+      "calendar_event_id": "evt_28a6cdf798074cecb20ed262c192b921",
+      "error": "Nextdoor publishing is not configured on Amber One yet."
+    },
+    {
+      "id": "spost_21658e5a28e2411f90f6b18de04dcaa5",
+      "platform": "instagram",
+      "status": "pending_compose",
+      "scheduled_at": "2026-08-21T08:58:29.829Z",
+      "calendar_event_id": null,
+      "error": null
+    },
+    {
+      "id": "spost_90a464e45b154a12be5afbeff4c1c6b3",
+      "platform": "instagram",
+      "status": "pending_compose",
+      "scheduled_at": "2026-08-20T08:58:29.829Z",
+      "calendar_event_id": null,
+      "error": "Quality gate failed at 92/100 after regeneration. Amber will not save a post below 95."
+    },
+    {
+      "id": "spost_6f072565e0f5489db78b5d26c0209df4",
+      "platform": "instagram",
+      "status": "publish_failed",
+      "scheduled_at": "2026-08-19T08:59:59.829Z",
+      "score": 95,
+      "calendar_event_id": "evt_9204dc27f0164b6da2cb8e584de0d832",
+      "error": "Instagram is not connected. Connect a Business account, then Amber can auto-publish from the cloud."
+    }
+  ]
+}

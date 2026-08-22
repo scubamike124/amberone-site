@@ -1,6 +1,7 @@
 import { ensureSchema, getUserFromRequest, json, nowIso, readJson, uid, writeAudit } from "../_lib/core.js";
 import { buildBriefing } from "../_lib/briefing.js";
 import { createEmailDraft, fetchEmails, resolveActiveGmailAccount } from "../_lib/gmail.js";
+import { createSocialCampaign } from "../_lib/social-schedule.js";
 
 const FAQ = [
   {
@@ -351,8 +352,24 @@ const TOOLS = [
     type: "function",
     function: {
       name: "generate_marketing_copy",
-      description: "Generate marketing copy (social post, promo, announcement).",
+      description: "Only for one-off copy ideas. To create and schedule social posts, use schedule_social_campaign.",
       parameters: { type: "object", properties: { type: { type: "string" }, topic: { type: "string" } }, required: ["topic"] },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "schedule_social_campaign",
+      description:
+        "When the user asks Amber to create and schedule social-media content for upcoming days (for example the next 14 days), create one cloud campaign for Instagram AND Nextdoor at the same time unless they name a single network. Amber writes, scores (≥95), calendars, and auto-publishes later without the browser staying open.",
+      parameters: {
+        type: "object",
+        properties: {
+          platform: { type: "string", description: "instagram, nextdoor, or all (both). Default all." },
+          days: { type: "integer", description: "How many days of posts, 1–14. Default 14." },
+        },
+        required: [],
+      },
     },
   },
   {
@@ -733,8 +750,32 @@ async function runTool(name, args, { db, user, env }) {
       const rows = await db.prepare("SELECT id, title, starts_at, ends_at, status FROM appointments WHERE user_id = ? ORDER BY starts_at ASC LIMIT 20").bind(user.id).all();
       return { data: rows.results || [], summary: `${(rows.results||[]).length} appointments.` };
     }
+    case "schedule_social_campaign": {
+      const requested = String(args.platform || "all").toLowerCase();
+      const days = Math.min(14, Math.max(1, Number(args.days) || 14));
+      try {
+        const campaign = await createSocialCampaign(db, user, { platform: requested, days, label: "talk" });
+        return {
+          data: campaign,
+          summary: `Scheduled ${campaign.posts.length} posts across ${(campaign.platforms || [campaign.platform]).join(" and ")}. Amber will write, score, and place them on the calendar in the cloud. ${campaign.publishNote}`,
+        };
+      } catch (err) {
+        return {
+          data: { error: err instanceof Error ? err.message : "Could not schedule" },
+          summary: err instanceof Error ? err.message : "Could not schedule that campaign.",
+        };
+      }
+    }
     case "generate_marketing_copy": {
-      return { data: { tip: "Marketing copy generated via the main conversation." }, summary: "I'll generate that copy in my reply." };
+      return {
+        data: {
+          path: "/dashboard/business/marketing.html",
+          qualityPass: 95,
+          platforms: ["instagram", "nextdoor"],
+        },
+        summary:
+          "For a week or two of posts, ask me to schedule a campaign and I’ll write, score, calendar, and auto-publish from the cloud. One-off drafts still live under Business → Social posts at the 95/100 gate.",
+      };
     }
     default:
       return { data: { error: `Unknown tool ${name}` }, summary: "That tool isn't available." };
@@ -786,6 +827,41 @@ async function handleAnonymous(message, key) {
   return { ...faqReply(message, Boolean(key)), conversationId: null, toolsUsed: [] };
 }
 
+const ANON_TALK_WINDOW_MS = 60 * 60 * 1000;
+const ANON_TALK_LIMIT = 20;
+const anonTalkHits = new Map();
+
+function allowAnonymousTalk(request) {
+  const ip = request.headers.get("CF-Connecting-IP") || request.headers.get("x-forwarded-for") || "unknown";
+  const now = Date.now();
+  const rec = anonTalkHits.get(ip) || { n: 0, t: now };
+  if (now - rec.t > ANON_TALK_WINDOW_MS) {
+    rec.n = 0;
+    rec.t = now;
+  }
+  rec.n += 1;
+  anonTalkHits.set(ip, rec);
+  return rec.n <= ANON_TALK_LIMIT;
+}
+
+function parseSocialCampaignRequest(message) {
+  const text = String(message || "");
+  if (
+    !/(schedule|create).{0,100}(social|instagram|nextdoor)/i.test(text) &&
+    !/social[- ]media content/i.test(text)
+  ) {
+    return null;
+  }
+  const daysMatch = text.match(/next\s+(\d+)\s+days/i) || text.match(/(\d+)\s*-?\s*days/i);
+  const days = daysMatch ? Math.min(14, Math.max(1, Number(daysMatch[1]))) : 14;
+  const namesIg = /instagram/i.test(text);
+  const namesNd = /nextdoor/i.test(text);
+  let platform = "all";
+  if (namesIg && !namesNd) platform = "instagram";
+  else if (namesNd && !namesIg) platform = "nextdoor";
+  return { platform, days };
+}
+
 export async function onRequestPost(context) {
   const body = await readJson(context.request);
   const message = String(body.message || "").trim();
@@ -796,6 +872,23 @@ export async function onRequestPost(context) {
 
   const user = db ? await getUserFromRequest(db, context.request).catch(() => null) : null;
   if (!user) {
+    if (parseSocialCampaignRequest(message)) {
+      return json({
+        reply: "Sign in first, then tell me to schedule your social posts. I’ll write, score, calendar, and publish them from the cloud so you can close the browser.",
+        source: "guided",
+        conversationId: null,
+        toolsUsed: [],
+      });
+    }
+    if (!allowAnonymousTalk(context.request)) {
+      return json({
+        reply:
+          "Please sign in to keep talking with Amber. Create an account so I can remember your calendar, notes, and preferences.",
+        source: "rate_limited",
+        conversationId: null,
+        toolsUsed: [],
+      });
+    }
     return json(await handleAnonymous(message, key));
   }
 
@@ -850,7 +943,8 @@ export async function onRequestPost(context) {
       "You are Amber, the AmberOne assistant. Mission: One Assistant. One Place. One Life. Be warm, clear, concise, and proactive. " +
       "Use the provided tools to save memories, manage the user's calendar, set reminders, save notes, manage shopping/todo lists, deliver briefings, and help with Gmail (list inbox / create drafts only — never claim an email was sent unless a send tool succeeded). " +
       "When the user asks what's on today, for a briefing, or for an evening recap, call get_briefing. For inbox questions, call list_emails. For 'draft an email', call create_email_draft. " +
-      "Never invent Enterprise custom quotes. Do not claim a feature (like phone calls, SMS, or third-party sync) is live unless you've verified it via a tool — Twilio calling/SMS is not available yet." +
+      "Never invent Enterprise custom quotes. Do not claim a feature (like phone calls, SMS, or third-party sync) is live unless you've verified it via a tool — Twilio calling/SMS is not available yet. " +
+      "When the user asks to create or schedule social posts (including “for the next 14 days”), call schedule_social_campaign with platform all unless they name a single network. Do not invent captions in chat. " +
       memoryBlock;
 
     if (!key) {
@@ -907,6 +1001,21 @@ export async function onRequestPost(context) {
       const fallback = faqReply(message, true);
       finalReply = fallback.reply;
       source = toolsUsed.length ? "openai" : "fallback";
+    }
+
+    if (!toolsUsed.some((t) => t.name === "schedule_social_campaign")) {
+      const direct = parseSocialCampaignRequest(message);
+      if (direct) {
+        try {
+          const result = await runTool("schedule_social_campaign", direct, { db, user, env: context.env });
+          toolsUsed.push({ name: "schedule_social_campaign", args: direct, summary: result.summary });
+          finalReply = result.summary;
+          source = "tool";
+        } catch (err) {
+          finalReply = err instanceof Error ? err.message : "Could not schedule that campaign.";
+          source = "tool";
+        }
+      }
     }
 
     await db

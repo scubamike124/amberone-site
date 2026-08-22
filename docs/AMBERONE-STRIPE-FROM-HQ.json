@@ -1,0 +1,164 @@
+{
+  "at": "2026-08-18T22:18:34.599Z",
+  "site": "https://amberoneai.com",
+  "steps": [
+    {
+      "step": "probe_hq_stripe_key",
+      "ok": true
+    },
+    {
+      "step": "catalog_prices",
+      "ok": true,
+      "detail": "7/7"
+    },
+    {
+      "step": "create_webhook_endpoint",
+      "ok": true,
+      "id": "we_1U5vL9KDbVMTgaXyzhMry7mj",
+      "url": "https://amberoneai.com/api/webhook",
+      "error": null,
+      "secret": {
+        "length": 38,
+        "prefix": "whsec_l",
+        "last4": "WHvS"
+      }
+    },
+    {
+      "step": "pages_secrets",
+      "ok": true,
+      "pushed": [
+        "STRIPE_SECRET_KEY",
+        "STRIPE_PRICE_PERSONAL",
+        "STRIPE_PRICE_FAMILY_2",
+        "STRIPE_PRICE_FAMILY_5",
+        "STRIPE_PRICE_FAMILY_10",
+        "STRIPE_PRICE_EXECUTIVE",
+        "STRIPE_PRICE_BUSINESS_SMALL",
+        "STRIPE_PRICE_BUSINESS_MEDIUM",
+        "STRIPE_WEBHOOK_SECRET"
+      ],
+      "failed": []
+    },
+    {
+      "step": "redeploy",
+      "ok": true,
+      "url": "https://da623da1.amberone.pages.dev"
+    }
+  ],
+  "account": {
+    "ok": true,
+    "id": "acct_1OWJRDKDbVMTgaXy",
+    "chargesEnabled": true,
+    "payoutsEnabled": false,
+    "key": {
+      "length": 107,
+      "prefix": "sk_live",
+      "last4": "b0p7"
+    },
+    "error": null
+  },
+  "priceChecks": [
+    {
+      "key": "STRIPE_PRICE_PERSONAL",
+      "id": "price_1U5vL5KDbVMTgaXy2X6wG1Uq",
+      "created": true,
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "error": null
+    },
+    {
+      "key": "STRIPE_PRICE_FAMILY_2",
+      "id": "price_1U5vL6KDbVMTgaXyQWUoCaYD",
+      "created": true,
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "error": null
+    },
+    {
+      "key": "STRIPE_PRICE_FAMILY_5",
+      "id": "price_1U5vL6KDbVMTgaXypzfYfpUb",
+      "created": true,
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "error": null
+    },
+    {
+      "key": "STRIPE_PRICE_FAMILY_10",
+      "id": "price_1U5vL7KDbVMTgaXyQ5tf3cIu",
+      "created": true,
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "error": null
+    },
+    {
+      "key": "STRIPE_PRICE_EXECUTIVE",
+      "id": "price_1U5vL7KDbVMTgaXy45dvtvEv",
+      "created": true,
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "error": null
+    },
+    {
+      "key": "STRIPE_PRICE_BUSINESS_SMALL",
+      "id": "price_1U5vL8KDbVMTgaXyMYMmI5sK",
+      "created": true,
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "error": null
+    },
+    {
+      "key": "STRIPE_PRICE_BUSINESS_MEDIUM",
+      "id": "price_1U5vL8KDbVMTgaXye9q2Zjhx",
+      "created": true,
+      "ok": true,
+      "livemode": true,
+      "active": true,
+      "error": null
+    }
+  ],
+  "pagesSecrets": [
+    {
+      "name": "STRIPE_SECRET_KEY",
+      "ok": true
+    },
+    {
+      "name": "STRIPE_PRICE_PERSONAL",
+      "ok": true
+    },
+    {
+      "name": "STRIPE_PRICE_FAMILY_2",
+      "ok": true
+    },
+    {
+      "name": "STRIPE_PRICE_FAMILY_5",
+      "ok": true
+    },
+    {
+      "name": "STRIPE_PRICE_FAMILY_10",
+      "ok": true
+    },
+    {
+      "name": "STRIPE_PRICE_EXECUTIVE",
+      "ok": true
+    },
+    {
+      "name": "STRIPE_PRICE_BUSINESS_SMALL",
+      "ok": true
+    },
+    {
+      "name": "STRIPE_PRICE_BUSINESS_MEDIUM",
+      "ok": true
+    },
+    {
+      "name": "STRIPE_WEBHOOK_SECRET",
+      "ok": true
+    }
+  ],
+  "ok": true
+}

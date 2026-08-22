@@ -1,4 +1,5 @@
 import { ensureSchema, getUserFromRequest, json, publicUser, nowIso } from "../_lib/core.js";
+import { isBetaAccount } from "../_lib/beta.js";
 import { dispatchDueReminders } from "./reminders.js";
 
 export async function onRequestGet(context) {
@@ -110,7 +111,7 @@ export async function onRequestGet(context) {
   if (!onboarding?.completed_at) suggestions.push({ id: "onboard", text: "Finish onboarding so Amber can personalize your briefings.", href: "/dashboard/onboarding" });
   if (!gcal) suggestions.push({ id: "gcal", text: "Connect Google Calendar for live schedule sync.", href: "/dashboard/connections" });
   if (!gmail) suggestions.push({ id: "gmail", text: "Connect Gmail for inbox summaries in your briefing.", href: "/dashboard/connections" });
-  if (!user.plan_slug) suggestions.push({ id: "plan", text: "Choose a plan to unlock Family, Executive, or Business dashboards.", href: "/pricing" });
+  if (!user.plan_slug && !isBetaAccount(user)) suggestions.push({ id: "plan", text: "Choose a plan to unlock Family, Executive, or Business dashboards.", href: "/pricing" });
   if (reminders.length) suggestions.push({ id: "rem", text: `Review ${reminders.length} pending reminder${reminders.length === 1 ? "" : "s"}.`, href: "/dashboard/reminders" });
   if (events.length) suggestions.push({ id: "cal", text: `You have ${events.length} event${events.length === 1 ? "" : "s"} today — prep the next one.`, href: "/dashboard/calendar" });
   if (tasks.length) suggestions.push({ id: "tasks", text: `${tasks.length} open list item${tasks.length === 1 ? "" : "s"} waiting.`, href: "/dashboard/notes" });
@@ -156,8 +157,8 @@ export async function onRequestGet(context) {
     },
     suggestions: suggestions.slice(0, 5),
     health: {
-      apis: apiHealth,
-      apiScore: Math.round((apiOkCount / apiTotal) * 100),
+      apis: isBetaAccount(user) ? { configured: true } : apiHealth,
+      apiScore: isBetaAccount(user) ? null : Math.round((apiOkCount / apiTotal) * 100),
       website: { status: "ok", label: "AmberOne live" },
       security: { status: "ok", label: "Session secured · HTTPS" },
       business: {

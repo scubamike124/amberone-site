@@ -15,6 +15,10 @@ export async function requirePlan(request, env, allowedSlugs = []) {
     });
   }
   const slug = user.plan_slug || "";
+  if (slug.startsWith("beta") || String(user.account_kind || "") === "beta") {
+    request._user = user;
+    return null;
+  }
   if (allowedSlugs.length && !allowedSlugs.some((s) => slug.startsWith(s))) {
     return new Response(
       JSON.stringify({
@@ -43,4 +47,15 @@ export async function resolveTeam(request, env) {
     .first();
   if (row) request._team = row;
   return row;
+}
+
+export async function userIsTeamMember(db, userId, teamId) {
+  if (!db || !userId || !teamId) return false;
+  const row = await db
+    .prepare(
+      "SELECT 1 AS ok FROM team_members WHERE team_id = ? AND user_id = ? AND status = 'active' LIMIT 1",
+    )
+    .bind(teamId, userId)
+    .first();
+  return Boolean(row);
 }

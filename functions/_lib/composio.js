@@ -157,6 +157,7 @@ export async function executeTool(env, { slug, userId, connectedAccountId, argum
 const AUTH_CONFIG_ENV_BY_TOOLKIT = {
   googlecalendar: "COMPOSIO_GOOGLE_CALENDAR_AUTH_CONFIG_ID",
   gmail: "COMPOSIO_GMAIL_AUTH_CONFIG_ID",
+  instagram: "COMPOSIO_INSTAGRAM_AUTH_CONFIG_ID",
 };
 
 export function authConfigIdForToolkit(env, toolkit) {

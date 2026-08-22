@@ -66,9 +66,12 @@
       }
       document.getElementById("plan").textContent = data.billing.planSlug || "None";
       document.getElementById("status").textContent = data.billing.status || "none";
-      document.getElementById("customer").textContent = data.billing.stripeCustomerId
-        ? data.billing.stripeCustomerId.slice(0, 14) + "…"
-        : "Not linked yet";
+      document.getElementById("customer").textContent = data.billing.note
+        ? "Not available in beta"
+        : data.billing.stripeCustomerId
+          ? data.billing.stripeCustomerId.slice(0, 14) + "…"
+          : "Not linked yet";
+      if (data.billing.note) AmberOne.showBanner(banner, data.billing.note, "warn");
       const events = data.events || [];
       document.getElementById("events").innerHTML = events.length
         ? `<ul>${events.map((e) => `<li>${e.type} · ${e.created_at}</li>`).join("")}</ul>`

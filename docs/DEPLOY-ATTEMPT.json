@@ -1,97 +1,40 @@
 {
-  "at": "2026-07-29T20:09:46.955Z",
-  "steps": [
-    {
-      "step": "whoami",
-      "ok": true,
-      "snippet": [
-        "⛅️ wrangler 3.114.15 (update available 4.115.0)",
-        "------------------------------------------------",
-        "",
-        "Getting User settings...",
-        "ℹ️  The API Token is read from the CLOUDFLARE_API_TOKEN environment variable.",
-        "👋 You are logged in with an User API Token. Unable to retrieve email for this user. Are you missing the `User->User Details->Read` permission?",
-        "┌──────────────────────────────────┬──────────────────────────────────┐",
-        "│ Account Name                     │ Account ID                       │"
-      ]
-    },
-    {
-      "step": "d1 create",
-      "ok": false,
-      "snippet": [
-        "⛅️ wrangler 3.114.15 (update available 4.115.0)",
-        "------------------------------------------------",
-        "",
-        "",
-        "📎 It looks like you are authenticating Wrangler via a custom API token set in an environment variable.",
-        "Please ensure it has the correct permissions for this operation.",
-        "",
-        "Getting User settings...",
-        "ℹ️  The API Token is read from the CLOUDFLARE_API_TOKEN environment variable.",
-        "👋 You are logged in with an User API Token. Unable to retrieve email for this user. Are you missing the `User->User Details->Read` permission?",
-        "┌──────────────────────────────────┬──────────────────────────────────┐",
-        "│ Account Name                     │ Account ID                       │",
-        "├──────────────────────────────────┼──────────────────────────────────┤",
-        "│ Scubamike124@gmail.com's Account │ 735d0e617e9ba6a16d9b2a1ec05b4dd3 │",
-        "└──────────────────────────────────┴──────────────────────────────────┘",
-        "🔓 To see token permissions visit https://dash.cloudflare.com/profile/api-tokens.",
-        "🎢 Unable to get membership roles. Make sure you have permissions to read the account. Are you missing the `User->Memberships->Read` permission?",
-        "\u001b[33m▲ \u001b[43;33m[\u001b[43;30mWARNING\u001b[43;33m]\u001b[0m \u001b[1mThe version of Wrangler you are using is now out-of-date.\u001b[0m",
-        "",
-        "  Please update to the latest version to prevent critical errors."
-      ]
-    },
-    {
-      "step": "wrangler.toml database_id",
-      "ok": true,
-      "databaseId": "0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a",
-      "source": "known_amberone_d1"
-    },
-    {
-      "step": "d1 migrate remote",
-      "ok": false,
-      "snippet": [
-        "⛅️ wrangler 3.114.15 (update available 4.115.0)",
-        "------------------------------------------------",
-        "",
-        "🌀 Executing on preview database amberone (0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a):",
-        "🌀 To execute on your local development database, remove the --remote flag from your wrangler command.",
-        "Note: if the execution fails to complete, your DB will return to its original state and you can safely retry.",
-        "├ Checking if file needs uploading",
-        "│",
-        "",
-        "📎 It looks like you are authenticating Wrangler via a custom API token set in an environment variable.",
-        "Please ensure it has the correct permissions for this operation.",
-        "",
-        "Getting User settings...",
-        "ℹ️  The API Token is read from the CLOUDFLARE_API_TOKEN environment variable.",
-        "👋 You are logged in with an User API Token. Unable to retrieve email for this user. Are you missing the `User->User Details->Read` permission?",
-        "┌──────────────────────────────────┬──────────────────────────────────┐",
-        "│ Account Name                     │ Account ID                       │",
-        "├──────────────────────────────────┼──────────────────────────────────┤",
-        "│ Scubamike124@gmail.com's Account │ 735d0e617e9ba6a16d9b2a1ec05b4dd3 │",
-        "└──────────────────────────────────┴──────────────────────────────────┘"
-      ]
-    },
-    {
-      "step": "pages deploy",
-      "ok": true,
-      "snippet": [
-        "✨ Compiled Worker successfully",
-        "Uploading... (229/236)",
-        "Uploading... (231/236)",
-        "Uploading... (233/236)",
-        "Uploading... (236/236)",
-        "✨ Success! Uploaded 7 files (229 already uploaded) (1.32 sec)",
-        "",
-        "✨ Uploading _headers",
-        "✨ Uploading Functions bundle",
-        "✨ Uploading _routes.json",
-        "🌎 Deploying...",
-        "✨ Deployment complete! Take a peek over at https://2af4cc46.amberone.pages.dev"
-      ]
-    }
+  "at": "2026-08-05T18:47:20.994Z",
+  "createStatus": 1,
+  "createOut": [
+    "",
+    "\u001b[31mX \u001b[41;31m[\u001b[41;97mERROR\u001b[41;31m]\u001b[0m \u001b[1mA request to the Cloudflare API (/accounts/735d0e617e9ba6a16d9b2a1ec05b4dd3/pages/projects) failed.\u001b[0m",
+    "",
+    "  A project with this name already exists. Choose a different project name. [code: 8000002]",
+    "  ",
+    "  If you think this is a bug, please open an issue at: \u001b[4mhttps://github.com/cloudflare/workers-sdk/issues/new/choose\u001b[0m",
+    "",
+    "",
+    "🪵  Logs were written to \"C:\\Users\\michael\\AppData\\Roaming\\xdg.config\\.wrangler\\logs\\wrangler-2026-08-05_18-47-08_376.log\"",
+    ""
   ],
-  "publicUrl": "https://2af4cc46.amberone.pages.dev",
-  "ok": true
+  "deployStatus": 0,
+  "publicUrl": "https://8a37c624.amberone.pages.dev",
+  "productionAlias": "https://amberone.pages.dev",
+  "deployTail": [
+    "✨ Compiled Worker successfully",
+    "Uploading... (221/270)",
+    "Uploading... (238/270)",
+    "Uploading... (254/270)",
+    "Uploading... (270/270)",
+    "✨ Success! Uploaded 49 files (221 already uploaded) (2.83 sec)",
+    "",
+    "✨ Uploading _headers",
+    "✨ Uploading Functions bundle",
+    "✨ Uploading _routes.json",
+    "🌎 Deploying...",
+    "✨ Deployment complete! Take a peek over at https://8a37c624.amberone.pages.dev",
+    ""
+  ],
+  "d1Binding": {
+    "binding": "DB",
+    "database_name": "amberone",
+    "database_id": "0b00c9b1-dbda-4be4-b603-1b5d3d16bc3a"
+  },
+  "note": "Deployed with D1 binding from wrangler.toml (not stripped)."
 }

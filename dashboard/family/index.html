@@ -16,7 +16,7 @@
     <div class="nav-links" data-nav-links>
       <a href="/dashboard/">Home</a>
       <a href="/dashboard/family/">Family</a>
-      <a href="/dashboard/family/members.html">Members</a>
+      <a href="/dashboard/family/members">Members</a>
       <a href="/dashboard/notes">Notes</a>
       <a class="nav-notif" href="/dashboard/notifications">Notifications<span class="badge" data-notif-badge hidden>0</span></a>
       <a href="#" data-logout>Log out</a>
@@ -49,7 +49,7 @@
                 <span class="ao-icon">✦</span>
                 <div><h2 id="team-name">Family</h2><p class="ao-card-meta">Shared workspace</p></div>
               </div>
-              <a class="btn btn-ghost btn-sm" href="/dashboard/family/members.html">Manage members</a>
+              <a class="btn btn-ghost btn-sm" href="/dashboard/family/members">Manage members</a>
             </div>
           </article>
 
@@ -83,7 +83,7 @@
           <article class="ao-card ao-span-6">
             <div class="ao-card-head">
               <div class="ao-card-title"><span class="ao-icon is-ok">◎</span><div><h2>Members</h2><p class="ao-card-meta">Invite &amp; roles</p></div></div>
-              <a class="btn btn-ghost btn-sm" href="/dashboard/family/members.html">Invite</a>
+              <a class="btn btn-ghost btn-sm" href="/dashboard/family/members">Invite</a>
             </div>
             <div id="members-preview"></div>
           </article>
@@ -113,6 +113,16 @@
         document.getElementById("team-name").textContent = currentTeam.name || "Family";
         loadChores();
         loadMembers();
+        loadSharedCalendar();
+      }
+
+      async function loadSharedCalendar() {
+        const res = await fetch("/api/calendar?scope=shared", { credentials: "include" });
+        const data = await res.json().catch(() => ({}));
+        const events = data.events || [];
+        document.getElementById("shared-cal").innerHTML = events.length
+          ? `<ul class="list">${events.map((e) => `<li class="list-item"><div class="meta-col"><strong>${String(e.title || "").replace(/</g, "&lt;")}</strong><span class="sub">${new Date(e.starts_at).toLocaleString()}${e.location ? " · " + String(e.location).replace(/</g, "&lt;") : ""}</span></div></li>`).join("")}</ul>`
+          : `<div class="empty-state"><strong>No shared events yet.</strong><div class="empty-hint">Create an event on Calendar and set privacy to Shared with family/team.</div></div>`;
       }
 
       async function loadChores() {

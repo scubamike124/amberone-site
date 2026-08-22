@@ -16,7 +16,7 @@
     <div class="nav-links" data-nav-links>
       <a href="/dashboard/">Home</a>
       <a href="/dashboard/family/">Family</a>
-      <a href="/dashboard/family/members.html">Members</a>
+      <a href="/dashboard/family/members">Members</a>
       <a href="#" data-logout>Log out</a>
     </div>
   </nav>
@@ -34,10 +34,17 @@
           </div>
           <div id="members"></div>
         </article>
+        <article class="ao-card" id="my-invites-card">
+          <div class="ao-card-head">
+            <div class="ao-card-title"><span class="ao-icon">→</span><div><h2>Your invitations</h2><p class="ao-card-meta">Accept or decline</p></div></div>
+          </div>
+          <div id="my-invites"></div>
+        </article>
         <article class="ao-card">
           <div class="ao-card-head">
             <div class="ao-card-title"><span class="ao-icon is-warn">→</span><div><h2>Invite a member</h2></div></div>
           </div>
+          <p class="lede">Invites stay in-app. Matching AmberOne accounts can accept or decline below. Invalid emails are rejected.</p>
           <form id="invite-form" style="display:flex;gap:.5rem;flex-wrap:wrap">
             <input class="field" name="email" type="email" placeholder="Email address" required style="margin:0;flex:1;min-width:180px" />
             <select class="field" name="role" style="margin:0;width:auto">
@@ -68,14 +75,40 @@
           ? `<ul class="list">${members.map((m) => `<li class="list-item"><div class="meta-col"><strong>${m.invited_email || m.user_id}</strong><span class="sub">${m.role}</span></div><span class="ao-status ${m.status === "active" ? "is-ok" : "is-warn"}">${m.status}</span></li>`).join("")}</ul>`
           : `<div class="empty-state"><strong>No data yet.</strong></div>`;
       }
+      async function loadInvites() {
+        const data = await (await fetch("/api/teams?action=invites", { credentials: "include" })).json().catch(() => ({}));
+        const invites = data.invites || [];
+        document.getElementById("my-invites").innerHTML = invites.length
+          ? `<ul class="list">${invites.map((i) => `<li class="list-item"><div class="meta-col"><strong>${i.team_name}</strong><span class="sub">${i.role}</span></div><div class="row-actions"><button class="btn btn-primary btn-sm" data-accept="${i.id}">Accept</button><button class="btn btn-ghost btn-sm" data-reject="${i.id}">Decline</button></div></li>`).join("")}</ul>`
+          : `<div class="empty-state"><strong>No pending invitations.</strong></div>`;
+        document.querySelectorAll("[data-accept]").forEach((btn) => {
+          btn.onclick = async () => {
+            await fetch("/api/teams", { method: "PATCH", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "accept", member_id: btn.dataset.accept }) });
+            loadInvites();
+            load();
+          };
+        });
+        document.querySelectorAll("[data-reject]").forEach((btn) => {
+          btn.onclick = async () => {
+            await fetch("/api/teams", { method: "PATCH", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "reject", member_id: btn.dataset.reject }) });
+            loadInvites();
+          };
+        });
+      }
       document.getElementById("invite-form").onsubmit = async (e) => {
         e.preventDefault();
         const fd = new FormData(e.target);
-        await fetch("/api/teams", { method: "PATCH", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "invite", team_id: teamId, email: fd.get("email"), role: fd.get("role") }) });
+        const res = await fetch("/api/teams", { method: "PATCH", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "invite", team_id: teamId, email: fd.get("email"), role: fd.get("role") }) });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          alert(data.error || "Could not invite");
+          return;
+        }
         e.target.reset();
         load();
       };
       load();
+      loadInvites();
     })();
   </script>
 </body>

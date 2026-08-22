@@ -1,0 +1,240 @@
+{
+  "at": "2026-08-19T02:39:41.261Z",
+  "base": "https://95461a13.amberone.pages.dev",
+  "email": "ao.qscore.mszhfolp@example.com",
+  "caption": "Struggling to find time for your orthodontic needs? At Harborline Orthodontics, we offer discreet adult clear-aligner treatments tailored for busy professionals like you. Join us for a complimentary 20-minute evening scan this Thursday from 5–7 PM in Ballard. With plans starting at just $129/month, achieving your ideal smile has never been easier. Secure your spot today and take the first step toward a more confident you.",
+  "imageUrl": "https://95461a13.amberone.pages.dev/api/social-image?id=spost_b557448d2d0c4352a24efdb8b43edf30&t=689226888d4c4c839265ecc136b9bdfa",
+  "score": {
+    "total": 95,
+    "passed": true,
+    "categories": {
+      "writing": 12,
+      "relevance": 12,
+      "imageQuality": 10,
+      "imageCaptionConsistency": 12,
+      "branding": 10,
+      "professionalism": 10,
+      "cta": 8,
+      "platformSuitability": 5,
+      "spellingGrammar": 8,
+      "engagementLikelihood": 8
+    },
+    "reasons": [
+      "Instagram needs 3–12 useful hashtags, not none and not a dump."
+    ],
+    "banned": [],
+    "platform": "instagram"
+  },
+  "nextdoor": {
+    "caption": "Are you a busy professional in Ballard looking to enhance your smile without disrupting your workday? At Harborline Orthodontics, we offer discreet adult clear-aligner treatment options tailored for your lifestyle. Join us for a complimentary 20-minute evening scan this Thursday from 5 to 7 PM, and discover how you can start your journey to straighter teeth for as low as $129/month. Don't miss this opportunity to take the first step towards your dream smile. Message us to reserve your spot today.",
+    "imageUrl": "https://95461a13.amberone.pages.dev/api/social-image?id=spost_47ba6caf3e96437294ea7246e490e44d&t=19abeee291fd45e9ab51846482d719cd",
+    "score": {
+      "total": 98,
+      "passed": true,
+      "categories": {
+        "writing": 12,
+        "relevance": 12,
+        "imageQuality": 10,
+        "imageCaptionConsistency": 12,
+        "branding": 10,
+        "professionalism": 10,
+        "cta": 8,
+        "platformSuitability": 8,
+        "spellingGrammar": 8,
+        "engagementLikelihood": 8
+      },
+      "reasons": [],
+      "banned": [],
+      "platform": "nextdoor"
+    }
+  },
+  "attempts": [
+    {
+      "n": 0,
+      "kind": "rejected_generic_template",
+      "accepted": false,
+      "total": 41,
+      "passed": false,
+      "reasons": [
+        "Banned filler language: open for the week, test post, will not be published, professional test"
+      ],
+      "captionPreview": "Harborline Orthodontics is open for the week! Come see us. This is an Amber One professional test post and will not be published live. #business #local"
+    },
+    {
+      "n": 1,
+      "kind": "caption_candidate",
+      "accepted": false,
+      "total": 80,
+      "passed": false,
+      "reasons": [
+        "Image is a generic placeholder, not generated for this business.",
+        "No matching generated image for this caption.",
+        "Spacing/punctuation issues."
+      ],
+      "captionPreview": "Are you a busy professional wishing for a straighter smile? At Harborline Orthodontics, we specialize in discreet adult clear-aligner treatments designed for yo"
+    },
+    {
+      "n": 2,
+      "kind": "with_generated_image",
+      "accepted": false,
+      "total": 92,
+      "passed": false,
+      "reasons": [
+        "Image prompt only loosely matches the caption.",
+        "Spacing/punctuation issues."
+      ],
+      "captionPreview": "Are you a busy professional wishing for a straighter smile? At Harborline Orthodontics, we specialize in discreet adult clear-aligner treatments designed for yo"
+    },
+    {
+      "n": 3,
+      "kind": "caption_retry_after_image",
+      "accepted": true,
+      "total": 95,
+      "passed": true,
+      "reasons": [
+        "Instagram needs 3–12 useful hashtags, not none and not a dump."
+      ],
+      "captionPreview": "Struggling to find time for your orthodontic needs? At Harborline Orthodontics, we offer discreet adult clear-aligner treatments tailored for busy professionals"
+    }
+  ],
+  "rejected": [
+    {
+      "kind": "rejected_generic_template",
+      "total": 41,
+      "reasons": [
+        "Banned filler language: open for the week, test post, will not be published, professional test"
+      ]
+    },
+    {
+      "kind": "caption_candidate",
+      "total": 80,
+      "reasons": [
+        "Image is a generic placeholder, not generated for this business.",
+        "No matching generated image for this caption.",
+        "Spacing/punctuation issues."
+      ]
+    },
+    {
+      "kind": "with_generated_image",
+      "total": 92,
+      "reasons": [
+        "Image prompt only loosely matches the caption.",
+        "Spacing/punctuation issues."
+      ]
+    }
+  ],
+  "pass": 23,
+  "fail": 0,
+  "steps": [
+    {
+      "name": "save specific business brief",
+      "ok": true
+    },
+    {
+      "name": "quality gate rejects generic filler",
+      "ok": true,
+      "detail": "422 41 Quality gate failed at 41/100. Amber will not save a Instagram post below 95."
+    },
+    {
+      "name": "every listed platform can compose under the 95 gate",
+      "ok": true,
+      "detail": "[{\"id\":\"instagram\",\"canCompose\":true,\"canPrepare\":true},{\"id\":\"nextdoor\",\"canCompose\":true,\"canPrepare\":false}]"
+    },
+    {
+      "name": "Nextdoor quality gate rejects generic filler",
+      "ok": true,
+      "detail": "422 41 Quality gate failed at 41/100. Amber will not save a Nextdoor post below 95."
+    },
+    {
+      "name": "unsupported network is rejected",
+      "ok": true,
+      "detail": "400 Amber does not support that network yet. Choose instagram or nextdoor."
+    },
+    {
+      "name": "Instagram compose caption HTTP",
+      "ok": "spost_b557448d2d0c4352a24efdb8b43edf30",
+      "detail": "200"
+    },
+    {
+      "name": "compose keeps sub-95 filler out of the kept caption",
+      "ok": true,
+      "detail": "[{\"kind\":\"rejected_generic_template\",\"total\":41},{\"kind\":\"caption_candidate\",\"total\":80}]"
+    },
+    {
+      "name": "render-image HTTP",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "name": "final score >= 95",
+      "ok": true,
+      "detail": "95"
+    },
+    {
+      "name": "gate log includes a rejected attempt",
+      "ok": true,
+      "detail": "[{\"kind\":\"rejected_generic_template\",\"total\":41},{\"kind\":\"caption_candidate\",\"total\":80},{\"kind\":\"with_generated_image\",\"total\":92}]"
+    },
+    {
+      "name": "caption names Harborline",
+      "ok": true,
+      "detail": "Struggling to find time for your orthodontic needs? At Harborline Orthodontics, we offer discreet adult clear-aligner treatments tailored for busy professionals like you. Join us f"
+    },
+    {
+      "name": "no test-post language",
+      "ok": true
+    },
+    {
+      "name": "has matching generated image URL",
+      "ok": true,
+      "detail": "https://95461a13.amberone.pages.dev/api/social-image?id=spost_b557448d2d0c4352a24efdb8b43edf30&t=689226888d4c4c839265ecc136b9bdfa"
+    },
+    {
+      "name": "generated image fetches",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "name": "Nextdoor compose caption HTTP",
+      "ok": "spost_47ba6caf3e96437294ea7246e490e44d",
+      "detail": "200"
+    },
+    {
+      "name": "Nextdoor compose rejected generic template",
+      "ok": true,
+      "detail": "[{\"kind\":\"rejected_generic_template\",\"total\":41},{\"kind\":\"caption_candidate\",\"total\":80}]"
+    },
+    {
+      "name": "Nextdoor render-image HTTP",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "name": "Nextdoor final score >= 95",
+      "ok": true,
+      "detail": "98"
+    },
+    {
+      "name": "Nextdoor caption names Harborline",
+      "ok": true,
+      "detail": "Are you a busy professional in Ballard looking to enhance your smile without disrupting your workday? At Harborline Orthodontics, we offer discreet adult clear-aligner treatment op"
+    },
+    {
+      "name": "Nextdoor caption names Ballard",
+      "ok": true
+    },
+    {
+      "name": "Nextdoor not a hashtag dump",
+      "ok": true
+    },
+    {
+      "name": "Nextdoor prepare stays unpublished",
+      "ok": true,
+      "detail": "503 publish_unavailable"
+    },
+    {
+      "name": "live UI shows Harborline brief",
+      "ok": true
+    }
+  ]
+}

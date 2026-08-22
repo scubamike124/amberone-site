@@ -55,7 +55,7 @@ Infrastructure credentials are obtained. That is **Phase 0 launch shell**, not A
 | Google Drive integration | Docs for memory/workflows | Composio → Drive | Missing | Not Started | Medium | 5d | Composio |
 | Microsoft 365 integration | Outlook/Calendar for Exec | Composio → Microsoft | Missing | Not Started | Medium | 8d | Composio |
 | CRM | Contacts, follow-ups, pipeline | D1, OpenAI; Composio optional | Configured | Not Started | High | 12d | Memory, Talk |
-| Social media publishing | Instagram / Nextdoor + images | Composio → IG/Nextdoor, OpenAI | Missing | Not Started | Medium | 10d | Composio, Business |
+| Social media publishing | Instagram / Nextdoor + full AI Marketing Manager (profile, calendar, approval modes, goals, recommendations) | Amber HQ `/dashboard/business-marketing` + vault | Partial (engine + hold) | In Progress | High | — | Business |
 | Business / user onboarding | First-run connect + prefs | — | Not Required | Complete | High | 5d | Auth, Composio |
 | AI automation engine | Manual / Assisted / Automatic | OpenAI, D1, Composio | Missing | Not Started | High | 14d | Talk, Memory, Composio |
 | Workflow automation | Multi-step + approvals + resiliency | D1, OpenAI, Composio | Missing | Not Started | High | 12d | Composio, Audit |

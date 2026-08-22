@@ -1,8 +1,8 @@
 {
-  "at": "2026-07-29T17:35:55.672Z",
-  "base": "https://amberone.pages.dev",
-  "email": "phase1_1785346538720@example.com",
-  "userId": "user_cb91e754f54440aeb5da6eaed466f149",
+  "at": "2026-07-30T20:19:39.098Z",
+  "base": "http://127.0.0.1:8788",
+  "email": "phase1_1785442771635@example.com",
+  "userId": "user_4ce8a11960724836bca521d7d7427660",
   "passed": 27,
   "total": 27,
   "failed": [],
@@ -27,7 +27,7 @@
       "ok": true,
       "status": 200,
       "source": "openai",
-      "conversationId": "conv_1d32e66e638247be81709b6832e3d687",
+      "conversationId": "conv_56f1fde76048475f8c62e7686db2ee73",
       "toolsUsed": [
         "save_memory"
       ]
@@ -36,7 +36,7 @@
       "name": "talk turn 2 (same conversation)",
       "ok": true,
       "status": 200,
-      "conversationId": "conv_1d32e66e638247be81709b6832e3d687"
+      "conversationId": "conv_56f1fde76048475f8c62e7686db2ee73"
     },
     {
       "name": "create memory via API",
@@ -124,7 +124,7 @@
       "name": "create shopping list",
       "ok": true,
       "status": 201,
-      "listId": "list_0491cdf2a2c1417aafde63fe4a60c934"
+      "listId": "list_154b91767e7b4e32aa01a2b498d313e6"
     },
     {
       "name": "add list item",

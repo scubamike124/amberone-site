@@ -24,6 +24,7 @@
           <li><a href="/plans">Compare plans</a></li>
           <li><a href="/family">Family</a></li>
           <li><a href="/faq">FAQ</a></li>
+          <li><a href="/contact">Contact</a></li>
         </ul>
       </div>
       <div>

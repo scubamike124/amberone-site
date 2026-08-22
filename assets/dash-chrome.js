@@ -10,6 +10,8 @@
     { href: "/dashboard/reminders", label: "Reminders" },
     { href: "/dashboard/memories", label: "Memories" },
     { href: "/dashboard/notes", label: "Notes" },
+    { href: "/dashboard/projects", label: "Projects" },
+    { href: "/dashboard/files", label: "Files" },
     { href: "/dashboard/connections", label: "Connections" },
     { label: "Account", type: "label" },
     { href: "/dashboard/billing", label: "Billing" },

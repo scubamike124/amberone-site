@@ -1,12 +1,12 @@
 {
-  "at": "2026-07-29T13:53:41.794Z",
+  "at": "2026-07-30T20:19:47.082Z",
   "base": "https://amberone.pages.dev",
   "issues": [],
   "pages": [
     {
       "path": "/",
       "status": 200,
-      "ms": 186,
+      "ms": 199,
       "ok": true,
       "isHtml": true,
       "deploymentNotFound": false,
@@ -15,7 +15,7 @@
     {
       "path": "/index.html",
       "status": 308,
-      "ms": 43,
+      "ms": 15,
       "ok": true,
       "isHtml": false,
       "deploymentNotFound": false,
@@ -24,7 +24,7 @@
     {
       "path": "/pricing",
       "status": 200,
-      "ms": 172,
+      "ms": 125,
       "ok": true,
       "isHtml": true,
       "deploymentNotFound": false,
@@ -33,7 +33,7 @@
     {
       "path": "/pricing.html",
       "status": 308,
-      "ms": 41,
+      "ms": 38,
       "ok": true,
       "isHtml": false,
       "deploymentNotFound": false,
@@ -42,7 +42,7 @@
     {
       "path": "/signup",
       "status": 200,
-      "ms": 59,
+      "ms": 37,
       "ok": true,
       "isHtml": true,
       "deploymentNotFound": false,
@@ -51,7 +51,7 @@
     {
       "path": "/signup.html",
       "status": 308,
-      "ms": 66,
+      "ms": 22,
       "ok": true,
       "isHtml": false,
       "deploymentNotFound": false,
@@ -60,7 +60,7 @@
     {
       "path": "/login",
       "status": 200,
-      "ms": 55,
+      "ms": 76,
       "ok": true,
       "isHtml": true,
       "deploymentNotFound": false,
@@ -69,7 +69,7 @@
     {
       "path": "/login.html",
       "status": 308,
-      "ms": 39,
+      "ms": 16,
       "ok": true,
       "isHtml": false,
       "deploymentNotFound": false,
@@ -78,7 +78,7 @@
     {
       "path": "/forgot-password",
       "status": 200,
-      "ms": 202,
+      "ms": 108,
       "ok": true,
       "isHtml": true,
       "deploymentNotFound": false,
@@ -87,7 +87,7 @@
     {
       "path": "/forgot-password.html",
       "status": 308,
-      "ms": 57,
+      "ms": 22,
       "ok": true,
       "isHtml": false,
       "deploymentNotFound": false,
@@ -96,7 +96,7 @@
     {
       "path": "/reset-password",
       "status": 200,
-      "ms": 66,
+      "ms": 77,
       "ok": true,
       "isHtml": true,
       "deploymentNotFound": false,
@@ -105,7 +105,7 @@
     {
       "path": "/reset-password.html",
       "status": 308,
-      "ms": 48,
+      "ms": 13,
       "ok": true,
       "isHtml": false,
       "deploymentNotFound": false,
@@ -114,7 +114,7 @@
     {
       "path": "/faq",
       "status": 200,
-      "ms": 56,
+      "ms": 76,
       "ok": true,
       "isHtml": true,
       "deploymentNotFound": false,
@@ -123,7 +123,7 @@
     {
       "path": "/faq.html",
       "status": 308,
-      "ms": 41,
+      "ms": 20,
       "ok": true,
       "isHtml": false,
       "deploymentNotFound": false,
@@ -132,7 +132,7 @@
     {
       "path": "/privacy",
       "status": 200,
-      "ms": 62,
+      "ms": 74,
       "ok": true,
       "isHtml": true,
       "deploymentNotFound": false,
@@ -141,7 +141,7 @@
     {
       "path": "/privacy.html",
       "status": 308,
-      "ms": 47,
+      "ms": 26,
       "ok": true,
       "isHtml": false,
       "deploymentNotFound": false,
@@ -150,7 +150,7 @@
     {
       "path": "/terms",
       "status": 200,
-      "ms": 54,
+      "ms": 74,
       "ok": true,
       "isHtml": true,
       "deploymentNotFound": false,
@@ -159,7 +159,7 @@
     {
       "path": "/terms.html",
       "status": 308,
-      "ms": 47,
+      "ms": 30,
       "ok": true,
       "isHtml": false,
       "deploymentNotFound": false,
@@ -168,7 +168,7 @@
     {
       "path": "/dashboard/",
       "status": 200,
-      "ms": 69,
+      "ms": 181,
       "ok": true,
       "isHtml": true,
       "deploymentNotFound": false,
@@ -177,7 +177,7 @@
     {
       "path": "/dashboard/index.html",
       "status": 308,
-      "ms": 38,
+      "ms": 21,
       "ok": true,
       "isHtml": false,
       "deploymentNotFound": false,
@@ -186,7 +186,7 @@
     {
       "path": "/dashboard/billing",
       "status": 200,
-      "ms": 60,
+      "ms": 75,
       "ok": true,
       "isHtml": true,
       "deploymentNotFound": false,
@@ -195,7 +195,7 @@
     {
       "path": "/dashboard/billing.html",
       "status": 308,
-      "ms": 50,
+      "ms": 16,
       "ok": true,
       "isHtml": false,
       "deploymentNotFound": false,
@@ -204,7 +204,7 @@
     {
       "path": "/dashboard/settings",
       "status": 200,
-      "ms": 81,
+      "ms": 87,
       "ok": true,
       "isHtml": true,
       "deploymentNotFound": false,
@@ -213,7 +213,7 @@
     {
       "path": "/dashboard/settings.html",
       "status": 308,
-      "ms": 57,
+      "ms": 19,
       "ok": true,
       "isHtml": false,
       "deploymentNotFound": false,
@@ -224,13 +224,13 @@
     {
       "path": "/assets/styles.css",
       "status": 200,
-      "ms": 74,
+      "ms": 70,
       "bytes": 4000
     },
     {
       "path": "/assets/app.js",
       "status": 200,
-      "ms": 76,
+      "ms": 83,
       "bytes": 4000
     }
   ],
@@ -241,12 +241,35 @@
       "body": {
         "ok": true,
         "db": true,
-        "userCount": 6,
+        "userCount": 38,
         "tables": [
           "_cf_KV",
+          "appointments",
+          "audit_logs",
+          "automation_runs",
+          "automations",
           "billing_events",
+          "briefings",
+          "calendar_events",
+          "chores",
+          "connected_accounts",
+          "conversations",
+          "crm_contacts",
+          "crm_interactions",
+          "list_items",
+          "lists",
+          "magic_logins",
+          "meeting_prep",
+          "memories",
+          "messages",
+          "notes",
+          "notifications",
+          "onboarding_state",
           "password_resets",
+          "reminders",
           "sessions",
+          "team_members",
+          "teams",
           "users"
         ]
       }
@@ -292,8 +315,8 @@
       "body": {
         "ok": true,
         "user": {
-          "id": "user_537d5a4a3f8344bcab576e8d2372be02",
-          "email": "qa.prod.1785333225767@example.com",
+          "id": "user_5f28f2fcf71c42d4b33286d5a4352cc9",
+          "email": "qa.prod.1785442792431@example.com",
           "name": "QA Prod",
           "planSlug": null,
           "subscriptionStatus": "none",
@@ -340,6 +363,10 @@
   },
   "env": {
     "present": [
+      "ASSIST_LOGIN_SECRET",
+      "COMPOSIO_API_KEY",
+      "COMPOSIO_GMAIL_AUTH_CONFIG_ID",
+      "COMPOSIO_GOOGLE_CALENDAR_AUTH_CONFIG_ID",
       "EMAIL_FROM",
       "OPENAI_API_KEY",
       "RESEND_API_KEY",
@@ -389,12 +416,12 @@
       {
         "path": "/privacy.html",
         "status": 200,
-        "title": "Privacy · AmberOne"
+        "title": "Privacy Policy · AmberOne"
       },
       {
         "path": "/terms.html",
         "status": 200,
-        "title": "Terms · AmberOne"
+        "title": "Terms of Service · AmberOne"
       }
     ],
     "formVisible": true
@@ -410,23 +437,23 @@
     }
   },
   "performance": {
-    "avgMs": 71,
-    "p95Ms": 186,
+    "avgMs": 60,
+    "p95Ms": 181,
     "assetMs": [
-      74,
-      76
+      70,
+      83
     ]
   },
   "security": {
     "https": true,
     "hasHsts": false,
-    "xfo": null,
+    "xfo": "SAMEORIGIN",
     "csp": null,
     "webhookRejectsBad": true,
     "cookiesHttpOnlyNoted": true
   },
   "scores": {
-    "performance": 96,
+    "performance": 97,
     "security": 90,
     "productionReadinessPercent": 100,
     "issueCounts": {
@@ -437,13 +464,7 @@
     }
   },
   "linkSamples": [
-    "/assets/styles.css",
-    "/",
-    "#products",
-    "/pricing",
-    "/faq",
-    "/login",
-    "/signup"
+    "/assets/styles.css"
   ],
   "launch": {
     "readyForPublicLaunch": true,

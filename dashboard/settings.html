@@ -59,6 +59,10 @@
       if (!user) return;
       document.getElementById("name").textContent = user.name || "Member";
       document.getElementById("email").textContent = user.email;
+      if (user.isBeta) {
+        const until = user.betaExpiresAt ? new Date(user.betaExpiresAt).toLocaleString() : "the end of the beta";
+        document.querySelector(".lede").textContent = `Temporary beta access. Expires ${until}. This is not the owner account.`;
+      }
       const { res, data } = await AmberOne.api("/api/audit");
       if (!res.ok) {
         document.getElementById("audit-list").innerHTML = `<p class="empty-state">${data.error || "Could not load activity."}</p>`;

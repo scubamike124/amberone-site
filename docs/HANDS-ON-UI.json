@@ -1,0 +1,120 @@
+{
+  "at": "2026-08-19T01:35:50.790Z",
+  "base": "https://amberoneai.com",
+  "email": "ao.ui.mszf6av0@example.com",
+  "pass": 24,
+  "fail": 1,
+  "total": 25,
+  "failed": [
+    "home talk submit"
+  ],
+  "steps": [
+    {
+      "name": "signup page",
+      "ok": true,
+      "detail": "https://amberoneai.com/signup"
+    },
+    {
+      "name": "signup submit lands in product",
+      "ok": true,
+      "detail": "https://amberoneai.com/dashboard/"
+    },
+    {
+      "name": "calendar form create shows event",
+      "ok": true,
+      "detail": "Piano lesson\n8/21/2026, 4:00:00 PM · Music studio · repeats weekly · private People: Maya, Ms. Chen Bring books\nEdit\nDel"
+    },
+    {
+      "name": "calendar has Connect Google",
+      "ok": true
+    },
+    {
+      "name": "calendar has Sync from Google",
+      "ok": true
+    },
+    {
+      "name": "calendar edit button present",
+      "ok": true
+    },
+    {
+      "name": "calendar edit/reschedule via UI",
+      "ok": true,
+      "detail": "updated list"
+    },
+    {
+      "name": "files page",
+      "ok": true
+    },
+    {
+      "name": "connections Google Calendar connectable",
+      "ok": true
+    },
+    {
+      "name": "reminders form create",
+      "ok": true
+    },
+    {
+      "name": "notes form create",
+      "ok": true
+    },
+    {
+      "name": "lists form create",
+      "ok": true
+    },
+    {
+      "name": "projects form create",
+      "ok": true
+    },
+    {
+      "name": "projects invite via UI",
+      "ok": true
+    },
+    {
+      "name": "projects add task via UI",
+      "ok": true
+    },
+    {
+      "name": "family dashboard",
+      "ok": true
+    },
+    {
+      "name": "settings shows account email",
+      "ok": true,
+      "detail": "settings"
+    },
+    {
+      "name": "billing page",
+      "ok": true
+    },
+    {
+      "name": "notifications page",
+      "ok": true
+    },
+    {
+      "name": "home dashboard",
+      "ok": true
+    },
+    {
+      "name": "home talk submit",
+      "ok": false
+    },
+    {
+      "name": "mobile calendar usable",
+      "ok": true
+    },
+    {
+      "name": "logout via UI",
+      "ok": true,
+      "detail": "https://amberoneai.com/"
+    },
+    {
+      "name": "login via UI after logout",
+      "ok": true,
+      "detail": "https://amberoneai.com/dashboard/"
+    },
+    {
+      "name": "calendar persisted after UI re-login",
+      "ok": true
+    }
+  ]
+}

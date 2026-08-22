@@ -1,7 +1,7 @@
 {
-  "at": "2026-07-29T12:48:40.536Z",
+  "at": "2026-07-30T20:19:30.692Z",
   "base": "http://127.0.0.1:8788",
-  "email": "journey_1785329314434@example.com",
+  "email": "journey_1785442765010@example.com",
   "passed": 22,
   "total": 22,
   "failed": [],
@@ -35,7 +35,7 @@
       "name": "create account",
       "ok": true,
       "status": 201,
-      "userId": "user_72327a7e49d84175a5765cac6c56524c"
+      "userId": "user_04627f6b99414534ac68fec7af82b011"
     },
     {
       "name": "session after signup",
@@ -46,8 +46,8 @@
       "name": "password reset / email path",
       "ok": true,
       "status": 200,
-      "emailDelivered": false,
-      "setupRequired": "RESEND_DOMAIN",
+      "emailDelivered": true,
+      "setupRequired": null,
       "hasResetUrl": true
     },
     {
@@ -72,7 +72,7 @@
       "name": "Stripe Checkout session",
       "ok": true,
       "status": 200,
-      "sessionId": "cs_live_b1EZv3US1cKJajQJsbGLxrws6LgnjRwhJv9Y00cHsKsZ3BpvdUftYOm8iB"
+      "sessionId": "cs_live_b1YcSJVAR4eIh9My63laa4BOk55MChrtboE4SyCEjEYdrbzPAsTPaDJd27"
     },
     {
       "name": "Stripe customer create",

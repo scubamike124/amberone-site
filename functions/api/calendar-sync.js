@@ -1,5 +1,11 @@
 import { ensureSchema, getUserFromRequest, json, nowIso, readJson, uid, writeAudit } from "../_lib/core.js";
 import { executeTool, isComposioConfigured, listConnectedAccounts } from "../_lib/composio.js";
+import {
+  getGoogleAccessToken,
+  isGoogleCalendarOAuthConfigured,
+  listGoogleCalendarEvents,
+  parseConnectionMeta,
+} from "../_lib/google-calendar.js";
 
 const GOOGLE_CALENDAR_TOOLKIT = "googlecalendar";
 const LIST_EVENTS_TOOL = "GOOGLECALENDAR_EVENTS_LIST";
@@ -53,7 +59,7 @@ async function resolveActiveGoogleCalendarAccount(env, db, userId) {
 
   let connection = await db
     .prepare(
-      `SELECT id, composio_connected_account_id, status FROM connected_accounts
+      `SELECT id, composio_connected_account_id, status, metadata_json FROM connected_accounts
        WHERE user_id = ? AND toolkit = ?
        ORDER BY CASE WHEN lower(status) = 'active' THEN 0 ELSE 1 END, updated_at DESC
        LIMIT 1`,
@@ -83,43 +89,66 @@ export async function onRequestPost(context) {
   const user = await getUserFromRequest(db, context.request);
   if (!user) return json({ error: "Unauthorized" }, 401);
 
-  if (!isComposioConfigured(context.env)) {
-    return json(
-      { error: "Connected Services are not configured yet. Add COMPOSIO_API_KEY to enable Google Calendar sync." },
-      503,
-    );
-  }
-
-  const connection = await resolveActiveGoogleCalendarAccount(context.env, db, user.id);
-  if (!connection || !connection.composio_connected_account_id) {
-    return json({ error: "Google Calendar is not connected yet. Visit Connections to link it." }, 400);
-  }
-
   const body = await readJson(context.request);
   const defaults = defaultWindow();
   const timeMin = body.from || defaults.timeMin;
   const timeMax = body.to || defaults.timeMax;
 
-  let toolResult;
-  try {
-    toolResult = await executeTool(context.env, {
-      slug: LIST_EVENTS_TOOL,
-      userId: user.id,
-      connectedAccountId: connection.composio_connected_account_id,
-      arguments: {
-        calendarId: "primary",
-        timeMin,
-        timeMax,
-        singleEvents: true,
-        orderBy: "startTime",
-        maxResults: 100,
-      },
-    });
-  } catch (err) {
-    return json({ error: err instanceof Error ? err.message : String(err) }, err?.status || 502);
+  const connection = await resolveActiveGoogleCalendarAccount(context.env, db, user.id);
+  if (!connection) {
+    return json({ error: "Google Calendar is not connected yet. Visit Connections to link it." }, 400);
   }
 
-  const events = findEventArray(toolResult);
+  let events = [];
+  let via = "composio";
+
+  const nativeMeta = parseConnectionMeta(connection);
+  if (isGoogleCalendarOAuthConfigured(context.env) && (nativeMeta.refresh_token || nativeMeta.access_token)) {
+    try {
+      const token = await getGoogleAccessToken(context.env, db, connection);
+      if (token?.accessToken) {
+        events = await listGoogleCalendarEvents(token.accessToken, { timeMin, timeMax });
+        via = "google";
+      }
+    } catch (err) {
+      return json({ error: err instanceof Error ? err.message : String(err) }, err?.status || 502);
+    }
+  }
+
+  if (via !== "google") {
+    if (!isComposioConfigured(context.env)) {
+      return json(
+        {
+          error:
+            "Google Calendar is not fully connected yet. Open Connections and connect Google Calendar, then Sync.",
+        },
+        503,
+      );
+    }
+    if (!connection.composio_connected_account_id) {
+      return json({ error: "Google Calendar is not connected yet. Visit Connections to link it." }, 400);
+    }
+    let toolResult;
+    try {
+      toolResult = await executeTool(context.env, {
+        slug: LIST_EVENTS_TOOL,
+        userId: user.id,
+        connectedAccountId: connection.composio_connected_account_id,
+        arguments: {
+          calendarId: "primary",
+          timeMin,
+          timeMax,
+          singleEvents: true,
+          orderBy: "startTime",
+          maxResults: 100,
+        },
+      });
+    } catch (err) {
+      return json({ error: err instanceof Error ? err.message : String(err) }, err?.status || 502);
+    }
+    events = findEventArray(toolResult);
+  }
+
   const ts = nowIso();
   let synced = 0;
 
@@ -180,15 +209,15 @@ export async function onRequestPost(context) {
     action: "calendar.sync",
     resourceType: "connected_account",
     resourceId: connection.id,
-    meta: { synced, foundEvents: events.length },
+    meta: { synced, foundEvents: events.length, via },
   });
 
   return json({
     ok: true,
     synced,
     foundEvents: events.length,
+    via,
     window: { from: timeMin, to: timeMax },
-    connectedAccountId: connection.composio_connected_account_id,
   });
 }
 

@@ -1,4 +1,5 @@
 import { getUserFromRequest, json, publicUser } from "../_lib/core.js";
+import { isBetaAccount } from "../_lib/beta.js";
 
 export async function onRequestGet(context) {
   const db = context.env.DB;
@@ -8,21 +9,25 @@ export async function onRequestGet(context) {
 
   const events = await db
     .prepare(
-      "SELECT id, type, stripe_id, created_at FROM billing_events WHERE user_id = ? OR user_id IS NULL ORDER BY created_at DESC LIMIT 20",
+      "SELECT id, type, stripe_id, created_at FROM billing_events WHERE user_id = ? ORDER BY created_at DESC LIMIT 20",
     )
     .bind(user.id)
     .all();
 
+  const beta = isBetaAccount(user);
   return json({
     user: publicUser(user),
     billing: {
       planSlug: user.plan_slug,
-      status: user.subscription_status,
-      stripeCustomerId: user.stripe_customer_id,
-      stripeSubscriptionId: user.stripe_subscription_id,
+      status: beta ? "beta" : user.subscription_status,
+      stripeCustomerId: beta ? null : user.stripe_customer_id,
+      stripeSubscriptionId: beta ? null : user.stripe_subscription_id,
+      note: beta
+        ? "Complimentary beta workspace. Payment credentials and the owner’s Stripe account are not available here."
+        : null,
     },
-    events: events.results || [],
-    stripeConfigured: Boolean(context.env.STRIPE_SECRET_KEY),
-    portalReady: Boolean(user.stripe_customer_id),
+    events: beta ? [] : events.results || [],
+    stripeConfigured: beta ? false : Boolean(context.env.STRIPE_SECRET_KEY),
+    portalReady: beta ? false : Boolean(user.stripe_customer_id),
   });
 }

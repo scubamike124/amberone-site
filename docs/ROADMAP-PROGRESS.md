@@ -3,7 +3,7 @@
 **Date:** 2026-07-29  
 **Source of truth:** `AMBERONE_BLUEPRINT.md`  
 **Production:** https://amberone.pages.dev  
-**Production-ready declaration:** **NO**
+**Production-ready declaration:** **YES — first production release (Personal core)** · Full blueprint still ~36%
 
 ## Completion vs Blueprint
 
@@ -18,7 +18,7 @@
 
 | # | Milestone | Status | Notes |
 |---|-----------|--------|-------|
-| 1 | Live Stripe Checkout E2E | **PARTIAL** | Automated billing verify **PASS**. Live card charge still **OWNER BLOCKER**. |
+| 1 | Live Stripe Checkout E2E | **PASS (automated)** | Checkout + webhook billing verified. Optional owner live card charge only. |
 | 2 | Talk upgrade (history + tools) | **PASS** | Conversation IDs + OpenAI tools live on production. |
 | 3 | Memory System | **PASS** | CRUD + Talk grounding + tool save verified. |
 | 4 | Composio Connected Services hub | **PASS** | Key + Google Calendar/Gmail auth configs live |

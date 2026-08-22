@@ -1,0 +1,10 @@
+name = "amberone-social-cron"
+main = "index.js"
+compatibility_date = "2025-07-18"
+account_id = "735d0e617e9ba6a16d9b2a1ec05b4dd3"
+
+[triggers]
+crons = ["* * * * *"]
+
+[vars]
+AMBERONE_CRON_URL = "https://amberoneai.com/api/cron/social"

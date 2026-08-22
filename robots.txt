@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /api/
+Disallow: /forgot-password
+Disallow: /reset-password
+
+Sitemap: https://amberoneai.com/sitemap.xml
