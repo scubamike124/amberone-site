@@ -5,6 +5,7 @@ import { createSocialCampaign } from "../_lib/social-schedule.js";
 import { publicPlatforms, requirePlatform, getPlatform } from "../_lib/social-platforms.js";
 import { QUALITY_PASS, scoreSocialPost } from "../_lib/social-quality.js";
 import { activeNextdoor, isNextdoorOAuthConfigured } from "../_lib/nextdoor.js";
+import { activeTikTok, isTikTokOAuthConfigured } from "../_lib/tiktok.js";
 
 const INSTAGRAM = "instagram";
 const DEFAULT_IMAGE = "/assets/social/amberone-professional-post.png";
@@ -76,18 +77,21 @@ export async function onRequestGet(context) {
   const igConnected = Boolean(connection && String(connection.status).toUpperCase() === "ACTIVE");
   const ndConnection = await activeNextdoor(db, user.id);
   const ndConnected = Boolean(ndConnection && String(ndConnection.status).toUpperCase() === "ACTIVE");
+  const ttConnection = await activeTikTok(db, user.id);
+  const ttConnected = Boolean(ttConnection && String(ttConnection.status).toUpperCase() === "ACTIVE");
   const posts = await db
     .prepare("SELECT * FROM social_posts WHERE user_id = ? ORDER BY created_at DESC LIMIT 50")
     .bind(user.id)
     .all();
 
   return json({
-    platforms: publicPlatforms({ instagram: igConnected, nextdoor: ndConnected }),
+    platforms: publicPlatforms({ instagram: igConnected, nextdoor: ndConnected, tiktok: ttConnected }),
     defaultImageUrl: null,
     qualityPass: QUALITY_PASS,
     posts: posts.results || [],
     composioConfigured: isComposioConfigured(context.env),
     nextdoorConfigured: isNextdoorOAuthConfigured(context.env),
+    tiktokConfigured: isTikTokOAuthConfigured(context.env),
   });
 }
 

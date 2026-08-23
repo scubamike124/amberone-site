@@ -12,6 +12,7 @@ import {
   isNextdoorOAuthConfigured,
   pickNextdoorProfile,
 } from "./nextdoor.js";
+import { activeTikTok, getTikTokAccessToken, isTikTokOAuthConfigured, publishTikTokPhoto } from "./tiktok.js";
 
 function parseJsonSafe(raw) {
   try {
@@ -392,6 +393,67 @@ export async function publishDueSocialPost({ env, db, platform = null }) {
         .bind(message, nowIso(), row.id)
         .run();
       return { did: notConnected ? "not_connected" : "publish_failed", id: row.id, platform: "nextdoor", error: message };
+    }
+  }
+
+  if (row.platform === "tiktok") {
+    if (!isTikTokOAuthConfigured(env)) {
+      await db
+        .prepare("UPDATE social_posts SET status = 'publish_failed', error = ?, updated_at = ? WHERE id = ?")
+        .bind("TikTok publishing is not configured on Amber One yet.", nowIso(), row.id)
+        .run();
+      return { did: "not_configured", id: row.id, platform: "tiktok", code: "tiktok_not_configured" };
+    }
+    const connection = await activeTikTok(db, row.user_id);
+    if (!connection || String(connection.status).toUpperCase() !== "ACTIVE") {
+      await db
+        .prepare("UPDATE social_posts SET status = 'publish_failed', error = ?, updated_at = ? WHERE id = ?")
+        .bind("TikTok is not connected. Connect the account, then Amber can auto-publish from the cloud.", nowIso(), row.id)
+        .run();
+      return { did: "not_connected", id: row.id, platform: "tiktok", code: "tiktok_not_connected" };
+    }
+    try {
+      const auth = await getTikTokAccessToken(env, db, connection);
+      if (!auth?.accessToken) {
+        throw Object.assign(new Error("TikTok is not connected. Connect the account, then Amber can auto-publish from the cloud."), {
+          code: "tiktok_not_connected",
+        });
+      }
+      const published = await publishTikTokPhoto(auth.accessToken, {
+        caption: row.caption,
+        imageUrl: row.image_url,
+      });
+      await db
+        .prepare("UPDATE social_posts SET status = 'published', error = NULL, published_at = ?, connected_account_id = ?, updated_at = ? WHERE id = ?")
+        .bind(nowIso(), connection.id, nowIso(), row.id)
+        .run();
+      await writeAudit(db, {
+        userId: row.user_id,
+        action: "social.auto_publish",
+        resourceType: "social_post",
+        resourceId: row.id,
+        meta: {
+          platform: "tiktok",
+          publishId: published?.publish_id || null,
+          privacyLevel: published?.privacyLevel || null,
+          via: "cloud_cron",
+        },
+      });
+      return {
+        did: "published",
+        id: row.id,
+        platform: "tiktok",
+        publishId: published?.publish_id || null,
+        privacyLevel: published?.privacyLevel || null,
+      };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      const notConnected = err?.code === "tiktok_not_connected" || /not connected/i.test(message);
+      await db
+        .prepare("UPDATE social_posts SET status = 'publish_failed', error = ?, updated_at = ? WHERE id = ?")
+        .bind(message, nowIso(), row.id)
+        .run();
+      return { did: notConnected ? "not_connected" : "publish_failed", id: row.id, platform: "tiktok", error: message };
     }
   }
 

@@ -23,7 +23,7 @@ export async function onRequestPost(context) {
     env: context.env,
     db,
     origin: originFrom(context.request),
-    platform: platform === "instagram" || platform === "nextdoor" ? platform : null,
+    platform: ["instagram", "nextdoor", "tiktok"].includes(platform) ? platform : null,
   });
   return json({ ok: true, cloud: true, platform: platform || "all", result, at: new Date().toISOString() });
 }

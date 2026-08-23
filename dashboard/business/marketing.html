@@ -53,10 +53,11 @@
 
         <article class="ao-card" style="margin-bottom:1rem">
           <h2 style="font-size:1.05rem;margin:0 0 .5rem">Accounts</h2>
-          <p id="account-status" class="lede" style="margin:0 0 .75rem">Checking Instagram and Nextdoor…</p>
+          <p id="account-status" class="lede" style="margin:0 0 .75rem">Checking Instagram, Nextdoor, and TikTok…</p>
           <div class="row-actions" style="display:flex;gap:.5rem;flex-wrap:wrap">
             <button class="btn btn-ghost" type="button" id="connect-ig">Connect Instagram</button>
             <button class="btn btn-ghost" type="button" id="connect-nd">Connect Nextdoor</button>
+            <button class="btn btn-ghost" type="button" id="connect-tt">Connect TikTok</button>
           </div>
         </article>
 
@@ -64,9 +65,10 @@
           <h2 style="font-size:1.05rem;margin:0 0 .75rem">Create with Amber</h2>
           <p class="lede">Every network uses the same 95/100 quality gate. Scheduling the next 14 days creates Instagram and Nextdoor posts together. The cloud job writes, scores, calendars, and auto-publishes each network when that account is connected.</p>
           <select class="field" id="platform">
-            <option value="all">Instagram + Nextdoor</option>
+            <option value="all">Instagram + Nextdoor + TikTok</option>
             <option value="instagram">Instagram only</option>
             <option value="nextdoor">Nextdoor only</option>
+            <option value="tiktok">TikTok only</option>
           </select>
           <p id="platform-note" class="lede"></p>
           <div class="row-actions" style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.5rem 0 1rem">
@@ -134,18 +136,21 @@
         platforms = data.platforms || [];
         const select = document.getElementById("platform");
         const previous = select.value;
-        if (!["all", "instagram", "nextdoor"].includes(previous)) select.value = "all";
+        if (!["all", "instagram", "nextdoor", "tiktok"].includes(previous)) select.value = "all";
         const ig = platforms.find((p) => p.id === "instagram");
         const nd = platforms.find((p) => p.id === "nextdoor");
+        const tt = platforms.find((p) => p.id === "tiktok");
         const igLine = ig?.connected ? "Instagram is connected." : "Instagram is not connected yet.";
         const ndLine = nd?.connected ? "Nextdoor is connected." : "Nextdoor is not connected yet.";
-        document.getElementById("account-status").textContent = `${igLine} ${ndLine} You can still create scored drafts.`;
+        const ttLine = tt?.connected ? "TikTok is connected." : "TikTok is not connected yet.";
+        document.getElementById("account-status").textContent = `${igLine} ${ndLine} ${ttLine} You can still create scored drafts.`;
         document.getElementById("connect-ig").style.display = ig?.connected ? "none" : "";
         document.getElementById("connect-nd").style.display = nd?.connected ? "none" : "";
+        document.getElementById("connect-tt").style.display = tt?.connected ? "none" : "";
         function updatePlatformNote() {
           if (select.value === "all") {
             document.getElementById("platform-note").textContent =
-              "Amber schedules Instagram and Nextdoor together. Each must score 95/100. Each auto-publishes from the cloud when connected.";
+              "Amber schedules Instagram, Nextdoor, and TikTok together. Each must score 95/100. Each auto-publishes from the cloud when connected. TikTok posts stay private until the TikTok app passes its audit.";
             return;
           }
           const chosen = platforms.find((p) => p.id === select.value);
@@ -278,6 +283,14 @@
         const { res, data } = await AmberOne.api("/api/connected-services", { method: "POST", body: JSON.stringify({ toolkit: "nextdoor" }) });
         if (!res.ok || !data.redirectUrl) {
           AmberOne.showBanner(banner, data.error || "Could not start Nextdoor connect.", "err");
+          return;
+        }
+        location.href = data.redirectUrl;
+      };
+      document.getElementById("connect-tt").onclick = async () => {
+        const { res, data } = await AmberOne.api("/api/connected-services", { method: "POST", body: JSON.stringify({ toolkit: "tiktok" }) });
+        if (!res.ok || !data.redirectUrl) {
+          AmberOne.showBanner(banner, data.error || "Could not start TikTok connect.", "err");
           return;
         }
         location.href = data.redirectUrl;

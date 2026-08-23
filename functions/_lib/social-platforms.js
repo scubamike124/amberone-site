@@ -34,6 +34,21 @@ export const SOCIAL_PLATFORMS = {
     writer:
       "Write a Nextdoor neighborhood post for one real business. Sound like a local professional, not a national ad. Name the neighborhood or city. Strong first-line hook, 3-6 sentences, specific service, neighbor benefit, one clear CTA (book, call, stop by, or message). 0-2 hashtags maximum. Never use link in bio.",
   },
+  tiktok: {
+    id: "tiktok",
+    label: "TikTok",
+    canCompose: true,
+    canPrepare: true,
+    canPublish: true,
+    maxCaption: 2200,
+    minCaption: 40,
+    hashtagMin: 2,
+    hashtagMax: 6,
+    requireLocation: false,
+    imageShape: "TikTok photo post, vertical 3:4",
+    writer:
+      "Write a TikTok photo-post caption for one real business. Punchy, direct first line — no throat-clearing. 1-4 short sentences, named business, specific service, one clear CTA. 2-6 relevant hashtags at the end, no generic #fyp #viral spam.",
+  },
 };
 
 export const QUALITY_PASS = 95;

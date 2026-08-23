@@ -8,6 +8,7 @@ import {
 } from "../_lib/composio.js";
 import { isGoogleCalendarOAuthConfigured } from "../_lib/google-calendar.js";
 import { isNextdoorOAuthConfigured } from "../_lib/nextdoor.js";
+import { isTikTokOAuthConfigured } from "../_lib/tiktok.js";
 
 /**
  * Connected Services API (Composio hub).
@@ -21,6 +22,7 @@ const SUPPORTED_TOOLKITS = {
   gmail: { provider: "google", label: "Gmail" },
   instagram: { provider: "meta", label: "Instagram" },
   nextdoor: { provider: "nextdoor", label: "Nextdoor" },
+  tiktok: { provider: "tiktok", label: "TikTok" },
 };
 
 export async function onRequestGet(context) {
@@ -33,6 +35,7 @@ export async function onRequestGet(context) {
   const composioConfigured = isComposioConfigured(context.env);
   const nativeGoogleCalendar = isGoogleCalendarOAuthConfigured(context.env);
   const nativeNextdoor = isNextdoorOAuthConfigured(context.env);
+  const nativeTikTok = isTikTokOAuthConfigured(context.env);
   let composioSyncError = null;
   let remoteItems = [];
 
@@ -112,10 +115,13 @@ export async function onRequestGet(context) {
     nativeGoogleCalendar,
     nativeNextdoor,
     composioSyncError,
+    nativeTikTok,
     availableToolkits: Object.entries(SUPPORTED_TOOLKITS).map(([toolkit, meta]) => {
       const composioReady = Boolean(authConfigIdForToolkit(context.env, toolkit));
       const nativeReady =
-        (toolkit === "googlecalendar" && nativeGoogleCalendar) || (toolkit === "nextdoor" && nativeNextdoor);
+        (toolkit === "googlecalendar" && nativeGoogleCalendar) ||
+        (toolkit === "nextdoor" && nativeNextdoor) ||
+        (toolkit === "tiktok" && nativeTikTok);
       return {
         toolkit,
         label: meta.label,
@@ -154,6 +160,23 @@ export async function onRequestPost(context) {
     return json({
       ok: true,
       redirectUrl: `${originFrom(context.request)}/api/nextdoor-oauth`,
+    });
+  }
+
+  if (toolkit === "tiktok") {
+    if (!isTikTokOAuthConfigured(context.env)) {
+      return json(
+        {
+          error:
+            "TikTok publishing is not configured on Amber One yet. Add TIKTOK_CLIENT_KEY and TIKTOK_CLIENT_SECRET from the TikTok Developer app.",
+          code: "tiktok_not_configured",
+        },
+        503,
+      );
+    }
+    return json({
+      ok: true,
+      redirectUrl: `${originFrom(context.request)}/api/tiktok-oauth`,
     });
   }
 
