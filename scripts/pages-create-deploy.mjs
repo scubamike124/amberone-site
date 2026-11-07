@@ -1,5 +1,10 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
+import { execSync } from "node:child_process";
+// P0 containment (2026-11-03): never deploy the repo root. Assemble a public-only dist and
+// refuse to deploy if the release gate finds any secret path. Fail closed.
+execSync("node scripts/assemble-dist.mjs", { stdio: "inherit" });
+execSync("node scripts/release-gate.mjs dist", { stdio: "inherit" });
 
 const cf = JSON.parse(readFileSync(".tmp/cf-env.json", "utf8"));
 const env = {
@@ -19,7 +24,7 @@ function run(args) {
 }
 
 const create = run(["pages", "project", "create", "amberone", "--production-branch=master"]);
-const deploy = run(["pages", "deploy", ".", "--project-name=amberone", "--commit-dirty=true"]);
+const deploy = run(["pages", "deploy", "dist", "--project-name=amberone"]);
 const urlMatch = deploy.out.match(/https:\/\/[a-z0-9.-]+\.pages\.dev/i);
 const report = {
   at: new Date().toISOString(),
