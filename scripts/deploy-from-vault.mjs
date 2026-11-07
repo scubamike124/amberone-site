@@ -1,3 +1,8 @@
+import { execSync } from "node:child_process";
+// P0 containment (2026-11-03): never deploy the repo root. Assemble a public-only dist and
+// refuse to deploy if the release gate finds any secret path. Fail closed.
+execSync("node scripts/assemble-dist.mjs", { stdio: "inherit" });
+execSync("node scripts/release-gate.mjs dist", { stdio: "inherit" });
 /**
  * Deploy AmberOne Pages using vault CF credentials from .tmp/cf-env.json.
  * Tries D1 create; continues Pages deploy even if D1 is blocked.
@@ -77,7 +82,7 @@ const databaseId = parsedId || KNOWN_D1;
   });
 }
 
-const deploy = run(["pages", "deploy", ".", "--project-name=amberone", "--commit-dirty=true"]);
+const deploy = run(["pages", "deploy", "dist", "--project-name=amberone"]);
 report.steps.push({
   step: "pages deploy",
   ok: deploy.status === 0,
