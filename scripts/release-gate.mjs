@@ -7,7 +7,7 @@ const dist = path.resolve(process.argv[2] || "dist");
 if (!existsSync(dist)) { console.error(JSON.stringify({ ok: false, error: "output dir missing: " + dist })); process.exit(1); }
 const FORBIDDEN_PATH = [/^\.dev\.vars/i, /(^|\/)\.tmp(\/|$)/i, /(^|\/)\.env(\.|$)/i, /(^|\/)backups(\/|$)/i,
   /(^|\/)docs(\/|$)/i, /(^|\/)scripts(\/|$)/i, /\.sql$/i, /wrangler.*\.toml/i, /(^|\/)\.cursor(\/|$)/i,
-  /package(-lock)?\.json$/i, /\.env\.example$/i];
+  /package(-lock)?\.json$/i, /\.env\.example$/i, /^functions(\/|$)/i, /(^|\/)(cron-worker|www-redirect-worker)(\/|$)/i];
 const hits = [];
 function walk(dir, rel = "") {
   for (const e of readdirSync(dir)) {
