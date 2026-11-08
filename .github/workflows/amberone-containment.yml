@@ -1,0 +1,164 @@
+# AmberOne containment (#1257): deploy the clean build, block the exposed paths on the custom domain, and delete the
+# deployments that still serve the exposed files. Hand-run only, from master only, one action per run.
+#
+# Every job uses the GitHub environment "amberone-production", which the owner configures (Settings > Environments):
+#   - Deployment branches: Selected, exactly one rule, the branch master.
+#   - Required reviewers: the owner (free on public repositories), so every run waits for the owner's approval.
+#   - Secrets: CLOUDFLARE_API_TOKEN (a NEW token, NOT the exposed one: Account > Cloudflare Pages: Edit, Zone > Zone: Read
+#     and Zone > Zone WAF: Edit for amberoneai.com only, with an expiry date) and CLOUDFLARE_ACCOUNT_ID.
+# The token is only sent to api.cloudflare.com (curl) or given to wrangler; nothing echoes it (no set -x). Output is IDs,
+# names, dates and HTTP statuses only.
+#
+# Actions:
+#   check                 read-only: verify the token, show the project's production branch and deployments, the zone, and
+#                         whether the block rule exists.
+#   deploy-clean          assemble dist from tracked files, run the release gate, deploy dist to production.
+#   block-domain-paths    add (once) a WAF custom rule on amberoneai.com that blocks the exposed paths.
+#   delete-old-deployments  delete every deployment except the current production one, and only when that production
+#                         deployment was built from a commit that contains the containment (bc2fceab). Irreversible.
+name: AmberOne containment (hand-run, owner-approved)
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "check, deploy-clean, block-domain-paths or delete-old-deployments"
+        required: true
+        default: check
+        type: choice
+        options: [check, deploy-clean, block-domain-paths, delete-old-deployments]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: amberone-containment
+  cancel-in-progress: false
+
+env:
+  PROJECT: amberone
+  ZONE_NAME: amberoneai.com
+  CONTAINMENT_COMMIT: bc2fceab25119cabb9506e9312a150172ec7fcd4
+  RULE_DESCRIPTION: "block-exposed-files (#1257)"
+
+jobs:
+  run:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: amberone-production
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Token and account present
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          [ -n "$CF_TOKEN" ] || { printf '%s\n' "::error::secret CLOUDFLARE_API_TOKEN is not set in the amberone-production environment; nothing was requested"; exit 1; }
+          [ -n "$CF_ACCOUNT" ] || { printf '%s\n' "::error::secret CLOUDFLARE_ACCOUNT_ID is not set in the amberone-production environment; nothing was requested"; exit 1; }
+
+      - name: Check (read-only)
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api() { curl -sS -m 30 -H "Authorization: Bearer $CF_TOKEN" "https://api.cloudflare.com/client/v4$1"; }
+          v=$(api /user/tokens/verify); printf 'token: %s\n' "$(jq -r '.result.status // ("refused: " + ([.errors[]?.message]|join("; ")))' <<<"$v")"
+          p=$(api "/accounts/$CF_ACCOUNT/pages/projects/$PROJECT")
+          printf 'project: %s, production branch: %s, current production deployment: %s\n' \
+            "$(jq -r '.result.name // "not readable"' <<<"$p")" "$(jq -r '.result.production_branch // "?"' <<<"$p")" \
+            "$(jq -r '.result.canonical_deployment.id // "?"' <<<"$p")"
+          for page in 1 2 3 4; do
+            api "/accounts/$CF_ACCOUNT/pages/projects/$PROJECT/deployments?per_page=25&page=$page" \
+              | jq -r '.result[]? | "deployment \(.id[0:8]) \(.environment) \(.created_on) commit \(.deployment_trigger.metadata.commit_hash // "-" | .[0:8])"'
+          done
+          z=$(api "/zones?name=$ZONE_NAME"); zone=$(jq -r '.result[0].id // empty' <<<"$z")
+          printf 'zone %s: %s\n' "$ZONE_NAME" "${zone:+readable}"
+          if [ -n "$zone" ]; then
+            r=$(api "/zones/$zone/rulesets/phases/http_request_firewall_custom/entrypoint")
+            printf 'block rule present: %s\n' "$(jq -r --arg d "$RULE_DESCRIPTION" '[.result.rules[]? | select(.description == $d)] | length > 0' <<<"$r")"
+          fi
+
+      - name: Deploy the clean build
+        if: inputs.action == 'deploy-clean'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor "$CONTAINMENT_COMMIT" HEAD || { printf '%s\n' "::error::this commit does not contain the containment"; exit 1; }
+          npm ci --ignore-scripts --no-audit --no-fund
+          node scripts/assemble-dist.mjs
+          node scripts/release-gate.mjs
+          branch=$(curl -sS -m 30 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/$PROJECT" | jq -r '.result.production_branch // empty')
+          [ -n "$branch" ] || { printf '%s\n' "::error::cannot read the project's production branch"; exit 1; }
+          set +e
+          npx --no-install wrangler pages deploy dist --project-name="$PROJECT" --branch="$branch" \
+            --commit-hash="$GITHUB_SHA" --commit-message="containment deploy (#1257)" > "$RUNNER_TEMP/deploy.log" 2>&1
+          status=$?
+          set -e
+          # Print the log without any long opaque string (a token never appears there, but nothing long is echoed either).
+          grep -Ev '[A-Za-z0-9_-]{40,}' "$RUNNER_TEMP/deploy.log" || true
+          rm -rf dist "$RUNNER_TEMP/deploy.log"
+          [ "$status" -eq 0 ] || { printf '%s\n' "::error::wrangler pages deploy failed (exit $status)"; exit "$status"; }
+
+      - name: Block the exposed paths on the custom domain (WAF custom rule, added once)
+        if: inputs.action == 'block-domain-paths'
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api() { curl -sS -m 30 -X "$1" -H "Authorization: Bearer $CF_TOKEN" -H "Content-Type: application/json" "https://api.cloudflare.com/client/v4$2" ${3:+--data "$3"}; }
+          zone=$(api GET "/zones?name=$ZONE_NAME" | jq -r '.result[0].id // empty')
+          [ -n "$zone" ] || { printf '%s\n' "::error::the token cannot read zone $ZONE_NAME"; exit 1; }
+          expr='(starts_with(http.request.uri.path, "/.dev.vars") or starts_with(http.request.uri.path, "/.tmp/") or starts_with(http.request.uri.path, "/.env") or starts_with(http.request.uri.path, "/backups") or starts_with(http.request.uri.path, "/functions/") or starts_with(http.request.uri.path, "/docs/") or starts_with(http.request.uri.path, "/scripts/") or starts_with(http.request.uri.path, "/cron-worker") or starts_with(http.request.uri.path, "/www-redirect-worker") or starts_with(http.request.uri.path, "/.cursor") or http.request.uri.path in {"/schema.sql" "/wrangler.toml" "/wrangler.local.toml" "/wrangler.toml.bak" "/package.json" "/package-lock.json" "/tsconfig.json"})'
+          rule=$(jq -nc --arg e "$expr" --arg d "$RULE_DESCRIPTION" '{action:"block",expression:$e,description:$d,enabled:true}')
+          ep=$(api GET "/zones/$zone/rulesets/phases/http_request_firewall_custom/entrypoint")
+          if [ "$(jq -r '.success' <<<"$ep")" = "true" ]; then
+            if [ "$(jq -r --arg d "$RULE_DESCRIPTION" '[.result.rules[]? | select(.description == $d)] | length' <<<"$ep")" != "0" ]; then
+              printf 'block rule already present; nothing changed\n'; exit 0
+            fi
+            res=$(api POST "/zones/$zone/rulesets/$(jq -r '.result.id' <<<"$ep")/rules" "$rule")
+          else
+            res=$(api PUT "/zones/$zone/rulesets/phases/http_request_firewall_custom/entrypoint" "$(jq -nc --argjson r "$rule" '{rules:[$r]}')")
+          fi
+          printf 'result: %s %s\n' "$(jq -r '.success' <<<"$res")" "$(jq -r '[.errors[]?.message] | join("; ")' <<<"$res")"
+          [ "$(jq -r '.success' <<<"$res")" = "true" ]
+
+      - name: Delete every deployment except the clean production one
+        if: inputs.action == 'delete-old-deployments'
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api() { curl -sS -m 30 -X "$1" -H "Authorization: Bearer $CF_TOKEN" "https://api.cloudflare.com/client/v4$2"; }
+          p=$(api GET "/accounts/$CF_ACCOUNT/pages/projects/$PROJECT")
+          keep=$(jq -r '.result.canonical_deployment.id // empty' <<<"$p")
+          keep_commit=$(jq -r '.result.canonical_deployment.deployment_trigger.metadata.commit_hash // empty' <<<"$p")
+          [ -n "$keep" ] && [ -n "$keep_commit" ] || { printf '%s\n' "::error::cannot read the current production deployment"; exit 1; }
+          git cat-file -e "$keep_commit^{commit}" 2>/dev/null && git merge-base --is-ancestor "$CONTAINMENT_COMMIT" "$keep_commit" || {
+            printf '%s\n' "::error::production deployment ${keep:0:8} was not built from a commit containing the containment; run deploy-clean first. Nothing deleted."; exit 1; }
+          ids=()
+          for page in 1 2 3 4 5 6 7 8; do
+            batch=$(api GET "/accounts/$CF_ACCOUNT/pages/projects/$PROJECT/deployments?per_page=25&page=$page" | jq -r '.result[]?.id')
+            [ -n "$batch" ] || break
+            while read -r id; do [ -n "$id" ] && [ "$id" != "$keep" ] && ids+=("$id"); done <<<"$batch"
+          done
+          printf 'keeping production deployment %s (commit %s); deleting %d others\n' "${keep:0:8}" "${keep_commit:0:8}" "${#ids[@]}"
+          failed=0
+          for id in "${ids[@]}"; do
+            r=$(api DELETE "/accounts/$CF_ACCOUNT/pages/projects/$PROJECT/deployments/$id?force=true")
+            if [ "$(jq -r '.success' <<<"$r")" = "true" ]; then printf 'deleted %s\n' "${id:0:8}"; else printf 'FAILED %s: %s\n' "${id:0:8}" "$(jq -r '[.errors[]?.message] | join("; ")' <<<"$r")"; failed=1; fi
+          done
+          exit $failed
