@@ -19,6 +19,9 @@ const PRUNE = [
   "docs", "scripts", "schema.sql", "wrangler.toml", "wrangler.local.toml", "wrangler.toml.bak",
   "tsconfig.json", "package.json", "package-lock.json", ".env.example", ".cursor",
   "cron-worker", "www-redirect-worker",
+  // Pages Functions source: wrangler compiles ./functions from the repository root, never from dist,
+  // so a copy in dist would only be served as readable source code (it is not under _routes.json).
+  "functions",
 ];
 for (const p of PRUNE) rmSync(path.join(dist, p), { recursive: true, force: true });
 // Drop any remaining markdown (blueprints/readmes) anywhere in the tree.
